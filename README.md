@@ -24,4 +24,4 @@ docs/knowledge/
     └── Performance.md
 ```
 
-Установка и запуск — в [AGENTS.md](AGENTS.md), подробности настройки — в [руководстве](docs/USAGE.md).
+Установка, запуск и настройка — в [AGENTS.md](AGENTS.md).
