@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "Sample workspace",
+    "root": "../examples/demo-project",
+    "agent_label": "Demo Agent"
+  },
+  "port": 8766,
+  "storage_profile": "project",
+  "documents": [
+    {
+      "path": "docs",
+      "include": [
+        "*.md"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "Python",
+      "category": "Runtime",
+      "match": {
+        "tool_names": [
+          "python3"
+        ],
+        "command_prefixes": [
+          "python3"
+        ]
+      }
+    }
+  ],
+  "max_steps": 5000,
+  "max_runs": 50
+}

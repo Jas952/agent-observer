@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "project": {
+    "name": "My project",
+    "root": "..",
+    "agent_label": "Project Agent"
+  },
+  "port": 8765,
+  "storage_profile": "project",
+  "documents": [
+    {
+      "path": "docs",
+      "include": [
+        "**/*.md"
+      ]
+    },
+    {
+      "path": ".",
+      "include": [
+        "README.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "notes",
+      "include": [
+        "**/*.md"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "Python",
+      "category": "Runtime",
+      "match": {
+        "tool_names": [
+          "python",
+          "python3"
+        ],
+        "command_prefixes": [
+          "python3"
+        ]
+      }
+    },
+    {
+      "name": "Database",
+      "category": "Data services",
+      "match": {
+        "tool_names": [
+          "query_database"
+        ]
+      }
+    }
+  ]
+}

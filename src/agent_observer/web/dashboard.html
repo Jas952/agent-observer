@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Agent · Live route</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080d18;--panel:#0e1726;--panel2:#121e30;--line:#20334a;--muted:#8fa4bd;--text:#e6effa;--cyan:#4bdcf1;--green:#42d5a1;--red:#ff697e;--amber:#efc46b}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:13px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+    button,select{font:inherit;color:inherit;background:#121d2d;border:1px solid #2b3f57;border-radius:8px;padding:7px 10px}button{cursor:pointer}button:hover,select:hover{border-color:var(--cyan)}
+    header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line);background:#0b1320;gap:14px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}.brand-mark{color:var(--cyan);border:1px solid #237b90;border-radius:8px;padding:5px 8px;font-family:monospace}.status{color:var(--muted);font:11px monospace}.badge{border-radius:20px;padding:4px 9px;background:#101d2d;color:var(--muted);font:10px monospace}.badge.live{color:var(--green);border:1px solid #24654f}.badge.demo{color:var(--amber);border:1px solid #715c2a}.toolbar{display:flex;align-items:center;gap:7px}.toolbar .primary{background:#087c93;border-color:#159cb0;color:white}
+    main{height:calc(100vh - 58px - 64px - 38px);display:flex;position:relative}.graph-viewport{position:relative;overflow:hidden;flex:1;background-color:#0a1120;background-image:linear-gradient(#122038 1px,transparent 1px),linear-gradient(90deg,#122038 1px,transparent 1px);background-size:28px 28px;touch-action:none}.history-active main{height:calc(100vh - 58px)}.history-active footer,.history-active #token-summary{display:none}
+    #world{position:relative;width:2380px;height:1250px;transform-origin:0 0;will-change:transform}#edge-layer{position:absolute;inset:0;width:2380px;height:1250px;overflow:visible;pointer-events:none;z-index:3}
+    .group{position:absolute;top:36px;background:rgba(13,23,38,.76);border:1px solid #1e324b;border-radius:14px;min-height:160px;z-index:2;box-shadow:0 12px 32px #03071170}.group-title{height:43px;display:flex;align-items:center;gap:8px;padding:0 13px;border-bottom:1px solid #1c3048;color:#b9d9eb;font:600 11px monospace;letter-spacing:.07em;text-transform:uppercase;cursor:grab;user-select:none}.group-title:active{cursor:grabbing}.group-body{padding:12px;display:flex;flex-direction:column;gap:9px;max-height:calc(100vh - 130px);overflow:auto}.g-request>.group-body{max-height:none;overflow:visible}.g-request .content{max-height:220px;overflow:auto;overscroll-behavior:contain}.g-request .card{flex:none}.g-request #comments-container{display:flex;flex-direction:column;gap:9px}.g-request #comments-container>.card .content{max-height:180px;overflow:auto;overscroll-behavior:contain}.g-request>.group-body>.request-card{flex:none}.g-request{left:24px;width:320px}.g-agent{left:495px;top:260px;width:280px}.g-docs{left:800px;width:560px}.g-tools{left:1380px;width:330px}.g-commands{left:1380px;top:540px;width:330px}.g-result{left:1870px;top:380px;width:260px}
+    .token-dock{position:relative;inset:auto;width:auto;min-width:0;min-height:0;background:#0e1a2a;border:1px solid #263c55;border-radius:8px;padding:6px 9px;z-index:1;box-shadow:none;cursor:pointer;transition:border-color .25s ease,background-color .25s ease,box-shadow .25s ease;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 8px;overflow:hidden;text-align:left}
+    .token-dock::before{content:none}
+    .token-dock:hover{border-color:var(--cyan);box-shadow:0 4px 14px rgba(36,200,231,.12)}
+    #token-summary{height:38px;display:flex;align-items:center;gap:14px;padding:0 14px;background:#0b1320;border-top:1px solid var(--line);overflow-x:auto;overflow-y:hidden}.token-summary-label{flex:0 0 auto;color:#7891aa;font:600 10px monospace;letter-spacing:.06em}.token-summary-items{display:flex;align-items:center;flex:0 0 auto;gap:0}.token-summary-items .token-dock{display:flex;align-items:center;flex:0 0 auto;gap:9px;padding:3px 14px;border:0;border-right:1px solid #26384d;border-radius:0;background:transparent;box-shadow:none;overflow:visible}.token-summary-items .token-dock:first-child{padding-left:0}.token-summary-items .token-dock:last-child{border-right:0}.token-summary-items .token-dock:hover{background:#122236;border-radius:4px}.token-summary-items .token-dock-badge,.token-summary-items .token-dock-sub{display:none}.token-summary-items .token-dock-label{font-size:11px;color:#99adc3;overflow:visible}.token-summary-items .token-dock-val{font-size:13px;letter-spacing:0}.token-summary-items .token-dock:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+    .token-dock-badge{grid-column:1/-1;justify-self:start;font:700 7px/1 monospace;padding:3px 5px;border-radius:4px;background:#142436;color:var(--muted);letter-spacing:.1em;margin:0}
+    .token-dock.active .token-dock-badge{background:#133946;color:var(--cyan)}
+    .token-dock.hit .token-dock-badge{background:#11382c;color:var(--green)}
+    .token-dock-label{font:600 8px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#92a9c1;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .token-dock-val{font:700 15px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e2f1fd;margin:0;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+    .token-dock.hit .token-dock-val{color:var(--green)}
+    .token-dock.active .token-dock-val{color:var(--cyan)}
+    .token-dock-sub{grid-column:1/-1;font:8px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#68819a;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .token-dock.active{border-color:#236b80;background:#0b1d2a}.token-dock.hit{border-color:#24664e;background:#0b1b19}
+    .docs-token-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;border-color:#315e8c;background:#0b1728}.docs-token-card .card-meta{margin:0}.docs-token-value{font:700 14px monospace;color:var(--cyan);text-align:right}.docs-token-foot{grid-column:1/-1;font:9px/1.4 monospace;color:#7690aa}
+
+    .card{position:relative;border:1px solid #273c53;background:#101b2b;border-radius:10px;padding:11px;cursor:pointer;transition:border-color .48s ease,background-color .65s ease,box-shadow .7s ease,opacity .5s ease}.card:hover{border-color:#55bcd1}.card.active{border-color:var(--cyan);box-shadow:0 0 18px #1ab6d733}.card.hit{border-color:#27845f;background:#0c251f}.card.error{border-color:#a54358;background:#2a111c}.card.waiting{border-color:#a17b2b;background:#29210e}.card.idle{opacity:.76}.card-title{font:600 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.card-meta{font-size:10px;color:var(--muted);margin-top:5px}.card-status{position:absolute;right:9px;top:8px;font:9px monospace;color:var(--muted);background:#182438;border-radius:5px;padding:2px 6px}.hit .card-status{color:var(--green)}.active .card-status{color:var(--cyan)}.error .card-status{color:var(--red)}.waiting .card-status{color:var(--amber)}
+    .request-card{border-color:#177e92;background:#0b202b}.comment-card{border-color:#80682d;background:#261f12}.comment-tag{color:var(--amber);font:10px monospace}.spec-card{border-color:#315e8c;background:#101d30}.spec-card .comment-tag{color:#8ec9ff}.content{margin-top:8px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#cfdae8;max-height:220px;overflow:auto}.agent-card{margin-top:0;border-color:#177e92;text-align:center;padding:13px 16px}.agent-icon{font-size:26px}.agent-title{font:700 16px monospace;margin-top:5px}.agent-phase{margin-top:9px;text-align:left;background:#09121e;border-radius:8px;padding:8px;color:var(--cyan);font:11px monospace}
+    .resource-category{border:1px solid #1d3047;border-radius:9px;margin-bottom:10px;background:#0b1421}.resource-category summary{cursor:pointer;padding:8px 10px;color:#9ab4cf;font:10px monospace;list-style:none}.resource-category summary:before{content:"▸ ";color:var(--cyan)}.resource-category[open]>summary:before{content:"▾ ";}.resource-items{padding:0 8px 8px;display:flex;flex-direction:column;gap:7px}
+    .comment-tools{display:flex;gap:5px;margin-top:7px}.comment-tools button,.comment-entry button{padding:3px 7px;font:10px monospace}.comment-editor{display:none;margin-top:6px}.comment-editor.open{display:block}.comment-editor textarea{width:100%;min-height:56px;resize:vertical;background:#080f1b;color:var(--text);border:1px solid #31465e;border-radius:6px;padding:7px;font:11px/1.4 ui-monospace,monospace}.comment-entry{border-top:1px solid #26394f;margin-top:6px;padding-top:6px;color:#d1dbea;font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere}.comment-entry button{margin-top:4px}.category-comment{margin:0 8px 8px}
+    #inspector{width:330px;border-left:1px solid var(--line);background:#0c1422;display:flex;flex-direction:column;transition:width .2s,opacity .2s;overflow:hidden}.inspector-head{display:flex;justify-content:space-between;align-items:center;padding:15px;border-bottom:1px solid var(--line);font-weight:700}.inspector-body{padding:14px;overflow:auto;display:flex;flex-direction:column;gap:12px}.inspector-box{border:1px solid #23364d;background:#111c2c;border-radius:9px;padding:11px}.inspector-label{color:var(--muted);font:10px monospace;text-transform:uppercase;margin-bottom:6px}.inspector-value{overflow-wrap:anywhere;white-space:pre-wrap}.inspector-hidden #inspector{width:0;opacity:0;border-left:0}.inspector-hidden .graph-viewport{flex:1}
+    .edge{fill:none;stroke:#40546a;stroke-width:2;opacity:.68;marker-end:url(#arrow);transition:stroke 1.3s ease,opacity 1.5s ease,stroke-width 1.3s ease}.edge.active{stroke:var(--cyan);stroke-width:2.3;opacity:.92}.edge.hit{stroke:var(--green);opacity:.85}.edge.error{stroke:var(--red);opacity:.9}.edge-port{stroke:#07111c;stroke-width:2;transition:fill .7s ease,r .7s ease,opacity .7s ease}.edge-port.active{filter:drop-shadow(0 0 5px #4bdcf1)}.edge-port.hit{filter:drop-shadow(0 0 4px #42d5a1)}.edge-label{fill:#91a7bd;font:10px monospace}.activity-card{height:232px;min-height:232px;max-height:232px;flex:0 0 232px;display:flex;flex-direction:column;overflow:hidden;background:#080c13;border-color:#202a37;padding:0;cursor:default}.activity-card .card-title{flex:0 0 auto;padding:8px 10px;border-bottom:1px solid #202a37;color:#a8b5c4;font:11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}.activity-list{flex:1 1 0;min-height:0;height:0;overflow-y:auto;overflow-x:hidden;display:block;padding:7px 0;color:#d0d7e0;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;contain:size layout}.activity-line{padding:3px 10px;white-space:pre-wrap;overflow-wrap:anywhere}.activity-line.root{color:#c9d1db}.activity-line.nested{margin-left:15px;border-left:1px solid #2c3542;padding-left:11px;color:#9faab8}.activity-line.phase{color:#87adf8}.activity-line.tool{color:#d7e1ec}.activity-line.result{color:#9cb3a0}.activity-line.error{color:#f18c98}.activity-empty{padding:4px 10px;color:#778494}.agent-card.running{box-shadow:0 0 22px #24c8e733;animation:pulse 3.8s ease-in-out infinite}@keyframes pulse{0%,100%{box-shadow:0 0 15px #24c8e722}50%{box-shadow:0 0 25px #24c8e755}}
+    .token-summary{border-color:#315e8c;background:#0e1a2a;cursor:pointer}.token-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.token-metric{border:1px solid #253b54;background:#0a1421;border-radius:6px;padding:6px}.token-metric small{display:block;color:var(--muted);font:9px monospace;text-transform:uppercase}.token-metric strong{font:600 12px monospace;color:#bfe8ff}.token-note{font-size:9px;color:#879ab0;margin-top:7px}.invocation-list{display:flex;flex-direction:column;gap:7px;max-height:360px;overflow:auto}.invocation-row{border-left:2px solid #3186a0;padding:6px 8px;background:#0b1421;font-size:11px;overflow-wrap:anywhere}.invocation-row.error{border-color:var(--red)}.invocation-row.success{border-color:var(--green)}.invocation-row strong{display:block;color:#d6e5f5}.invocation-row pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:4px 0 0;font:10px/1.4 ui-monospace,monospace;color:#aebed1}
+    .tabs{display:flex;gap:5px}.tab-button{background:transparent;border-color:transparent;color:var(--muted)}.tab-button.selected{background:#12283a;border-color:#245269;color:#e6f8ff}
+    #history-view{display:none;position:absolute;inset:0;background:#0a1120;overflow:auto;padding:20px;z-index:5}.history-active #graph-viewport,.history-active #inspector{visibility:hidden}.history-active #history-view{display:block}.history-layout{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:16px;height:100%}.history-list,.history-detail{background:#0d1726;border:1px solid #20334a;border-radius:12px;overflow:auto;padding:14px}.history-list{display:flex;flex-direction:column;gap:8px}.history-row{padding:11px;border:1px solid #263d57;border-radius:9px;background:#101c2d;text-align:left;cursor:pointer}.history-row:hover,.history-row.selected{border-color:var(--cyan)}.history-row-title{font-weight:700}.history-row-meta,.history-meta{color:var(--muted);font-size:11px;margin-top:4px}.history-detail h2{margin:0 0 12px}.history-section{border-top:1px solid #20334a;padding:12px 0}.history-section h3{font:600 11px monospace;color:#91b4d3;text-transform:uppercase;margin:0 0 8px}.history-entry{border-left:2px solid #2a6276;padding:5px 10px;margin:7px 0;background:#0b1421;overflow-wrap:anywhere}.history-entry.tool{border-color:#31976f}.history-entry.error{border-color:var(--red)}.history-entry pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;color:#bfcede;font:11px/1.4 ui-monospace,monospace}.empty-history{color:var(--muted);padding:16px}
+    footer{height:64px;border-top:1px solid var(--line);background:#0b1320;display:flex;align-items:center;gap:14px;padding:7px 14px}.history{display:flex;align-items:center;gap:8px;flex:0 0 auto;min-width:94px}.history label{font:10px monospace;color:var(--muted);white-space:nowrap}.history select{max-width:340px}.timeline{flex:1;min-width:0;overflow:hidden}.timeline-top{display:flex;align-items:center;color:var(--muted);font:11px monospace;gap:16px;min-width:0;white-space:nowrap}.timeline-top span:first-child{flex:0 0 auto;white-space:nowrap;color:#c0d1e3}.timeline-top span:last-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}.timeline input{display:block;width:100%;height:14px;margin:5px 0 0;appearance:none;background:transparent;cursor:pointer;accent-color:var(--cyan)}.timeline input::-webkit-slider-runnable-track{height:4px;background:#233b50;border-radius:4px}.timeline input::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4px;border:0;border-radius:50%;background:var(--cyan)}.timeline input::-moz-range-track{height:4px;background:#233b50;border-radius:4px}.timeline input::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--cyan)}.timeline input:focus-visible{outline:1px solid var(--cyan);outline-offset:3px}.step-controls{display:flex;flex:0 0 auto;gap:4px}.step-controls button{width:30px;height:30px;padding:0;display:grid;place-items:center}.help{position:absolute;bottom:14px;left:14px;color:#758ba4;font:10px monospace;pointer-events:none}
+    @media(max-width:850px){header{padding:0 8px}.brand .sub,.status{display:none}.toolbar{gap:3px}.toolbar button{padding:6px}.history{display:none}#inspector{width:280px}footer{gap:10px;padding:7px 10px}}
+    @media(max-width:600px){.token-summary-label{display:none}.timeline-top span:last-child{display:none}#token-summary{padding:0 10px}.token-summary-items .token-dock{padding:3px 10px}}
+
+    header{white-space:nowrap}.brand{min-width:0}.brand>span:nth-child(2){white-space:nowrap}.tabs,.toolbar{flex-shrink:0}.toolbar button{white-space:nowrap}.brand .sub{overflow:hidden;text-overflow:ellipsis}.comment-tag{display:block;overflow-wrap:anywhere}.request-card,.comment-card,.spec-card{flex:none}.group-title .status{margin-left:auto;max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.card-title{padding-right:54px}.agent-card .card-title,.attachment-card .card-title{padding-right:0}.resource-category summary{display:flex;align-items:center;gap:7px}.resource-category summary:before{flex:none}.category-name{flex:1;min-width:0;overflow-wrap:anywhere}.category-count{flex:none;color:#627e9c}.category-status{flex:none;font-size:9px;color:#6e9eb6}.resource-category[data-status="active"]{border-color:#2789a0}.resource-category[data-status="active"]>summary .category-status{color:var(--cyan)}.resource-category[data-status="hit"]>summary .category-status{color:var(--green)}.resource-category[data-status="error"]>summary .category-status{color:var(--red)}.card.observed{border-color:#355b79}.observed .card-status{color:#8ebbd8}.card:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}button:disabled{opacity:.35;cursor:default}.history-text{white-space:pre-wrap;overflow-wrap:anywhere}.history-detail{overflow-wrap:anywhere}.history-detail h2{font-size:18px}.history-detail #open-saved-route{margin-bottom:12px}.edge.observed{stroke:#74a9ca;opacity:.8}.help{left:auto;right:12px;bottom:8px;max-width:calc(100% - 24px);font-size:9px;padding:4px 7px;background:#0a1120dd;border-radius:5px}.g-agent>.group-body{max-height:none;overflow:visible}.activity-list{overscroll-behavior:contain}
+    @media(max-width:1450px){.brand .sub{display:none}}
+    @media(max-width:1100px){header{gap:8px;padding:0 10px}.brand{gap:6px;font-size:11px}.toolbar{gap:4px}.toolbar button{font-size:11px;padding:6px}.brand #source{display:none}}
+    @media(prefers-reduced-motion:reduce){.edge.active,.agent-card.running{animation:none}.edge,.card{transition:none}}
+    .g-files{left:800px;top:700px;width:560px}.g-files .group-body{max-height:360px}.category-name strong{display:block;font-size:11px;color:#b9cfe4;font-weight:500}.category-name small{display:block;font-size:9px;color:#708ba7;margin-top:2px}.call-meta{color:#7dabc4;font:9px monospace;margin-top:7px}.edge-step{fill:#b3cfdf;stroke:#0a1120;stroke-width:4px;paint-order:stroke;font:10px monospace;text-anchor:end}.resource-legend{margin-left:auto;color:#8da5bd;font:10px monospace;white-space:nowrap}.resource-legend .live-dot{color:var(--cyan)}.resource-legend .used-dot{color:var(--green)}
+    @media(max-width:1300px){.resource-legend{display:none}}
+    main{height:calc(100vh - 58px - 64px - 38px - 62px)}.history-active #call-sequence{display:none}
+    #call-sequence{height:62px;display:flex;align-items:center;gap:9px;padding:6px 14px;border-top:1px solid var(--line);background:#0b1421}.call-sequence-heading{width:90px;flex:none}.call-sequence-heading strong{display:block;font:600 11px/1.5 monospace;color:#c6dae9}.call-sequence-heading span{display:block;color:#829ab1;font:10px monospace}#call-sequence>button{padding:3px;width:25px;height:30px;flex:none}#call-track{display:flex;align-items:center;gap:17px;overflow-x:auto;overflow-y:hidden;flex:1;min-width:0;height:50px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#304e67 transparent}.call-chip{position:relative;flex:0 0 160px;min-width:0;max-width:160px;height:40px;padding:4px 8px;text-align:left;border-radius:6px;border-color:#263b52;background:#111d2d;line-height:1.3}.call-chip:not(:last-child)::after{content:'→';position:absolute;right:-15px;top:11px;color:#647d96}.call-chip strong{display:block;font:600 10px monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.call-chip small{display:block;color:#87a0b8;font:9px/1.6 monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.call-chip.current{border-color:#4bdcf1;background:#103141}.call-chip.current strong{color:#80e8f6}.call-chip.future{opacity:.42}.call-chip.failed{border-bottom-color:var(--red)}.call-empty{color:#8197ae;font:11px monospace}.card.sequence-focus{outline:2px solid #84dff0;outline-offset:2px}.resource-category.sequence-focus>summary{background:#123346;border-radius:8px}.edge.current-call{stroke:#80deeb;stroke-width:2.3;opacity:.94}.edge-step.current-call-label{fill:#b9f4fc;font-weight:700}.edge-port.active,.edge-port.hit{filter:none}
+    #world.camera-moving .edge,#world.camera-moving .agent-card.running{animation-play-state:paused}
+    .edge.active{animation:none;stroke-dasharray:none}.edge.active.current-call{stroke-dasharray:none;animation:none}
+    @media(prefers-reduced-motion:reduce){.edge.active.current-call{animation:none}}
+    @media(max-width:600px){#call-sequence{padding:6px 8px;gap:5px}.call-sequence-heading{width:68px}.call-chip{flex-basis:140px;max-width:140px}}
+    /* Low-frequency activity cues: a single travelling highlight over a solid route. */
+    .edge-signal{fill:none;stroke:#b1edf5;stroke-width:3;stroke-linecap:round;stroke-dasharray:3 97;opacity:0;pointer-events:none;display:none}
+    .edge-signal.in-flight{display:block;animation:route-travel 6.5s linear infinite}
+    @keyframes route-travel{0%{stroke-dashoffset:0;opacity:0}12%{opacity:.7}82%{opacity:.7}100%{stroke-dashoffset:-100;opacity:0}}
+    .card.active:not(.request-card)::after,.agent-card.running::after{content:'';position:absolute;inset:-2px;border:1px solid #65d9ea;border-radius:inherit;pointer-events:none;animation:block-breathe 5.5s ease-in-out infinite}
+    .resource-category summary{position:relative}.resource-category[data-status="active"]>summary::after{content:'';position:absolute;inset:0;border:1px solid #65d9ea;border-radius:7px;pointer-events:none;animation:block-breathe 5.5s ease-in-out infinite}
+    @keyframes block-breathe{0%,100%{opacity:.25}50%{opacity:.75}}
+    .resource-category{transition:border-color 1.2s ease,background-color 1.2s ease}.edge.current-call.hit{stroke:var(--green)}.edge.current-call.error{stroke:var(--red)}
+    .card.hit.sequence-focus{outline-color:#64cba4}.card.error.sequence-focus{outline-color:var(--red)}.resource-category[data-status="hit"].sequence-focus>summary{background:#102c23}
+    #world.camera-moving .edge-signal,#world.camera-moving .card::after,#world.camera-moving summary::after{animation-play-state:paused}
+    @media(prefers-reduced-motion:reduce){.edge-signal.in-flight{display:none}.card.active:not(.request-card)::after,.agent-card.running::after,.resource-category[data-status="active"]>summary::after{animation:none;opacity:.6}}
+    /* One scroll surface; folder guides express nesting without stacked panels. */
+    .g-docs{background:#0d1726;overflow:hidden;display:flex;flex-direction:column;height:640px}.g-docs>.group-title{background:#0d1726;flex:none}.g-docs>.document-navigation{flex:none}.g-docs>#documents-container{flex:1;min-height:0;max-height:none}.g-files>.group-body{height:auto;max-height:320px}.g-files{min-height:0}.group-body{overflow-anchor:none;scrollbar-gutter:stable}.document-folder summary{overflow-anchor:none}
+    .document-navigation{display:flex;align-items:center;gap:9px;min-height:35px;padding:6px 14px;border-bottom:1px solid #20334a;background:#101d2d;font:10px/1.4 ui-monospace,monospace;color:#a8c2d7}
+    .document-navigation button{flex:none;padding:2px 6px;font:inherit;border:0;background:transparent;color:#83c6d9}.document-navigation button:hover{background:#193044}
+    #document-location{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:rtl;text-align:left;unicode-bidi:plaintext}
+    #documents-container{display:block;padding:12px 15px 20px;scroll-padding-block:12px;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:#35516b #0d1726;border-radius:0 0 13px 13px}
+    #documents-container::-webkit-scrollbar{width:7px}#documents-container::-webkit-scrollbar-track{background:#0d1726}#documents-container::-webkit-scrollbar-thumb{background:#35516b;border:2px solid #0d1726;border-radius:6px}
+    #documents-container .card{flex:none;padding:10px 12px;border-radius:8px;background:#111e2e}#documents-container .card.hit{background:#102820}#documents-container .card.error{background:#2a111c}
+    #documents-container>.card{margin-bottom:8px}#documents-container .card-meta{line-height:1.55}#documents-container .card .comment-tools{margin-top:8px}
+    .document-folder,.document-folder .document-folder{margin:3px 0;border:0;border-radius:0;background:transparent;box-shadow:none}
+    .document-folder>summary{min-height:36px;padding:8px 9px;border-radius:6px;background:#101e2e;gap:8px}.document-folder>summary:hover{background:#172b3e}.document-folder>summary:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+    .document-folder[open]>summary{margin-bottom:7px;background:#132437}.document-folder>summary .category-name strong{font-size:11px;font-weight:600}.document-folder>summary .category-status{max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .document-folder>.resource-items{border-left:1px solid #294358;margin-left:12px;padding:0 0 3px 12px;gap:7px}.document-folder>.category-comment{margin:5px 0 10px 25px}
+    .document-folder:not([open])>.category-comment{display:none}.document-folder[data-status="active"]>summary{box-shadow:inset 2px 0 #4bdcf1}.document-folder[data-status="hit"]>summary{box-shadow:inset 2px 0 #42d5a1}
+
+
+    body{display:flex;flex-direction:column;height:100dvh}header{flex:0 0 58px}main,.history-active main{flex:1;min-height:0;height:auto}#call-sequence{flex:0 0 62px}#token-summary{flex:0 0 38px}footer{flex:0 0 64px}
+    .bottom-hidden #call-sequence,.bottom-hidden #token-summary,.bottom-hidden footer{display:none}
+    .graph-viewport.pan-mode{cursor:grab}.graph-viewport.pan-mode:active{cursor:grabbing}
+    .g-agent{width:280px}.g-agent>.group-body>*{min-width:0;flex-shrink:0}.g-agent .agent-card{height:174px;min-height:174px;max-height:174px;flex:0 0 174px}.agent-phase{height:42px;min-height:42px;max-height:42px;overflow:auto;overflow-wrap:anywhere;line-height:1.35;scrollbar-width:thin}.agent-card>.comment-widget{position:relative}.agent-card .comment-editor.open{position:absolute;top:100%;left:0;right:0;background:#111e2e;padding:8px;border:1px solid #35516b;border-radius:8px;z-index:9}.agent-card .comment-entry{max-height:30px;overflow:auto}.activity-card .card-title{height:32px;min-height:32px;max-height:32px;white-space:nowrap}.activity-line{max-width:100%}
+    .edge-pins{position:absolute;left:12px;right:12px;z-index:6;display:flex;flex-direction:column;gap:3px;pointer-events:none}.edge-pins-top{top:44px}.g-docs>.edge-pins-top{top:79px}.edge-pins-bottom{bottom:6px}.edge-pin{pointer-events:auto;display:flex;align-items:center;gap:7px;width:100%;min-height:28px;padding:5px 9px;border:1px solid #31546a;background:#112334fa;border-radius:6px;box-shadow:0 2px 7px #0006;text-align:left;font:10px/1.3 ui-monospace,monospace}.edge-pin-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.edge-pin-direction{color:#81c6d8;flex:none}.edge-pin[data-status="hit"]{border-color:#28775b;background:#10291ff5}.edge-pin[data-status="active"]{border-color:#45c9df}.edge-pin-count{font:9px monospace;color:#88a0b6;flex:none}
+
+    .edge-pin{flex:none;min-height:0;max-width:none;border-radius:6px;padding:8px 9px;gap:8px;background:#111e2efa;box-shadow:0 2px 6px #0003;font-size:11px;box-sizing:border-box}
+    .edge-pin-label{font-weight:600}.edge-pin[data-kind="folder"]{background:#101e2efa;border:0;box-shadow:0 2px 5px #0003}.edge-pin[data-kind="folder"][data-status="hit"]{background:#101e2efa;box-shadow:inset 2px 0 #42d5a1,0 2px 5px #0003}.edge-pin[data-kind="folder"][data-status="active"]{background:#132437;box-shadow:inset 2px 0 #4bdcf1,0 2px 5px #0003}.edge-pin-status{font:9px monospace;color:#42d5a1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}.edge-pin-indicator{flex:none;color:#7396ae;font:10px monospace}.edge-pin-direction{font-size:10px;flex:none}.edge-pin:hover{filter:brightness(1.08)}
+
+    .icon-button{display:grid;place-items:center;width:32px;height:32px;min-width:32px;padding:6px;border:1px solid transparent;border-radius:7px;background:transparent;color:#a7bdce}.icon-button svg{width:19px;height:19px;display:block}.icon-button:hover{background:#1a3042;color:#ecfaff;border-color:#315970}.icon-button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.icon-button[aria-pressed="true"]{background:#164153;border-color:#28758b;color:#79e5f3}
+    .help{bottom:66px;font-size:9px;opacity:.7}
+
+    .inspector-hidden #toggle-inspector,.bottom-hidden .inspector-head .icon-button{width:28px;height:28px;min-width:28px}
+    #call-sequence{position:relative;padding-right:45px}
+    .group-resize{position:absolute;right:2px;bottom:2px;z-index:7;width:18px;height:18px;min-width:18px;padding:2px;border:0;background:transparent;color:#6992aa;cursor:nwse-resize;opacity:0}.group-resize svg{width:14px;height:14px}.group:hover>.group-resize,.group-resize:focus-visible{opacity:1}.group.user-sized{display:flex;flex-direction:column}.group.user-sized>.group-title,.group.user-sized>.document-navigation{flex:none}.group.user-sized>.group-body{flex:1;min-height:0;height:auto;max-height:none;overflow:auto}
+    #main-layout:fullscreen{width:100vw;height:100dvh;flex:none;background:var(--bg)}
+
+    /* Application chrome: fixed control lanes, independent from graph scaling. */
+    header{height:auto;min-height:60px;flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:10px 16px}
+    .brand{min-width:0;gap:10px;font-size:13px;overflow:hidden}
+    .brand-mark,.brand>span:nth-child(2),.brand .badge{flex:none}
+    .brand .sub{min-width:0;max-width:280px;flex:0 1 auto}
+    .brand .badge{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .header-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+    .tabs{gap:2px;padding:3px;border:1px solid var(--line);border-radius:10px;background:#080f1b}
+    .tabs button,.toolbar button{height:34px;padding:0 14px;font-size:12px;line-height:1;white-space:nowrap}
+    .tab-button{border-radius:7px}.tab-button.selected{background:#173348;border-color:#2d596d}
+    .toolbar{gap:8px}.toolbar #live-button{border-color:#2b3f57;background:#101e2e}
+    button:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+    .canvas-tools,.canvas-controls{position:absolute;z-index:8;display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px;border:1px solid #2a425a;border-radius:12px;background:#0d1928f5;box-shadow:0 4px 18px #0004;width:48px;max-height:calc(100% - 24px);overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+    .canvas-tools::-webkit-scrollbar,.canvas-controls::-webkit-scrollbar{display:none}
+    .canvas-tools{left:12px;top:12px}
+    .canvas-controls{right:12px;left:auto;top:50%;bottom:auto;transform:translateY(-50%)}
+    .canvas-tools .icon-button,.canvas-controls .icon-button,.canvas-controls #zoom-label{display:grid;place-items:center;flex:0 0 36px;width:36px;min-width:36px;height:36px;padding:7px;border:1px solid transparent;background:transparent}
+    .canvas-tools button:hover,.canvas-controls button:hover,.canvas-tools button[aria-pressed="true"]{background:#17384c;border-color:#28758b;color:#88eafa}
+    .canvas-controls #zoom-label,.canvas-controls #actual-size{font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;padding:0;letter-spacing:-.03em}
+    .control-divider{flex:0 0 1px;width:24px;height:1px;background:#2b4056;margin:3px 0}
+    #toggle-inspector,#toggle-bottom{position:static;display:grid;transform:none;border-radius:7px;box-shadow:none}
+    .zoom-menu{position:absolute;right:72px;top:12px;z-index:10;display:flex;flex-direction:column;min-width:100px;padding:5px;background:#101e2e;border:1px solid #31516b;border-radius:9px;box-shadow:0 5px 20px #0006}
+    .zoom-menu{max-height:calc(100% - 16px);overflow-y:auto;overscroll-behavior:contain}.zoom-menu[hidden]{display:none}.zoom-menu button{flex:0 0 32px;font:12px ui-monospace,monospace;text-align:left;border:0;border-radius:5px;height:32px;padding:5px 12px}
+    .zoom-menu button[aria-pressed="true"]{background:#17384c;color:var(--cyan)}
+    .help{left:76px;right:76px;bottom:10px;max-width:none;text-align:center;font-size:10px;line-height:1.5;padding:4px 8px}
+    #inspector{flex:0 0 320px;min-width:0;width:320px}.inspector-hidden #inspector{flex-basis:0;width:0}
+    .inspector-head{min-height:54px;padding:10px 14px;gap:12px;flex:none}.inspector-head .icon-button{flex:none}
+    .inspector-body{min-height:0}.history-active #inspector{flex-basis:0;width:0;border:0}
+    #call-sequence{display:grid;grid-template-columns:90px 32px minmax(0,1fr) 32px 32px;grid-template-rows:1fr;align-items:center;gap:8px;padding:6px 12px;height:64px;flex-basis:64px}
+    .call-sequence-heading{grid-column:1;width:auto;min-width:0}#call-prev{grid-column:2}#call-track{grid-column:3;width:100%}#call-next{grid-column:4}
+    #call-sequence>#close-bottom{grid-column:5;grid-row:1;position:static;width:32px;height:32px;padding:6px}
+    #call-sequence>button{height:32px;width:32px}#call-sequence>*{grid-row:1}
+    #token-summary{padding:0 14px;gap:12px;scrollbar-width:thin}
+    footer{padding:10px 14px;gap:14px}.step-controls{gap:4px}.step-controls button{height:32px;width:32px}
+    .timeline-top{gap:12px;line-height:1.3}.timeline input{height:18px;margin-top:4px}
+    .history-layout{min-height:0;grid-template-columns:minmax(220px,320px) minmax(0,1fr)}
+    .history-list,.history-detail{min-width:0;min-height:0}.history-row-title{overflow-wrap:anywhere}.history-list{padding:10px}.history-row{flex:none;width:100%}
+    @media(max-width:1200px){.brand .sub{display:none}.brand #source{display:none}}
+    @media(max-width:900px){header{padding:9px 12px;gap:10px}.header-actions{gap:8px}.brand{gap:8px}.tabs button,.toolbar button{padding:0 10px}.toolbar{gap:6px}#inspector{width:280px;flex-basis:280px}.inspector-hidden #inspector{flex-basis:0}.history-active #inspector{flex-basis:0}.history{display:none}}
+    @media(max-width:700px){header{grid-template-columns:minmax(0,1fr);gap:8px}.brand{min-height:30px}.header-actions{justify-content:space-between}.tabs{flex:0 0 auto}.toolbar{margin-left:auto}.brand #source{display:inline-block;max-width:140px}.help{display:none}#history-view{padding:12px}.history-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(100px,32%) minmax(0,1fr);gap:10px}#token-summary>.token-summary-label{display:none}#call-sequence{grid-template-columns:68px 30px minmax(0,1fr) 30px 30px;gap:5px;padding:6px 8px}.call-chip{flex-basis:140px;max-width:140px}footer{gap:10px;padding:8px 10px}}
+    @media(max-width:480px){.brand #source{display:none}#inspector{width:220px;flex-basis:220px}.inspector-hidden #inspector,.history-active #inspector{flex-basis:0}.tabs button,.toolbar button{padding:0 9px}.header-actions{gap:6px}.brand .badge{padding:4px 6px;max-width:120px}.toolbar{gap:5px}}
+    @media(max-width:700px){#inspector{position:absolute;inset:0 0 0 auto;width:min(320px,calc(100% - 76px));z-index:11;box-shadow:-8px 0 24px #0005}.inspector-hidden #inspector,.history-active #inspector{width:0;box-shadow:none}body:not(.inspector-hidden) .canvas-controls{visibility:hidden}}
+    @media(max-height:620px){.help{display:none}.canvas-tools,.canvas-controls{gap:2px}.canvas-tools .icon-button,.canvas-controls .icon-button,.canvas-controls #zoom-label{height:30px;flex-basis:30px}}
+
+
+    .comment-widget{display:inline-flex;flex:none;margin:0;padding:0;line-height:1}.comment-action{display:grid;place-items:center;position:relative;width:25px;height:25px;padding:5px;border:1px solid transparent;border-radius:6px;background:transparent;color:#6e8ba3;cursor:pointer}.comment-action svg{width:15px;height:15px}.comment-action:hover,.comment-action:focus-visible{color:#9de5f2;border-color:#315a70;background:#153043}.comment-action.has-notes{color:#74d2e5;background:#143041}.comment-action[data-count]:not([data-count=""])::after{content:attr(data-count);position:absolute;right:-3px;top:-3px;min-width:12px;padding:1px 2px;border-radius:7px;background:#24728a;color:white;font:8px/1 monospace}
+    .card:has(>.comment-widget){padding-bottom:37px}.card>.comment-widget{position:absolute;right:8px;bottom:7px}.group-title{position:relative}.group-title>.group-comment{position:absolute;right:8px;top:8px}.group-title:has(>.group-comment)>.status{margin-right:28px}.document-folder>summary .category-comment,.resource-category>summary .category-comment{margin:0 0 0 3px}.document-folder:not([open])>summary .category-comment{display:inline-flex}.activity-card .card-title{position:relative;padding-right:38px}.activity-card .card-title>.comment-widget{position:absolute;right:5px;top:3px}.agent-card:has(>.comment-widget){padding-bottom:37px}
+    .notes-dialog{width:min(480px,calc(100vw - 32px));max-height:80dvh;padding:0;border:1px solid #34536b;border-radius:14px;background:#0f1b2a;color:var(--text);box-shadow:0 20px 80px #0008}.notes-dialog::backdrop{background:#03091499}.notes-heading{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #263c52}.notes-heading strong{font-size:14px}.notes-target{margin-top:5px;font:11px/1.5 ui-monospace,monospace;color:#93b4ca;overflow-wrap:anywhere}.notes-close{border:0;background:transparent;padding:0 5px;font-size:22px;color:#90aabd}.notes-list{max-height:32dvh;overflow:auto;padding:12px 18px;display:flex;flex-direction:column;gap:9px}.notes-empty{font-size:12px;color:#7893a9}.saved-note{padding:10px 12px;border:1px solid #29445b;border-radius:8px;background:#132235}.saved-note>div{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.saved-note button{margin-top:8px;padding:4px 8px;font-size:10px}.notes-form{padding:14px 18px 18px;border-top:1px solid #263c52}.notes-form label{display:block;color:#a6bed0;font-size:11px;margin-bottom:7px}.notes-form textarea{width:100%;min-height:100px;max-height:24dvh;resize:vertical;background:#0a1421;border:1px solid #35516b;border-radius:8px;padding:10px;color:var(--text);font:12px/1.5 Inter,-apple-system,sans-serif}.notes-form textarea:focus{outline:1px solid #59b9cf}.notes-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.notes-footer span{font-size:10px;color:#6f91a8}.notes-footer button{font-size:11px;background:#174354;border-color:#2b758a}
+
+    .resize-guide{position:absolute;z-index:15;pointer-events:none;border-color:#65d5eb;opacity:.85}.resize-guide.vertical{border-left:1px dashed #65d5eb;width:0}.resize-guide.horizontal{border-top:1px dashed #65d5eb;height:0}
+    .g-docs>.group-resize{display:none}.g-commands,.g-commands.user-sized{height:auto!important;min-height:0}.g-commands>#commands-container,.g-commands.user-sized>#commands-container{height:auto;max-height:none;overflow:visible;flex:none}.g-commands>#commands-container>.card{flex:none}.g-commands>.group-resize{cursor:ew-resize}
+    .g-agent.user-sized>.group-body{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(174px,3fr) minmax(232px,4fr);gap:9px;overflow:hidden}.g-agent.user-sized .agent-card{height:auto;min-height:174px;max-height:none;display:flex;flex-direction:column;justify-content:flex-start}.g-agent.user-sized .agent-phase{flex:1;min-height:42px;max-height:none;height:auto}.g-agent.user-sized .activity-card{height:auto;min-height:232px;max-height:none;align-self:stretch}.g-agent.user-sized .activity-list{flex:1;min-height:0;max-height:none}
+    .group.user-sized:not(.g-agent):not(.g-docs):not(.g-commands)>.group-body>.card{flex:1 0 auto}.g-result.user-sized>#result-container>.card,.g-request.user-sized .request-card,.g-request.user-sized #comments-container>.card{display:flex;flex-direction:column}.g-result.user-sized .content,.g-request.user-sized .content{flex:1;min-height:60px;max-height:none}.g-request.user-sized #comments-container{flex:1}.g-request.user-sized #comments-container>.card{flex:1;min-height:120px}
+
+    /* Equal layout insets: scroll controls float above content and reserve no gutter. */
+    .group-body,#documents-container{padding-left:12px;padding-right:12px;min-width:0;scrollbar-gutter:auto}
+    .group *,.inspector-body,.invocation-list,.notes-list,.history-list,.history-detail,#history-view,#call-track,#token-summary{scrollbar-width:none!important;scrollbar-gutter:auto!important}
+    .group *::-webkit-scrollbar,.inspector-body::-webkit-scrollbar,.invocation-list::-webkit-scrollbar,.notes-list::-webkit-scrollbar,.history-list::-webkit-scrollbar,.history-detail::-webkit-scrollbar,#history-view::-webkit-scrollbar,#call-track::-webkit-scrollbar,#token-summary::-webkit-scrollbar{display:none!important;width:0;height:0}
+    .overlay-scrollbar{position:fixed;z-index:1000;border-radius:8px;background:transparent;opacity:0;pointer-events:none;transition:opacity .22s ease,background .16s ease;touch-action:none}.overlay-scrollbar.visible{opacity:1;pointer-events:auto}.overlay-scrollbar:hover,.overlay-scrollbar.dragging{background:#172b3d88}.overlay-scrollbar-thumb{border-radius:8px;background:#618ba5bb;box-shadow:0 0 0 1px #0b172455;cursor:grab}.overlay-scrollbar:hover .overlay-scrollbar-thumb,.overlay-scrollbar.dragging .overlay-scrollbar-thumb{background:#8bc4dcee}.overlay-scrollbar.dragging .overlay-scrollbar-thumb{cursor:grabbing}.overlay-scrollbar:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
+    .group-resize{padding:0;border:0;border-radius:0;min-width:0;opacity:0;background:transparent}.group-resize[data-edge="n"],.group-resize[data-edge="s"]{left:14px;right:14px;width:auto;height:7px;cursor:ns-resize}.group-resize[data-edge="n"]{top:0;bottom:auto}.group-resize[data-edge="s"]{bottom:0;top:auto}.group-resize[data-edge="w"],.group-resize[data-edge="e"]{top:14px;bottom:14px;height:auto;width:7px;cursor:ew-resize}.group-resize[data-edge="w"]{left:0;right:auto}.group-resize[data-edge="e"]{right:0;left:auto}.group-resize[data-edge="nw"],.group-resize[data-edge="ne"],.group-resize[data-edge="sw"],.group-resize[data-edge="se"]{width:13px;height:13px}.group-resize[data-edge="nw"]{top:0;left:0;right:auto;bottom:auto;cursor:nwse-resize}.group-resize[data-edge="ne"]{top:0;right:0;bottom:auto;cursor:nesw-resize}.group-resize[data-edge="sw"]{bottom:0;left:0;right:auto;top:auto;cursor:nesw-resize}.group-resize[data-edge="se"]{bottom:0;right:0;top:auto;left:auto;cursor:nwse-resize}.group-resize:hover{background:#52b5d54d}.group:hover>.group-resize{opacity:1}
+    .resize-guide{border-width:calc(1.5px * var(--guide-scale,1));filter:drop-shadow(0 0 2px #4bdcf144)}.resize-guide span{position:absolute;left:5px;top:5px;transform:scale(var(--guide-scale,1));transform-origin:0 0;white-space:nowrap;border-radius:4px;padding:3px 6px;background:#125068;color:#e5faff;font:10px/1.2 ui-monospace,monospace}.group.snap-target{outline:1px solid #5acbe7;outline-offset:3px}
+    @media(prefers-reduced-motion:reduce){.overlay-scrollbar{transition:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="brand-mark">AO</span><span>Agent Observer</span><span class="sub status">documents and tools · observed events only</span><span id="connection" class="badge">Connecting…</span><span id="source" class="badge">Idle</span></div>
+    <div class="header-actions">
+    <nav class="tabs" aria-label="Observer views"><button id="graph-tab" class="tab-button selected" aria-pressed="true">Graph</button><button id="history-tab" class="tab-button" aria-pressed="false">History</button></nav>
+    <div class="toolbar" aria-label="Route actions">
+      <button id="live-button" class="tab-button" title="Return to the current Agent request">Live</button>
+      <button id="demo-button" class="primary">▶ Demo</button>
+    </div>
+    </div>
+  </header>
+  <main id="main-layout">
+    <section id="graph-viewport" class="graph-viewport" aria-label="Interactive route graph">
+      <div id="world">
+        <svg id="edge-layer" viewBox="0 0 2380 1250" aria-hidden="true"><defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z" fill="context-stroke"/></marker></defs></svg>
+        <section class="group g-request" data-group="request"><div class="group-title" data-drag-handle>1 · Project prompt & refinements <span id="project-name" class="status"></span></div><div class="group-body"><article id="request_prompt" class="card request-card" data-node-id="request_prompt"><span class="card-status">Idle</span><div class="card-title">Project prompt</div><div id="prompt-content" class="content">Waiting for an agent run.</div></article><div id="comments-container"></div></div></section>
+        <section class="group g-agent" data-group="agent"><div class="group-title" data-drag-handle>2 · Agent <span id="run-timer" class="status"></span></div><div class="group-body"><article id="agent-hub" class="card agent-card"><div class="agent-icon">⚙️</div><div class="agent-title">Agent</div><div class="card-meta">SwiftUI · Harness / 9router</div><div id="agent-phase" class="agent-phase">Waiting for observed events</div></article><article class="card activity-card"><div class="card-title">Live agent log</div><div id="activity-list" class="activity-list"><div class="activity-line">No events yet</div></div></article></div></section>
+        <section class="group g-docs" data-group="documents"><div class="group-title" data-drag-handle>3 · Knowledge & project documents <span id="doc-count" class="status"></span></div><div class="document-navigation"><button type="button" id="document-top" title="Scroll to project files">Project</button><span aria-hidden="true">/</span><span id="document-location">Documents</span></div><div class="group-body" id="documents-container" aria-label="Project documents"></div></section>
+        <section class="group g-tools" data-group="tools"><div class="group-title" data-drag-handle>4 · CAD tools <span id="tool-count" class="status"></span></div><div class="group-body" id="tools-container"></div></section>
+        <section class="group g-commands" data-group="commands"><div class="group-title" data-drag-handle>5 · Commands <span id="command-count" class="status"></span></div><div class="group-body" id="commands-container"></div></section>
+        <section class="group g-files" data-group="files"><div class="group-title" data-drag-handle>6 · Working files <span id="file-count" class="status">0 observed</span></div><div class="group-body" id="files-container"><div class="history-meta files-empty">Files appear when a command explicitly accesses a path.</div></div></section>
+        <section class="group g-result" data-group="result"><div class="group-title" data-drag-handle>7 · Result</div><div class="group-body" id="result-container"><article class="card idle" id="run_result" data-node-id="run_result"><span class="card-status">Idle</span><div class="card-title">Agent result</div><div class="card-meta">Shown when the route finishes</div></article></div></section>
+      </div>
+      <div class="canvas-tools" role="toolbar" aria-orientation="vertical" aria-label="Canvas tools"><button id="select-mode" class="icon-button" type="button" title="Select · V" aria-label="Select · V" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-7 1-3 7-4-17z"/></svg></button><button id="pan-mode" class="icon-button" type="button" title="Pan · H" aria-label="Pan · H" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6 M13 10V7a2 2 0 0 1 4 0v5 M17 11V9a2 2 0 0 1 4 0v7c0 4-3 6-7 6h-1c-2 0-4-1-5-3l-4-6a2 2 0 0 1 3-2l2 2V8a2 2 0 0 1 4 0"/></svg></button><span class="control-divider" aria-hidden="true"></span><button id="toggle-inspector" class="icon-button" type="button" title="Toggle inspector" aria-label="Inspector" aria-pressed="true" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18v16H3z M15 4v16"/></svg></button><button id="toggle-bottom" class="icon-button" type="button" title="Toggle route details" aria-label="Route details" aria-pressed="true" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18v16H3z M3 15h18"/></svg></button></div>
+      <div class="canvas-controls" role="toolbar" aria-orientation="vertical" aria-label="View controls"><button id="zoom-in" class="icon-button" type="button" title="Zoom in · +" aria-label="Zoom in · +" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14 M5 12h14"/></svg></button><button id="zoom-label" title="Choose zoom level" aria-label="Choose zoom level" aria-expanded="false" aria-controls="zoom-menu">100%</button><button id="zoom-out" class="icon-button" type="button" title="Zoom out · −" aria-label="Zoom out · −" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button><span class="control-divider"></span><button id="fit" class="icon-button" type="button" title="Fit graph · 0" aria-label="Fit graph · 0" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5 M8 8h8v8H8z"/></svg></button><button id="actual-size" class="icon-button" type="button" title="Actual size · 1" aria-label="Actual size · 1" >1:1</button><button id="reset-layout" class="icon-button" type="button" title="Reset layout" aria-label="Reset layout" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11a9 9 0 1 1 2 7 M3 4v7h7"/></svg></button><button id="fullscreen" class="icon-button" type="button" title="Full screen" aria-label="Full screen" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5"/></svg></button></div>
+
+      <div class="zoom-menu" id="zoom-menu" role="group" aria-label="Zoom presets" hidden><button type="button" data-zoom="0.25">25%</button><button type="button" data-zoom="0.5">50%</button><button type="button" data-zoom="0.75">75%</button><button type="button" data-zoom="1.0">100%</button><button type="button" data-zoom="1.25">125%</button><button type="button" data-zoom="1.5">150%</button></div>
+      <div class="help">Pinch to zoom · two fingers to pan · mouse wheel to zoom · drag headers to move groups</div>
+    </section>
+    <aside id="inspector"><div class="inspector-head"><span>Inspector</span><button id="close-inspector" class="icon-button" type="button" title="Close inspector" aria-label="Close inspector" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12 M18 6L6 18"/></svg></button></div><div class="inspector-body"><div><div id="inspector-title" class="card-title">Select a block</div><div id="inspector-category" class="card-meta">Static resource or route event</div></div><div class="inspector-box"><div class="inspector-label">Observed status</div><div id="inspector-status" class="inspector-value">No event yet.</div></div><div class="inspector-box"><div class="inspector-label">Source / reason</div><div id="inspector-reason" class="inspector-value">—</div></div><div class="inspector-box"><div class="inspector-label">Event data</div><div id="inspector-payload" class="inspector-value">—</div></div><div class="inspector-box"><div class="inspector-label">Invocation sequence</div><div id="inspector-invocations" class="invocation-list"><div class="history-meta">Select a tool, document, or category to see its calls.</div></div></div></div></aside>
+    <section id="history-view"><div class="history-layout"><div id="history-list" class="history-list"><div class="empty-history">No saved routes yet.</div></div><article id="history-detail" class="history-detail"><div class="empty-history">Choose a route to inspect its prompts, attachments, documents, tools, and results.</div></article></div></section>
+  </main>
+  <section id="call-sequence" aria-label="Chronological call order"><button id="close-bottom" class="icon-button" type="button" title="Close bottom panel" aria-label="Close bottom panel" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12 M18 6L6 18"/></svg></button><div class="call-sequence-heading"><strong>Call order</strong><span id="call-position">No calls</span></div><button id="call-prev" aria-label="Previous call" title="Previous function call">‹</button><div id="call-track" role="group" aria-label="Observed calls in event order"></div><button id="call-next" aria-label="Next call" title="Next function call">›</button></section>
+  <section id="token-summary" aria-label="Token usage summary"><div class="token-summary-label">TOKEN USAGE</div><div class="token-summary-items"><div id="agent-input-dock" class="token-dock" title="Prompt and specification token usage"><div class="token-dock-badge">IN</div><div class="token-dock-label">Prompt estimate</div><div class="token-dock-val" id="agent-input-val">—</div><div class="token-dock-sub" id="agent-input-sub">Prompt & Specs</div></div><div id="result-input-dock" class="token-dock" title="Total input token usage"><div class="token-dock-badge">Σ IN</div><div class="token-dock-label">Total input</div><div class="token-dock-val" id="result-input-val">—</div><div class="token-dock-sub" id="result-input-sub">Prompt + Docs</div></div><div id="result-output-dock" class="token-dock" title="Model output token usage"><div class="token-dock-badge">OUT</div><div class="token-dock-label">Output tokens</div><div class="token-dock-val" id="result-output-val">—</div><div class="token-dock-sub" id="result-output-sub">Generated CAD</div></div></div><div class="resource-legend"><span class="live-dot">●</span> In use · <span class="used-dot">●</span> Completed · # Last call step</div></section>
+  <footer>
+    <div class="history"><label id="timeline-title">CURRENT ROUTE</label></div>
+    <div class="step-controls"><button id="step-start" title="First step">|◀</button><button id="step-prev" title="Previous step">‹</button><button id="step-play" title="Play route">▶</button><button id="step-next" title="Next step">›</button><button id="step-end" title="Last step">▶|</button></div>
+    <div class="timeline"><div class="timeline-top"><span id="step-label">Waiting for events</span><span id="step-description">Routes are saved from request to result</span></div><input id="timeline-slider" aria-label="Route step" type="range" min="0" max="0" value="0"></div>
+  </footer>
+  <script>
+    const $=id=>document.getElementById(id), viewport=$('graph-viewport'),world=$('world'),svg=$('edge-layer');
+    let ws,config={nodes:[],agent_spec:[]},state=null,steps=[],runs=[],selectedNode=null,scale=1,panX=0,panY=0,playing=null,demoTimers=[];
+    let liveSnapshot=null,liveSteps=[],viewMode='live',viewRunId='',selectedResource=null,requestSignature='',initialized=false,followNewRun=true;
+    const MIN_ZOOM=.15,MAX_ZOOM=1.8;
+    const storageProject=window.__BOOTSTRAP__?.config?.project_root||'local';
+    const storagePrefix=`agent-observer:${encodeURIComponent(storageProject)}:`;
+    function readLocal(key,fallback){try{let raw=localStorage.getItem(storagePrefix+key);if(raw===null&&/cad-agent(?:[\\/]|$)/i.test(storageProject)){raw=localStorage.getItem(key);if(raw!==null)localStorage.setItem(storagePrefix+key,raw)}return raw===null?fallback:JSON.parse(raw)??fallback}catch{return fallback}}
+    function writeLocal(key,value){try{localStorage.setItem(storagePrefix+key,JSON.stringify(value))}catch{}}
+    function removeLocal(key){try{localStorage.removeItem(storagePrefix+key)}catch{}}
+    function eventFor(step){return step?.event||step?.latest_step?.event||{}}
+    function eventType(ev){const type=String(ev.type||ev.event_type||'').toUpperCase();return ({GENERATION_START:'PROMPT_START',PROMPT_RECEIVED:'PROMPT_START',TOOL_ACCESS:'TOOL_CALL_START',TOOL_RESULT:'TOOL_CALL_END',GENERATION_ERROR:'GENERATION_END'})[type]||type}
+    function failedEvent(ev){return ['false','0','no','failed','error','cancelled'].includes(String(ev.success).toLowerCase())||/^(error|failed|failure|cancelled)$/.test(String(ev.status||'').toLowerCase())||String(ev.type||ev.event_type||'').toUpperCase()==='GENERATION_ERROR'}
+    function requestBlockLabel(block){return block.kind==='spec'?'Project specification':block.label==='Общий комментарий'?'Refinement note':String(block.label||'Refinement comment').replace(/^Комментарий\s+(\d+)$/,'Refinement comment $1')}
+    function observedStatus(status){return ['active','hit','error','waiting','observed'].includes(status)?status:'idle'}
+    function stopPlayback(){if(playing)clearInterval(playing);playing=null;$('step-play').textContent='▶'}
+    function stopDemo(){demoTimers.forEach(clearTimeout);demoTimers=[];$('demo-button').textContent='▶ Demo'}
+    const groupDefaults={request:[24,36],agent:[495,260],documents:[800,36],tools:[1380,36],commands:[1380,540],files:[800,700],result:[1870,380]};
+    let groupPositions=readLocal('cad-map-groups',structuredClone(groupDefaults));
+    if(!groupPositions||typeof groupPositions!=='object')groupPositions=structuredClone(groupDefaults);
+    // A saved arrangement is authoritative, including blocks left at default coordinates.
+    const validPosition=pos=>Array.isArray(pos)&&pos.length===2&&pos.every(Number.isFinite);
+    const savedPositions=readLocal('cad-map-groups',{});
+    const manuallyPlaced=new Set(Object.keys(groupDefaults).filter(key=>validPosition(savedPositions?.[key])));
+    const savedCamera=readLocal('cad-map-camera',null),hasSavedCamera=savedCamera&&[savedCamera.scale,savedCamera.x,savedCamera.y].every(Number.isFinite)&&savedCamera.scale>0;
+    if(hasSavedCamera){scale=Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,savedCamera.scale));panX=savedCamera.x;panY=savedCamera.y}
+    let cameraSaveTimer=null;
+
+    function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    let cameraSettledTimer=null,overlayScrollReady=false;
+    function setWorld(){world.classList.add('camera-moving');clearTimeout(cameraSettledTimer);for(const animation of completionAnimations.values())animation.pause();cameraSettledTimer=setTimeout(()=>{world.classList.remove('camera-moving');for(const animation of completionAnimations.values())animation.play()},160);world.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`;if(overlayScrollReady)refreshOverlayScrollbars(); $('zoom-label').textContent=`${Math.round(scale*100)}%`;clearTimeout(cameraSaveTimer);cameraSaveTimer=setTimeout(()=>writeLocal('cad-map-camera',{scale,x:panX,y:panY}),200)}
+    function statusClass(s){return observedStatus(s)}
+    function statusLabel(s){return ({idle:'Catalogued',active:'In use',hit:'Used',error:'Failed',waiting:'Waiting for input',observed:'Called'})[s]||'Catalogued'}
+    const extraCommandRegistry=[
+      {name:'write_stdin',aliases:['write_stdin'],description:'Send input to or poll an existing terminal session'},
+      {name:'update_plan',aliases:['update_plan'],description:'Update the agent execution plan'},
+      {name:'web_search',aliases:['web_search','web_search_preview','web.run','web__run'],description:'Search or retrieve web information'},
+      {name:'list_mcp_resources',aliases:['list_mcp_resources'],description:'List available MCP resources'},
+      {name:'list_mcp_resource_templates',aliases:['list_mcp_resource_templates'],description:'List parameterized MCP resources'},
+      {name:'read_mcp_resource',aliases:['read_mcp_resource'],description:'Read an MCP resource'},
+      {name:'request_user_input',aliases:['request_user_input','request_user_input_async'],description:'Request information from the user'},
+      {name:'tool_search',aliases:['tool_search','search_tools'],description:'Discover deferred tool definitions'},
+      {name:'spawn_agent',aliases:['spawn_agent','spawn'],description:'Start a delegated agent'},
+      {name:'send_message',aliases:['send_message','send_input','followup_task'],description:'Send input to an agent'},
+      {name:'wait_agent',aliases:['wait_agent','wait_agents','wait_threads'],description:'Wait for delegated work'},
+      {name:'list_agents',aliases:['list_agents'],description:'Inspect delegated agent status'},
+      {name:'resume_agent',aliases:['resume_agent'],description:'Resume a delegated agent'},
+      {name:'close_agent',aliases:['close_agent','interrupt_agent'],description:'Close or interrupt a delegated agent'},
+      {name:'orchestrate',aliases:['functions.exec','multi_tool_use.parallel','parallel'],description:'Compose tool calls'},
+      {name:'wait',aliases:['wait'],description:'Resume a running tool execution'}
+    ];
+    function shortToolName(name){return String(name||'').toLowerCase().trim().replace(/^(?:functions|collaboration)\./,'')}
+    const commandTemplates=[
+      ['glob','glob',['glob','find','ls'],'Find files and directories'],
+      ['read','read',['read','read_file','cat','head','tail'],'Read file contents'],
+      ['image','read_image',['read_image','view_image'],'Inspect images'],
+      ['search','grep',['grep','rg'],'Search text in files'],
+      ['write','write',['write','write_file'],'Create or replace a file'],
+      ['edit','edit',['edit','edit_file'],'Edit existing file contents'],
+      ['patch','apply_patch',['apply_patch'],'Apply a structured patch'],
+      ['shell','bash',['bash','zsh','sh','fish','shell','shell_command','exec','exec_command','run_command','terminal','python','python2','python3','node','npm','swift','xcodebuild','git','curl','jq','sqlite3','open','mkdir','touch','cp','mv','rm','sed','awk','pwd'],'Run a command or script']
+    ].map(([key,label,aliases,description])=>({id:'command_template_'+key,label,aliases,description,kind:'command',category:'command',status:'idle',match:{tool_names:aliases}}));
+    function commandTemplateFor(name){
+      const raw=String(name||'').trim(),short=shortToolName(raw),registered=extraCommandRegistry.find(n=>n.aliases.includes(raw.toLowerCase())||n.aliases.includes(short));
+      const standard=!registered&&commandTemplates.find(n=>n.aliases.includes(short));if(standard)return standard;
+      const label=registered?.name||raw,aliases=[...new Set([raw,...registered?.aliases||[]])];return{id:'command_observed_'+encodeURIComponent(label.toLowerCase()),label,aliases,description:registered?.description||(/^mcp[_.]/i.test(raw)?'Observed MCP tool call':'Observed additional agent command'),kind:'command',category:'command',status:'idle',match:{tool_names:aliases}};
+    }
+    function knownCommandName(name){const raw=String(name||'').toLowerCase(),short=shortToolName(raw);return commandTemplates.some(n=>n.aliases.includes(short))||extraCommandRegistry.some(n=>n.aliases.includes(raw)||n.aliases.includes(short))||/^mcp[_.]/.test(raw)}
+    function isCommandNode(n){return n.kind==='command'||n.category==='command'||(String(n.id||'').startsWith('observed_tool_')&&knownCommandName(n.label))}
+    function normalizeCommands(){
+      const remap=new Map(),fixed=Object.fromEntries(commandTemplates.map(n=>[n.id,{...n,status:'idle',reason:'',payload:'',match:{tool_names:[...n.aliases]}}]));
+      const rawNodes=Object.values(state.nodes),declared=new Set(rawNodes.filter(isCommandNode).map(n=>String(n.label).toLowerCase()));
+      // Availability and mentions are not invocations. Only captured call events add cards.
+      for(const item of routeEventsFor(state)){const ev=eventFor(item);if(!['TOOL_CALL_START','TOOL_CALL_END'].includes(eventType(ev)))continue;const name=String(ev.tool||ev.tool_name||'');if(!name||(!knownCommandName(name)&&!declared.has(name.toLowerCase())))continue;const template=commandTemplateFor(name);if(!fixed[template.id])fixed[template.id]={...template,match:{tool_names:[...template.aliases]}};if(!fixed[template.id].match.tool_names.includes(name))fixed[template.id].match.tool_names.push(name)}
+      for(const node of rawNodes)if(isCommandNode(node)){const template=commandTemplateFor(node.label);if(fixed[template.id])remap.set(node.id,template.id);delete state.nodes[node.id]}
+      Object.assign(state.nodes,fixed);state.edges=state.edges.map(edge=>({...edge,from:remap.get(edge.from)||edge.from,to:remap.get(edge.to)||edge.to}));
+    }
+    function commentContext(key,label){
+      const nodes=Object.values(state?.nodes||{}),request=(state?.prompt_blocks?.length?state.prompt_blocks:[{id:'request_prompt',label:'Project prompt',kind:'prompt',text:state?.prompt||''}]).map(b=>({...b,status:state?.prompt?'hit':'idle',payload:b.text}));
+      const agent={id:'agent-hub',kind:'agent',label:'Agent',status:({running:'active',complete:'hit',error:'error',waiting:'waiting'})[state?.orchestrator_phase]||'idle',payload:state?.orchestrator_action||''};let related=[];
+      if(key.startsWith('node:')){const id=key.slice(5);if(id==='agent-hub')related=[agent,...nodes.filter(n=>n.status!=='idle')];else if(id==='activity-log')related=[{...agent,payload:routeEventsFor(state).slice(-12).map(item=>`${routeStepCaption(item)}${eventFor(item).input?`\n${String(eventFor(item).input).slice(0,500)}`:''}`).join('\n')}];else related=[nodes.find(n=>n.id===id)||request.find(n=>n.id===id)].filter(Boolean)}
+      else if(key.startsWith('category:'))related=categoryMembers(key.slice(9));
+      else if(key.startsWith('group:')){const group=key.slice(6);related=group==='request'?request:group==='agent'?[agent,...nodes.filter(n=>n.status!=='idle')]:nodes.filter(n=>group==='tools'?(n.kind==='tool'&&!isCommandNode(n)):group==='commands'?isCommandNode(n):group==='documents'?n.kind==='document':group==='result'?n.kind==='result':group==='files'?n.kind==='file':n.group===group)}
+      const used=related.filter(n=>n.status&&n.status!=='idle'),info=used.length?used.map(n=>`${isCommandNode(n)?'command':n.kind||n.category}: ${n.label} [${statusLabel(n.status)}]${n.reason?` — ${n.reason}`:''}${n.payload?`\nData: ${String(n.payload).slice(0,1600)}`:''}`).join('\n'):'No activity recorded for this target at the selected route step.';
+      return `Agent refinement\nTarget: ${label}\nContext: ${key}\nRoute: ${state?.project||'Project'} · ${state?.run_id||viewRunId||'current run'}\nStep: ${currentStepIndex+1} of ${steps.length}\nAttachments: ${(state?.attachments||[]).join(', ')||'None recorded'}\nObserved activity:\n${info}`;
+    }
+    const noteIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2z M7 9h10 M7 13h6"/></svg>';
+    let noteDialog=null,noteOpener=null;const noteDrafts=new Map();
+    function noteKeys(key){const all=readLocal('cad-route-comments',{}),keys=[key];if(key==='category:docs / Root files')keys.push('category:docs / Общее');if(key.startsWith('node:command_template_')||key.startsWith('node:command_observed_'))for(const [old,items] of Object.entries(all)){if(old===key||!old.startsWith('node:')||old.startsWith('node:command_template_'))continue;const target=items[0]?.context?.match(/^Target: (?:command|tool): (.+)$/m)?.[1];if(target&&commandTemplateFor(target).id===key.slice(5))keys.push(old)}return keys}
+    function notesFor(key){const all=readLocal('cad-route-comments',{});return noteKeys(key).flatMap(k=>all[k]||[])}
+    function refreshNoteButtons(){for(const wrap of document.querySelectorAll('.comment-widget')){const count=notesFor(wrap.dataset.commentKey).length,button=wrap.querySelector('button');button.dataset.count=count||'';button.classList.toggle('has-notes',count>0);button.title=`${count?count+' saved notes · ':''}${wrap.dataset.commentLabel}`;button.setAttribute('aria-label',`Comments: ${wrap.dataset.commentLabel}${count?' · '+count+' saved':''}`)}}
+    function openNotes(key,label,opener){
+      if(!noteDialog){noteDialog=document.createElement('dialog');noteDialog.className='notes-dialog';noteDialog.innerHTML='<div class="notes-heading"><div><strong>Comments</strong><div class="notes-target"></div></div><button type="button" class="notes-close" aria-label="Close comments">×</button></div><div class="notes-list"></div><form class="notes-form"><label for="note-text">Requested change</label><textarea id="note-text" placeholder="Describe what should change…"></textarea><div class="notes-footer"><span>Saved locally for this project</span><button type="submit">Save comment</button></div></form>';document.body.appendChild(noteDialog);noteDialog.querySelector('.notes-close').onclick=()=>noteDialog.close();noteDialog.addEventListener('click',e=>{if(e.target===noteDialog){const r=noteDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)noteDialog.close()}});noteDialog.addEventListener('close',()=>{noteDrafts.set(noteDialog.dataset.key,noteDialog.querySelector('textarea').value);noteOpener?.focus()})}
+      noteOpener=opener;noteDialog.dataset.key=key;noteDialog.querySelector('.notes-target').textContent=label;const textarea=noteDialog.querySelector('textarea');textarea.value=noteDrafts.get(key)||'';const context=commentContext(key,label);
+      const render=()=>{const list=noteDialog.querySelector('.notes-list');list.replaceChildren();const entries=notesFor(key);if(!entries.length){const empty=document.createElement('div');empty.className='notes-empty';empty.textContent='No comments yet.';list.appendChild(empty)}for(const item of entries){const row=document.createElement('article');row.className='saved-note';const text=document.createElement('div');text.textContent=item.text;const copy=document.createElement('button');copy.type='button';copy.textContent='Copy prompt';copy.onclick=async()=>{try{await navigator.clipboard.writeText(`${item.context||context}\n\nRequested change:\n${item.text}`);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy prompt',1200)}catch{copy.textContent='Copy unavailable'}};row.append(text,copy);list.appendChild(row)}};render();
+      noteDialog.querySelector('form').onsubmit=e=>{e.preventDefault();const text=textarea.value.trim();if(!text){textarea.focus();return}const all=readLocal('cad-route-comments',{});all[key]=[...(all[key]||[]),{text,created_at:new Date().toISOString(),context}];writeLocal('cad-route-comments',all);textarea.value='';noteDrafts.delete(key);render();refreshNoteButtons();textarea.focus()};noteDialog.showModal();textarea.focus();
+    }
+    function commentWidget(key,label,extra=''){const wrap=document.createElement('span');wrap.className=`comment-widget ${extra}`;wrap.dataset.commentKey=key;wrap.dataset.commentLabel=label;const button=document.createElement('button');button.type='button';button.className='comment-action';button.innerHTML=noteIcon;const count=notesFor(key).length;button.dataset.count=count||'';button.classList.toggle('has-notes',count>0);button.title=`Comments · ${label}`;button.setAttribute('aria-label',`Comments: ${label}${count?' · '+count+' saved':''}`);button.onclick=e=>{e.stopPropagation();openNotes(key,label,button)};wrap.appendChild(button);wrap.addEventListener('pointerdown',e=>e.stopPropagation());wrap.addEventListener('click',e=>e.stopPropagation());return wrap}
+    function nodeCard(n){const card=document.createElement('article');card.id=n.id;card.className=`card ${statusClass(n.status)}`;card.dataset.nodeId=n.id;card.tabIndex=0;card.setAttribute('role','button');card.innerHTML=`<span class="card-status">${esc(statusLabel(n.status))}</span><div class="card-title">${esc(n.label)}</div><div class="card-meta">${esc(n.description||n.category||'')}</div>`;card.addEventListener('click',()=>select(n.id));if((n.id.startsWith('command_template_')||n.id.startsWith('command_observed_'))){const meta=document.createElement('div');meta.className='call-meta';meta.textContent='No calls yet';card.appendChild(meta)}card.appendChild(commentWidget(`node:${n.id}`,`${n.kind||n.category||'Block'}: ${n.label}`));return card}
+    function categoryMembers(group){const folder=[...document.querySelectorAll('.resource-category')].find(el=>el.dataset.category===group);if(folder){const ids=new Set([...folder.querySelectorAll('.card[data-node-id]')].map(el=>el.dataset.nodeId));return Object.values(state?.nodes||{}).filter(n=>ids.has(n.id))}return Object.values(state?.nodes||{}).filter(n=>n.group===group)}
+    function categoryHeading(group){const parts=String(group).split(' / ');return `<strong>${esc(parts.at(-1))}</strong>${parts.length>1?`<small>${esc(parts.slice(0,-1).join(' / '))}</small>`:''}`}
+    // Only explicit file arguments establish an access; source-code mentions are not evidence.
+    function fileRefs(ev){
+      if(!['TOOL_CALL_START','TOOL_CALL_END'].includes(eventType(ev)))return [];
+      const tool=String(ev.tool||ev.tool_name||'').toLowerCase(),refs=[];
+      const add=(path,action)=>{if(typeof path!=='string')return;path=path.trim().replaceAll('\\','/');if(!path||/[\n\r*?]/.test(path)||!/(?:^|\/)[^/]+\.[a-z0-9]{1,12}$/i.test(path)||matchingDocument(path))return;if(!refs.some(x=>x.path===path))refs.push({path,action})};
+      const action=/edit|patch/.test(tool)?'Edit':/write/.test(tool)?'Write':tool==='read_image'?'View':'Read';
+      if(/^(read|read_file|read_image|write|write_file|edit|apply_patch)$/.test(tool)){
+        for(const key of ['path','file_path','filename'])add(ev[key],action);
+        let input=ev.input;try{if(typeof input==='string')input=JSON.parse(input)}catch{}
+        if(input&&typeof input==='object'){for(const key of ['path','file_path','filename'])add(input[key],action)}else if(typeof input==='string'&&!/\s/.test(input.trim()))add(input,action);
+      }
+      const command=String(ev.command||ev.input||'');
+      if((tool==='bash'||/openscad/i.test(tool))&&/^\s*(?:openscad|["']?\/Applications\/OpenSCAD\.app\/Contents\/MacOS\/OpenSCAD["']?)(?:\s|$)/i.test(command)&&!/[;|&\n`$]/.test(command)){
+        const args=(command.match(/"[^"\n]*"|'[^'\n]*'|[^\s]+/g)||[]).map(x=>x.replace(/^["']|["']$/g,''));
+        const out=args.indexOf('-o');if(out>=0)add(args[out+1],'Export');for(const arg of args.slice(1))if(/\.scad$/i.test(arg)&&arg!==args[out+1])add(arg,'Compile');
+      }
+      return refs;
+    }
+    function deriveWorkingFiles(events,phase){
+      const files=new Map(),pending=new Map();
+      events.forEach((item,index)=>{const ev=eventFor(item),type=eventType(ev),tool=String(ev.tool||ev.tool_name||''),key=ev.call_id||ev.tool_call_id||tool;
+        if(type==='TOOL_CALL_START')pending.set(key,fileRefs(ev));
+        const refs=type==='TOOL_CALL_END'?(fileRefs(ev).length?fileRefs(ev):pending.get(key)||[]):fileRefs(ev);
+        for(const ref of refs){const ext=ref.path.split('.').at(-1).toLowerCase(),group=['scad','py','swift','js','ts'].includes(ext)?'Working files / Code & source files':['png','jpg','jpeg','webp','svg'].includes(ext)?'Working files / Images & previews':['stl','obj','3mf','step','stp'].includes(ext)?'Working files / Models & exports':'Working files / Project data';
+          const id='working_file_'+encodeURIComponent(ref.path),prior=files.get(id);files.set(id,{id,kind:'file',category:'Working file',label:ref.path,group,description:`${ref.action} · explicit command argument`,status:type==='TOOL_CALL_START'?'active':failedEvent(ev)?'error':'hit',reason:`${ref.action} requested by ${tool} · step ${index+1}`,payload:String(ev.input||ev.command||ev.result||ev.output||''),last_step:type==='TOOL_CALL_END'&&prior?prior.last_step:index+1,calls:(prior?.calls||0)+(type==='TOOL_CALL_START'?1:0),action:ref.action});
+        }
+        if(type==='TOOL_CALL_END')pending.delete(key);
+        if(type==='THINKING'&&/step completed/i.test(ev.phase||'')||type==='GENERATION_END')for(const n of files.values())if(n.status==='active')n.status='observed';
+      });
+      if(phase!=='running')for(const n of files.values())if(n.status==='active')n.status='observed';return [...files.values()];
+    }
+    function renderWorkingFiles(activity){
+      const files=deriveWorkingFiles(activity,state.orchestrator_phase),holder=$('files-container');
+      for(const el of holder.querySelectorAll('.card'))if(!files.some(n=>n.id===el.id))el.remove();
+      for(const node of files){state.nodes[node.id]=node;let details=[...holder.querySelectorAll('details')].find(el=>el.dataset.category===node.group);if(!details){details=document.createElement('details');details.className='resource-category';details.dataset.category=node.group;details.innerHTML=`<summary><span class="category-name">${categoryHeading(node.group)}</span><span class="category-count"></span><span class="category-status"></span></summary><div class="resource-items"></div>`;details.querySelector('summary').onclick=()=>selectCategory(node.group);details.addEventListener('toggle',renderEdges);details.querySelector(':scope > summary').appendChild(commentWidget(`category:${node.group}`,node.group,'category-comment'));holder.prepend(details)}const list=details.querySelector('.resource-items');let card=$(node.id);if(!card){card=nodeCard(node);list.appendChild(card)}card.className=`card ${node.status}`;card.querySelector('.card-status').textContent=statusLabel(node.status);card.querySelector('.card-meta').textContent=node.description;let meta=card.querySelector('.call-meta');if(!meta){meta=document.createElement('div');meta.className='call-meta';card.insertBefore(meta,card.querySelector('.comment-widget'))}meta.textContent=`${node.calls} calls · last #${node.last_step}`;
+        state.edges.push({from:'agent-hub',to:node.id,label:'explicit file argument',step:node.last_step});
+      }
+      for(const details of holder.querySelectorAll('details')){const count=details.querySelectorAll('.card').length;if(!count)details.remove();else details.querySelector('.category-count').textContent=count}
+      let empty=holder.querySelector('.files-empty');if(files.length)empty?.remove();else if(!empty){empty=document.createElement('div');empty.className='history-meta files-empty';empty.textContent='Files appear when a command explicitly accesses a path.';holder.prepend(empty)}$('file-count').textContent=`${files.length} observed`;
+    }
+    function agentName(){return config.agent_label||'Agent'}
+    function applyProjectLabels(){
+      document.title=config.project_title==='Agent Observer'?'Agent Observer':`${config.project_title||'Project'} · Agent Observer`;
+      document.querySelector('.brand>span:nth-child(2)').textContent='Agent Observer';
+      document.querySelector('.g-agent .group-title').firstChild.textContent=`2 · ${agentName()} `;
+      document.querySelector('.agent-title').textContent=agentName();
+      document.querySelector('.agent-card .card-meta').textContent=config.agent_description||'Observed tools · documents · results';
+      document.querySelector('.g-docs .group-title').firstChild.textContent='3 · Documents & references ';
+      document.querySelector('.g-tools .group-title').firstChild.textContent='4 · Tools & services ';
+    }
+    function renderCatalog(){
+      applyProjectLabels();
+      const docs=config.nodes.filter(n=>n.kind==='document');
+      const tools=config.nodes.filter(n=>(n.kind==='tool'||n.category==='tool')&&!isCommandNode(n));
+      $('doc-count').textContent=`${docs.length} documents`;$('tool-count').textContent=`${tools.length} listed`;$('command-count').textContent=`${commandTemplates.length} available`;$('commands-container').replaceChildren(...commandTemplates.map(node=>nodeCard(node)));
+      const holder=$('documents-container');holder.replaceChildren();
+      const tree={folders:new Map(),files:[],path:''};
+      for(const node of docs){const parts=String(node.path||node.label).replaceAll('\\','/').split('/').filter(Boolean);let branch=tree;for(const name of parts.slice(0,-1)){if(!branch.folders.has(name))branch.folders.set(name,{folders:new Map(),files:[],path:branch.path?branch.path+' / '+name:name,name});branch=branch.folders.get(name)}branch.files.push(node)}
+      const expanded=readLocal('document-tree-open',{});
+      function appendBranch(branch,parent){
+        for(const node of branch.files.sort((a,b)=>a.label.localeCompare(b.label))){const card=nodeCard({...node,status:'idle'});card.querySelector('.card-title').textContent=String(node.path||node.label).split('/').at(-1);card.title=node.path||node.label;parent.appendChild(card)}
+        for(const folder of [...branch.folders.values()].sort((a,b)=>a.name.localeCompare(b.name))){
+          const details=document.createElement('details');details.className='resource-category document-folder';details.dataset.category=folder.path;details.open=expanded[folder.path]===true;
+          const summary=document.createElement('summary');summary.innerHTML=`<span class="category-name"><strong>${esc(folder.name)}</strong></span><span class="category-count"></span><span class="category-status"></span>`;summary.addEventListener('click',()=>selectCategory(folder.path));
+          const children=document.createElement('div');children.className='resource-items';appendBranch(folder,children);details.append(summary,children);summary.querySelector('.category-count').textContent=children.querySelectorAll('.card').length;
+          details.querySelector(':scope > summary').appendChild(commentWidget(`category:${folder.path}`,`Folder: ${folder.path}`,'category-comment'));
+          details.addEventListener('toggle',()=>{const open=readLocal('document-tree-open',{});open[folder.path]=details.open;writeLocal('document-tree-open',open);renderEdges()});parent.appendChild(details);
+        }
+      }
+      appendBranch(tree,holder);
+      $('document-top').onclick=()=>holder.scrollTo({top:0,behavior:'smooth'});
+      updateDocumentNavigation();
+      $('doc-token-usage')?.remove();
+      const docsTokens=document.createElement('div');docsTokens.id='doc-token-usage';docsTokens.className='token-dock idle';docsTokens.title='Estimated context contribution from unique documents accessed';docsTokens.innerHTML='<div class="token-dock-label">Documents</div><div class="token-dock-val" id="docs-token-value">—</div><div class="token-dock-sub" id="docs-token-foot">No document reads recorded</div>';docsTokens.addEventListener('click',()=>select('doc-token-usage',{id:'doc-token-usage',kind:'tokens',category:'Document token estimate',label:'Read documents · Estimated tokens',reason:'Estimated contribution from unique knowledge files opened during this route; this is separate from provider-reported model usage.',payload:`Estimated tokens: ${$('docs-token-value').textContent}\n${$('docs-token-foot').textContent}`,status:'hit'}));$('result-input-dock').before(docsTokens);
+
+      $('tools-container').replaceChildren(...tools.map(n=>nodeCard({...n,status:'idle'})));
+      for(const el of document.querySelectorAll('.group')){const body=el.querySelector('.group-body');if(body&&!el.querySelector(':scope > .group-title > .group-comment'))el.querySelector('.group-title').appendChild(commentWidget(`group:${el.dataset.group}`,`Group: ${el.dataset.group}`,'group-comment'))}
+    }
+    function ensureStaticComments(){for(const [id,label] of [['agent-hub','Agent'],['run_result','Agent result']]){const el=$(id);if(el&&!el.querySelector('[data-comment-key]'))el.appendChild(commentWidget(`node:${id}`,label))}const log=document.querySelector('.activity-card .card-title');if(log&&!log.querySelector('[data-comment-key]'))log.appendChild(commentWidget('node:activity-log','Live agent log'))}
+    function renderRequestBlocks(){const signature=JSON.stringify([state?.prompt,state?.project,state?.prompt_blocks,state?.attachments]);if(signature===requestSignature)return;requestSignature=signature;const holder=$('comments-container');holder.replaceChildren();if(!$('request_prompt').querySelector('[data-comment-key="node:request_prompt"]'))$('request_prompt').appendChild(commentWidget('node:request_prompt','Project prompt'));for(const block of (state?.prompt_blocks||[]).filter(b=>b.kind==='comment'||b.kind==='spec')){const card=document.createElement('article');card.id=block.id;card.className=`card ${block.kind==='spec'?'spec-card':'comment-card'}`;card.dataset.nodeId=block.id;const title=requestBlockLabel(block);card.innerHTML=`<span class="comment-tag">${esc(title)}</span><div class="content">${esc(block.text)}</div>`;card.title=block.region||'';card.addEventListener('click',()=>select(block.id,block));card.appendChild(commentWidget(`node:${block.id}`,`${block.kind}: ${title}`));holder.appendChild(card)}if(state?.attachments?.length){const attachments=document.createElement('article');attachments.className='card attachment-card';attachments.innerHTML=`<div class="card-title">Attachments · ${state.attachments.length}</div><div class="content">${state.attachments.map(esc).join('<br>')}</div>`;holder.appendChild(attachments)}$('prompt-content').textContent=state?.prompt||'Waiting for an agent run.';$('project-name').textContent=state?.project||'';$('request_prompt').classList.toggle('active',Boolean(state?.prompt));$('request_prompt').querySelector('.card-status').textContent=state?.prompt?'Received':'Idle'}
+
+    function updateTimer(){
+      const el=$('run-timer');if(!el||!state)return;
+      const start=Date.parse(state.run_started_at||steps[0]?.timestamp||'');
+      if(!Number.isFinite(start)||!state.prompt){el.textContent='';return}
+      const following=currentStepIndex===steps.length-1&&(viewMode==='live'||viewMode==='demo');
+      const end=state.orchestrator_phase==='running'&&following?Date.now():Date.parse(state.timestamp||steps[currentStepIndex]?.timestamp||state.run_finished_at||'');
+      const seconds=Math.max(0,Math.floor(((Number.isFinite(end)?end:start)-start)/1000));
+      el.textContent=`${state.orchestrator_phase==='running'&&following?'⏱ ':''}${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
+    }
+    let currentStepIndex=-1;
+    function routeEventsFor(s){
+      if(steps.length&&currentStepIndex>=0)return steps.slice(0,currentStepIndex+1).map((step,index)=>({timestamp:step.timestamp,description:step.description,event:eventFor(step),step_index:step.step_index??index}));
+      return (s.recent_events||s.history||[]).map(item=>({...item,event:eventFor(item)}));
+    }
+    function renderActivity(s){const list=$('activity-list'),wasAtBottom=list.scrollHeight-list.clientHeight-list.scrollTop<36,events=routeEventsFor(s).slice(-120);if(!events.length){list.innerHTML='<div class="activity-empty">Waiting for Agent output…</div>';return}const rows=[];const add=(text,kind='root')=>{const row=document.createElement('div');row.className=`activity-line ${kind}`;row.textContent=text;rows.push(row)};for(const item of events){const ev=eventFor(item),type=eventType(ev),tool=ev.tool||ev.tool_name||'tool',detail=String(ev.input||ev.result||ev.output||'').trim();if(type==='PROMPT_START'||type==='GENERATION_START'||type==='PROMPT_RECEIVED'){add('› Agent · request started','root');if(ev.prompt)add(`> ${String(ev.prompt).split('\n')[0].slice(0,220)}`,'nested')}else if(type==='THINKING'&&ev.usage_kind==='token_usage'){add(`▣ Tokens · input ${Number(ev.input_tokens||0).toLocaleString()} · output ${Number(ev.output_tokens||0).toLocaleString()}`,'result')}else if(type==='THINKING'){add(`⚑ ${ev.phase||item.description||'Agent phase'}`,'phase')}else if(type==='TOOL_CALL_START'||type==='TOOL_ACCESS'){add(`⌄ Code · ${tool}`,'tool');if(detail)add(`>_ ${detail.slice(0,500)}`,'nested')}else if(type==='TOOL_CALL_END'||type==='TOOL_RESULT'){add(`${ev.success===false?'✕':'✓'} ${tool} · ${ev.status|| (ev.success?'OK':'complete')}`,ev.success===false?'error':'result');if(detail)add(`  ${detail.slice(0,500)}`,'nested')}else if(type==='KNOWLEDGE_ACCESS'){add(`# Document · ${ev.target_id||ev.path||'document'}`,'root');if(ev.reason)add(`  ${ev.reason}${ev.estimated_tokens?` · ~${Number(ev.estimated_tokens).toLocaleString()} tokens`:''}`,'nested')}else if(type==='GENERATION_END'){add(`${ev.success===false?'✕':'✓'} Agent · ${ev.status||'finished'}`,ev.success===false?'error':'result');if(detail)add(`  ${detail.slice(0,500)}`,'nested')}else add(item.description||type,'root')}list.replaceChildren(...rows);if(wasAtBottom)list.scrollTop=list.scrollHeight}
+
+    function matchingDocument(value){
+      const raw=String(value||'').replaceAll('\\','/').replace(/^file:\/\//,'').trim();
+      const labels=config.nodes.filter(n=>n.kind==='document');
+      return labels.find(n=>raw===n.id||raw===n.label||raw.endsWith('/'+n.label))||null;
+    }
+    function inputDocument(ev){
+      const direct=matchingDocument(ev.target_id||ev.path||ev.file_path);if(direct)return direct;
+      const visit=value=>{if(typeof value==='string')return matchingDocument(value);if(Array.isArray(value))return value.map(visit).find(Boolean);if(value&&typeof value==='object')return Object.values(value).map(visit).find(Boolean);return null};
+      try{return visit(typeof ev.input==='string'?JSON.parse(ev.input):ev.input)}catch{return matchingDocument(ev.input)}
+    }
+    function updateTokenAccounting(s){
+      const events=routeEventsFor(s),docs=new Map(),explicitDocs=new Set(),usage=events.map(eventFor).filter(ev=>ev.usage_kind==='token_usage'||'input_tokens' in ev||'output_tokens' in ev);
+      for(const {event:ev} of events){
+        const type=eventType(ev),isRead=/^(read|read_file|cat)$/i.test(String(ev.tool||ev.tool_name||''));
+        if(failedEvent(ev)||!(type==='KNOWLEDGE_ACCESS'||type==='TOOL_CALL_END'&&isRead))continue;
+        const node=inputDocument(ev),path=node?.label||String(ev.target_id||ev.path||ev.file_path||'');if(!path)continue;
+        const tokens=Math.max(0,Number(ev.estimated_tokens||node?.estimated_tokens||(ev.content_chars?Math.ceil(Number(ev.content_chars)/3.5):0))||0);
+        if(Number(ev.estimated_tokens)>0||Number(ev.content_chars)>0){docs.set(path,tokens);explicitDocs.add(path)}else if(!explicitDocs.has(path))docs.set(path,Math.max(docs.get(path)||0,tokens));
+      }
+      const docTotal=[...docs.values()].reduce((a,b)=>a+b,0),docKnown=docs.size>0&&[...docs.values()].every(n=>n>0);
+      const chunks=new Set();for(const text of [s.prompt,s.project_spec,...(s.prompt_blocks||[]).map(b=>b.text)])if(typeof text==='string'&&text.trim()){const clean=text.trim();if(![...chunks].some(existing=>existing.includes(clean))){for(const existing of chunks)if(clean.includes(existing))chunks.delete(existing);chunks.add(clean)}}
+      const promptEstimate=chunks.size?Math.ceil([...chunks].join('\n').length/3.5):0;
+      const finiteValue=(ev,key)=>typeof ev[key]==='number'&&Number.isFinite(ev[key])&&ev[key]>=0;
+      const inputUsage=usage.filter(ev=>finiteValue(ev,'input_tokens')),outputUsage=usage.filter(ev=>finiteValue(ev,'output_tokens'));
+      const firstInput=inputUsage[0]?.input_tokens,totalInput=inputUsage.reduce((sum,ev)=>sum+ev.input_tokens,0),output=outputUsage.reduce((sum,ev)=>sum+ev.output_tokens,0);
+      const count=(id,value,estimate,detail,status)=>{const el=$(id);if(!el)return;el.textContent=value==null?'—':`${estimate?'~':''}${value.toLocaleString()}`;const dock=el.closest('.token-dock');dock.className=`token-dock ${status}`;dock.title=`${dock.querySelector('.token-dock-label').textContent}: ${el.textContent} tokens. ${detail}`;const sub=dock.querySelector('.token-dock-sub');if(sub)sub.textContent=detail;dock.tabIndex=0;dock.setAttribute('role','button')};
+      const visible=s.prompt?'hit':'idle';
+      $('agent-input-dock').querySelector('.token-dock-label').textContent=firstInput!=null?'First input':'Prompt';
+      count('agent-input-val',firstInput??(promptEstimate||null),firstInput==null,firstInput!=null?'Provider reported · first model call':'Text estimate · prompt and specification counted once',visible);
+      count('docs-token-value',docKnown?docTotal:null,true,docs.size?`${docs.size} unique documents accessed${docKnown?' · content estimate':' · token size not fully captured'}`:'No successful document reads recorded',docs.size?'hit':'idle');
+      count('result-input-val',inputUsage.length?totalInput:(promptEstimate?promptEstimate+docTotal:null),!inputUsage.length,inputUsage.length?`Provider reported · ${inputUsage.length} model calls`:`Text estimate · prompt plus ${docs.size} unique documents`,visible);
+      count('result-output-val',outputUsage.length?output:null,false,outputUsage.length?`Provider reported · ${outputUsage.length} model calls`:'Output token usage was not reported',outputUsage.length?'hit':'idle');
+      const tokenNodes=new Set(['agent-input-dock','result-input-dock','result-output-dock','doc-token-usage']);
+      s.edges=(s.edges||[]).filter(e=>!tokenNodes.has(e.from)&&!tokenNodes.has(e.to));
+      for(const id of new Set([...(s.prompt?[ 'request_prompt' ]:[]),...(s.prompt_blocks||[]).map(b=>b.id)]))if(!s.edges.some(e=>e.from===id&&e.to==='agent-hub'))s.edges.push({from:id,to:'agent-hub',label:'request'});
+    }
+    function resourceMatchesCall(n,ev){
+      const tool=String(ev.tool||ev.tool_name||'');const match=n.match||{};if((match.tool_names||[]).some(name=>String(name).toLowerCase()===tool.toLowerCase()))return true;let command=String(ev.command||ev.input||'').trim();try{const input=JSON.parse(command);command=String(input.command||input.cmd||'').trim()}catch{}if((ev.command||/^(bash|zsh|sh|shell|exec|exec_command|run_command|terminal)$/i.test(tool))&&(match.command_prefixes||[]).some(prefix=>command===prefix||command.startsWith(prefix+' ')))return true;if(tool.toLowerCase()===String(n.label||'').toLowerCase())return true;
+      if(/OpenSCAD CLI/i.test(n.label||''))return /^\s*(?:["']?\/Applications\/OpenSCAD\.app\/Contents\/MacOS\/OpenSCAD["']?|openscad)(?:\s|$)/i.test(String(ev.input||ev.command||''))||/^\s*(?:\/usr\/bin\/)?open\s+-a\s+["']?OpenSCAD\b/i.test(String(ev.input||ev.command||''));
+      return false;
+    }
+    function refreshCategoryStatus(){
+      for(const details of document.querySelectorAll('.resource-category')){
+        const nodes=categoryMembers(details.dataset.category),statuses=nodes.map(n=>n.status);
+        const status=['active','error','waiting','hit','observed'].find(s=>statuses.includes(s))||'idle';details.dataset.status=status;
+        const used=nodes.filter(n=>n.status!=='idle').length,last=Math.max(0,...nodes.map(n=>n.last_step||0));details.querySelector('.category-status').textContent=used?`${used} ${status==='active'?'in use':'accessed'}${last?' · #'+last:''}`:'';
+      }
+    }
+    function renderState(snapshot){
+      if(!snapshot)return;
+      const catalog=Object.fromEntries(config.nodes.map(n=>[n.id,{...n,status:'idle',reason:'',payload:''}]));
+      state=structuredClone(snapshot);state.nodes={...catalog,...state.nodes};state.edges=state.edges||[];
+      for(const node of config.nodes)if(state.nodes[node.id])state.nodes[node.id].group=node.group;
+      normalizeCommands();
+      const activity=routeEventsFor(state);
+      for(const node of Object.values(state.nodes)){
+        if(node.kind!=='tool'&&node.kind!=='command')continue;
+        let latest=null;
+        for(const item of activity){const ev=eventFor(item),type=eventType(ev);if((type==='TOOL_CALL_START'||type==='TOOL_CALL_END')&&resourceMatchesCall(node,ev))latest={ev,type,status:type==='TOOL_CALL_START'?'active':failedEvent(ev)?'error':'hit'};if(latest?.status==='active'&&type==='THINKING'&&/step completed/i.test(String(ev.phase||'')))latest.status='observed'}
+        if(latest){node.status=latest.status;node.payload=String(latest.ev.input||latest.ev.command||latest.ev.result||latest.ev.output||node.payload||'');if(!state.edges.some(e=>e.to===node.id))state.edges.push({from:'agent-hub',to:node.id,label:'observed call'})}
+        if(node.status==='active'&&state.orchestrator_phase!=='running'){node.status='observed';node.reason=node.reason||'Call observed; command result was not captured'}
+      }
+      renderWorkingFiles(activity);
+      for(const node of Object.values(state.nodes)){if(!['document','tool','command'].includes(node.kind))continue;const calls=invocationsFor(node);node.last_step=calls.at(-1)?.step||0;for(const edge of state.edges)if(edge.to===node.id)edge.step=node.last_step}
+      renderRequestBlocks();renderActivity(state);$('agent-phase').textContent=state.orchestrator_action||'Waiting for observed events';
+      $('source').textContent=viewMode==='demo'?'DEMO · LOCAL':viewMode==='saved'?'SAVED ROUTE':state.prompt?`LIVE · ${state.orchestrator_phase==='running'?'RUNNING':'FINISHED'}`:'Idle';
+      $('source').className=`badge ${viewMode==='demo'?'demo':viewMode==='live'&&state.prompt?'live':''}`;
+      $('agent-hub').classList.toggle('running',state.orchestrator_phase==='running'&&(viewMode==='demo'||viewMode==='live')&&currentStepIndex===steps.length-1);updateTimer();
+      for(const el of document.querySelectorAll('#commands-container>.card,#tools-container>.card'))if(!state.nodes[el.id])el.remove();
+      for(const n of Object.values(state.nodes)){
+        if(n.kind!=='document'&&n.kind!=='tool'&&n.kind!=='command')continue;
+        let el=$(n.id);if(!el){if(n.kind==='document')continue;if(n.description==='Инструмент обнаружен по реальному событию Agent.')n.description='Tool observed in a Agent event.';el=nodeCard(n)}
+        if(n.kind==='tool'||n.kind==='command'){const holder=isCommandNode(n)?$('commands-container'):$('tools-container');if(el.parentElement!==holder)holder.insertBefore(el,holder.querySelector('.group-comment'))}
+        el.className=`card ${statusClass(n.status)}`;const badge=el.querySelector('.card-status');if(badge)badge.textContent=statusLabel(n.status);let meta=el.querySelector('.call-meta');if(n.last_step){if(!meta){meta=document.createElement('div');meta.className='call-meta';el.insertBefore(meta,el.querySelector('.comment-widget'))}meta.textContent=`Last call · #${n.last_step}`}else if((n.id.startsWith('command_template_')||n.id.startsWith('command_observed_'))){if(meta)meta.textContent='No calls yet'}else meta?.remove();
+      }
+      const result=state.nodes.run_result||{id:'run_result',kind:'result',label:'Agent result',status:'idle',payload:'Shown when the route finishes'};
+      let resultEl=$('run_result');if(!resultEl){resultEl=nodeCard(result);$('result-container').prepend(resultEl)}
+      resultEl.className=`card ${statusClass(result.status)}`;
+      let resultContent=resultEl.querySelector('.content');if(!resultContent){resultEl.querySelector('.card-meta')?.remove();resultContent=document.createElement('div');resultContent.className='content';resultEl.insertBefore(resultContent,resultEl.querySelector('.comment-widget'))}
+      resultEl.querySelector('.card-title').textContent='Agent result';resultEl.querySelector('.card-status').textContent=result.status==='idle'?'Idle':result.status==='hit'?'Completed':statusLabel(result.status);resultContent.textContent=result.payload||result.description||'';
+      $('command-count').textContent=`${Object.values(state.nodes).filter(isCommandNode).length} listed · ${Object.values(state.nodes).filter(n=>isCommandNode(n)&&n.status!=='idle').length} used`;
+      ensureStaticComments();updateTokenAccounting(state);refreshCategoryStatus();settleLayout();updateNavigation();
+      renderCallSequence();animateCompletedResources();if(selectedResource)refreshSelection();renderEdges();
+    }
+    let callFocus=null,callSequenceSignature='',callSequenceIndex=-2,callSequence=[];
+    function buildCallSequence(routeSteps){
+      const calls=[],pending=new Map();
+      routeSteps.forEach((item,step)=>{const ev=eventFor(item),type=eventType(ev),tool=String(ev.tool||ev.tool_name||'tool'),key=ev.call_id||ev.tool_call_id||tool;
+        if(type==='TOOL_CALL_START'||type==='KNOWLEDGE_ACCESS'){
+          const refs=fileRefs(ev);let detail=String(ev.path||ev.file_path||ev.target_id||ev.command||ev.input||ev.reason||'');
+          try{const input=typeof ev.input==='string'?JSON.parse(ev.input):ev.input;if(input&&typeof input==='object')detail=String(input.path||input.file_path||input.command||detail)}catch{}
+          if(refs.length)detail=refs.map(x=>x.path).join(', ');
+          const call={ordinal:calls.length+1,step,tool:type==='KNOWLEDGE_ACCESS'?'Document read':tool,detail,ev,endStep:type==='KNOWLEDGE_ACCESS'?step:null,failed:failedEvent(ev)};calls.push(call);if(type==='TOOL_CALL_START')pending.set(key,call);
+        }else if(type==='TOOL_CALL_END'){const call=pending.get(key);if(call){call.endStep=step;call.failed=failedEvent(ev);pending.delete(key)}}
+      });return calls;
+    }
+    function jumpToCall(call){stopPlayback();showStep(call.step);const target=[...callFocus?.targets||[]].find(id=>state.nodes[id]?.kind==='command'||state.nodes[id]?.kind==='tool')||[...callFocus?.targets||[]][0];if(target)select(target);if(document.body.classList.contains('inspector-hidden'))$('toggle-inspector').click()}
+    function renderCallSequence(){
+      callSequence=buildCallSequence(steps);const signature=JSON.stringify([viewMode,viewRunId,callSequence.map(c=>[c.step,c.tool,c.detail,c.endStep,c.failed])]),holder=$('call-track'),changed=signature!==callSequenceSignature;
+      if(changed){
+        callSequenceSignature=signature;const existing=new Map([...holder.querySelectorAll('.call-chip')].map(button=>[Number(button.dataset.callStep),button]));
+        holder.querySelector('.call-empty')?.remove();
+        for(const call of callSequence){let button=existing.get(call.step);if(!button){button=document.createElement('button');button.type='button';button.className='call-chip';button.dataset.callStep=call.step;button.innerHTML='<strong></strong><small></small>';holder.appendChild(button)}existing.delete(call.step);
+          const executable=/^(bash|zsh|sh)$/i.test(call.tool)?(String(call.ev.command||call.ev.input||'').trim().match(/^(?:"([^"]+)"|'([^']+)'|([^\s]+))/)||[]).slice(1).find(Boolean):'';
+          const display=executable?`${call.tool} / ${executable.split('/').at(-1)}`:call.tool,title=`Call ${call.ordinal} · event #${call.step+1} · ${call.tool}\n${call.detail.slice(0,600)}`,heading=`${call.ordinal}. ${display} · #${call.step+1}`;
+          const refs=fileRefs(call.ev),knownDoc=inputDocument(call.ev),short=(refs.length?refs.map(ref=>ref.path.split('/').at(-1)).join(', '):knownDoc?knownDoc.label.split('/').at(-1):call.tool==='Document read'?call.detail.split('/').at(-1):call.detail.replace(/\s+/g,' ').trim()).slice(0,140);
+          if(button.title!==title)button.title=title;if(button.querySelector('strong').textContent!==heading)button.querySelector('strong').textContent=heading;if(button.querySelector('small').textContent!==short)button.querySelector('small').textContent=short||'Arguments not captured';button.onclick=()=>jumpToCall(call);
+        }
+        for(const button of existing.values())button.remove();if(!callSequence.length)holder.innerHTML='<div class="call-empty">Function calls appear here as the agent uses them.</div>';
+      }
+      const index=callSequence.findLastIndex(call=>call.step<=currentStepIndex),call=callSequence[index];callFocus=null;
+      for(const el of document.querySelectorAll('.sequence-focus'))el.classList.remove('sequence-focus');
+      if(call){const targets=targetsForCall(call.ev);callFocus={...call,targets};for(const id of targets){const el=visibleEndpoint(id);if(el)el.classList.add('sequence-focus');if(el?.tagName==='SUMMARY')el.closest('details').classList.add('sequence-focus')}}
+      [...holder.querySelectorAll('.call-chip')].forEach((button,i)=>{const entry=callSequence[i];button.className=`call-chip${i===index?' current':''}${entry.step>currentStepIndex?' future':''}${entry.failed&&entry.step<=currentStepIndex&&entry.endStep<=currentStepIndex?' failed':''}`;if(i===index)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');button.setAttribute('aria-label',`Call ${entry.ordinal}: ${entry.tool}, event ${entry.step+1}${entry.step>currentStepIndex?', later in recorded route':''}`)});
+      $('call-position').textContent=callSequence.length?`${index+1} of ${callSequence.length}`:'No calls';$('call-prev').disabled=index<=0;$('call-next').disabled=index>=callSequence.length-1||!callSequence.length;
+      if(index!==callSequenceIndex||changed){holder.querySelector('.current')?.scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});callSequenceIndex=index}
+      $('call-prev').onclick=()=>{if(index>0)jumpToCall(callSequence[index-1])};$('call-next').onclick=()=>{if(index+1<callSequence.length)jumpToCall(callSequence[index+1])};
+    }
+    let lastCompletionEvent='',lastMotionRoute='',lastMotionIndex=-1;
+    const completionAnimations=new Map();
+    function targetsForCall(ev){
+      const targets=new Set();for(const node of Object.values(state?.nodes||{})){
+        if(node.kind==='file'?fileRefs(ev).some(ref=>ref.path===node.label):node.kind==='document'?inputDocument(ev)?.id===node.id:resourceMatchesCall(node,ev))targets.add(node.id);
+      }return targets;
+    }
+    function completionGlow(el,failed=false,isEdge=false){
+      if(!el||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+      completionAnimations.get(el)?.cancel();const color=failed?'255,105,126':'66,213,161';
+      const frames=isEdge?[{opacity:.65},{opacity:1,offset:.4},{opacity:.85}]:[{boxShadow:`0 0 0 rgba(${color},0)`},{boxShadow:`0 0 16px 2px rgba(${color},.28)`,offset:.4},{boxShadow:`0 0 0 rgba(${color},0)`}];
+      const animation=el.animate(frames,{duration:2400,easing:'ease-in-out'});completionAnimations.set(el,animation);el.dataset.completion=failed?'failed':'completed';
+      const cleanup=()=>{if(completionAnimations.get(el)===animation){completionAnimations.delete(el);delete el.dataset.completion}};animation.onfinish=cleanup;animation.oncancel=cleanup;
+    }
+    function animateCompletedResources(){
+      const route=`${viewMode}:${state?.run_id||viewRunId}`,key=`${route}:${currentStepIndex}`;if(key===lastCompletionEvent)return;lastCompletionEvent=key;
+      if(route!==lastMotionRoute||currentStepIndex<lastMotionIndex){for(const animation of completionAnimations.values())animation.cancel();completionAnimations.clear()}lastMotionRoute=route;lastMotionIndex=currentStepIndex;
+      for(const [el,animation] of completionAnimations)if(!el.isConnected||el.classList.contains('active')||el.classList.contains('running')||el.tagName==='SUMMARY'&&el.closest('details')?.dataset.status==='active'){animation.cancel();completionAnimations.delete(el)}
+      const ev=eventFor(steps[currentStepIndex]),type=eventType(ev),targets=new Set();
+      if(type==='GENERATION_END'){targets.add('agent-hub');targets.add('run_result')}
+      else if(type==='TOOL_CALL_END'||type==='KNOWLEDGE_ACCESS'){
+        for(const call of callSequence.filter(call=>call.endStep===currentStepIndex))for(const id of targetsForCall(call.ev))targets.add(id);
+        for(const id of targetsForCall(ev))targets.add(id);
+      }else return;
+      const visible=new Set([...targets].map(visibleEndpoint).filter(Boolean));for(const el of visible)completionGlow(el,failedEvent(ev));
+    }
+    function eventTargetText(ev){return String(ev.target_id||ev.path||ev.file_path||ev.input||ev.command||'').replaceAll('\\','/')}
+
+    function invocationsFor(n){
+      const events=routeEventsFor(state),entries=[],docs=n.kind==='category'?categoryMembers(n.label):['document','file'].includes(n.kind)?[n]:[];
+      const matches=ev=>docs.length?docs.some(doc=>doc.kind==='file'?fileRefs(ev).some(ref=>ref.path===doc.label):inputDocument(ev)?.id===doc.id):resourceMatchesCall(n,ev);
+      const running=state?.orchestrator_phase==='running';
+      for(let i=0;i<events.length;i++){
+        const item=events[i],ev=eventFor(item),type=eventType(ev);if(!matches(ev))continue;
+        if(type==='KNOWLEDGE_ACCESS'){entries.push({step:i+1,time:item.timestamp,title:`Document loaded · ${ev.target_id||ev.path||n.label}`,command:'',result:ev.reason||'Added to context',status:failedEvent(ev)?'error':'success'});continue}
+        if(type!=='TOOL_CALL_START')continue;
+        const tool=String(ev.tool||ev.tool_name||''),callId=ev.call_id||ev.tool_call_id;let finish=null,stepEnded=false;
+        for(let j=i+1;j<events.length;j++){
+          const next=eventFor(events[j]),nextType=eventType(next),nextId=next.call_id||next.tool_call_id;
+          if(nextType==='TOOL_CALL_START'&&(!callId||callId===nextId)&&String(next.tool||next.tool_name||'')===tool)break;
+          if(nextType==='TOOL_CALL_END'&&String(next.tool||next.tool_name||'')===tool&&(!callId||callId===nextId)){finish=next;break}
+          if(nextType==='THINKING'&&/step completed/i.test(String(next.phase||''))){stepEnded=true;if(!callId)break}
+        }
+        entries.push({step:i+1,time:item.timestamp,title:`Call · ${tool||n.label}`,command:ev.input||ev.command||ev.path||'Arguments not captured',result:finish?(finish.result||finish.output||finish.status||'Completed'):stepEnded?'Step ended · command output was not captured':running?'Awaiting command result':'Command result was not captured',status:finish?(failedEvent(finish)?'error':'success'):stepEnded||!running?'observed':'active'});
+      }
+      return entries;
+    }
+    function renderInvocationSequence(n){
+      const holder=$('inspector-invocations'),entries=invocationsFor(n),atBottom=holder.scrollHeight-holder.clientHeight-holder.scrollTop<32;
+      if(!entries.length){holder.innerHTML='<div class="history-meta">No invocation was recorded for this block in the selected route.</div>';return}
+      holder.replaceChildren(...entries.slice(-80).reverse().map(item=>{const row=document.createElement('div');row.className=`invocation-row ${item.status}`;row.innerHTML=`<strong>Step ${item.step} · ${esc(item.title)} · ${esc(item.time?new Date(item.time).toLocaleTimeString():'—')}</strong>${item.command?`<pre>Command / input: ${esc(String(item.command).slice(0,1800))}</pre>`:''}${item.result?`<pre>Result: ${esc(String(item.result).slice(0,1800))}</pre>`:''}`;return row}));
+    }
+    function selectCategory(group){select(`category:${group}`,{id:`category:${group}`,kind:'category',label:group})}
+    function refreshSelection(){
+      const id=selectedResource?.id;if(!id)return;
+      let n=state?.nodes?.[id]||state?.prompt_blocks?.find(b=>b.id===id)||selectedResource;
+      if(id==='request_prompt')n={id,label:'Project prompt',kind:'request',text:state?.prompt||'',status:state?.prompt?'hit':'idle'};
+      if(id==='agent-hub')n={id,label:'Agent',kind:'agent',status:({running:'active',complete:'hit',waiting:'waiting',error:'error'})[state?.orchestrator_phase]||'idle',reason:state?.orchestrator_action||'',payload:`Route: ${state?.run_id||viewRunId||'—'}\n${state?.project||''}`};
+      if(n.kind==='category'){const members=categoryMembers(n.label);n={...n,status:['active','error','waiting','hit','observed'].find(status=>members.some(x=>x.status===status))||'idle',description:`${members.length} resources · ${members.filter(x=>x.status!=='idle').length} accessed`}}
+      if(id==='run_result'&&!state?.nodes?.run_result)n={id,label:'Agent result',kind:'result',status:'idle',payload:'No result recorded at this step'};
+      if(n.kind==='tokens'){const dock=$(id);n={...n,label:dock?.querySelector('.token-dock-label')?.textContent||n.label,status:dock?.classList.contains('hit')?'hit':'idle',reason:dock?.title||'',payload:dock?.querySelector('.token-dock-val')?.textContent||'—'}}
+      $('inspector-title').textContent=n.label||id;$('inspector-category').textContent=n.category||n.kind||'Request';$('inspector-status').textContent=n.status?statusLabel(n.status):'Request text';$('inspector-reason').textContent=n.reason||n.region||'—';$('inspector-payload').textContent=n.payload||n.text||n.description||'—';renderInvocationSequence(n);
+    }
+    function clearSelection(){selectedNode=null;selectedResource=null;$('inspector-title').textContent='Select a block';$('inspector-category').textContent='Static resource or route event';$('inspector-status').textContent='No event yet';$('inspector-reason').textContent='—';$('inspector-payload').textContent='—';$('inspector-invocations').textContent='Select a tool, document, or category to see its calls.'}
+    function select(id,provided){selectedNode=id;selectedResource=provided||state?.nodes?.[id]||state?.prompt_blocks?.find(b=>b.id===id)||{id,label:id};refreshSelection()}
+    // Graph coordinates must not depend on the viewport transform. Zoom and pan
+    // move the entire world, including the already routed SVG, without rerouting.
+    function elementBox(el){
+      // Measure in one coordinate space, including nested scrolling and CSS zoom.
+      const r=el.getBoundingClientRect(),w=world.getBoundingClientRect(),sx=w.width/world.offsetWidth||1,sy=w.height/world.offsetHeight||1;
+      const snap=value=>Math.round(value*64)/64,left=snap((r.left-w.left)/sx),top=snap((r.top-w.top)/sy),width=snap(r.width/sx),height=snap(r.height/sy);
+      return{left,right:left+width,top,bottom:top+height,cx:left+width/2,cy:top+height/2};
+    }
+    const edgePins=new Map();
+    function baseEndpoint(id){let el=$(id);if(!el)return null;for(let ancestor=el.parentElement;ancestor;ancestor=ancestor.parentElement)if(ancestor.tagName==='DETAILS'&&!ancestor.open)el=ancestor.querySelector(':scope > summary');return el}
+    function prepareEdgePins(){
+      edgePins.clear();const desired=new Map();
+      for(const edge of state?.edges||[])for(const id of [edge.from,edge.to]){
+        const el=baseEndpoint(id),body=el?.closest('.group-body');if(!body||!body.clientHeight)continue;
+        const r=elementBox(el),bounds=elementBox(body),pinHeight=el.tagName==='SUMMARY'?r.bottom-r.top:36,inset=4+pinHeight/2;if(r.cy>=bounds.top+inset&&r.cy<=bounds.bottom-inset)continue;
+        const group=body.closest('.group'),direction=r.cy<bounds.top+inset?'top':'bottom',key=el.id||`folder:${el.closest('details')?.dataset.category}`;
+        if(!desired.has(group))desired.set(group,{top:new Map(),bottom:new Map()});const bucket=desired.get(group)[direction];if(!bucket.has(key))bucket.set(key,{el,id});
+      }
+      for(const group of document.querySelectorAll('.group'))for(const direction of ['top','bottom']){
+        const items=[...(desired.get(group)?.[direction]||[])];let dock=group.querySelector(`:scope > .edge-pins-${direction}`);
+        if(!dock&&items.length){dock=document.createElement('div');dock.className=`edge-pins edge-pins-${direction}`;dock.setAttribute('aria-label',direction==='top'?'Accessed blocks above':'Accessed blocks below');group.appendChild(dock)}if(!dock)continue;
+        const existing=new Map([...dock.children].map(el=>[el.dataset.pinKey,el])),seen=new Set(),slotPins=[];
+        // Keep the viewport readable when many accessed resources are out of view.
+        for(let i=0;i<items.length;i++){
+          const [key,item]=items[i],slot=Math.min(i,2);let pin=slotPins[slot];
+          if(i<3){pin=existing.get(key)||document.createElement('button');pin.type='button';pin.className='edge-pin';pin.dataset.pinKey=key;pin.dataset.pinSlot=slot;seen.add(key);
+            const label=item.el.querySelector('.card-title,.category-name')?.textContent||item.el.textContent;const status=item.el.tagName==='SUMMARY'?item.el.closest('details').dataset.status:state?.nodes?.[item.id]?.status;
+            const source=elementBox(item.el),container=elementBox(group),bodyBounds=elementBox(item.el.closest('.group-body')),isFolder=item.el.tagName==='SUMMARY';
+            // Preserve the source row's horizontal geometry, including nesting and scrollbar gutter.
+            pin.style.marginLeft=`${source.left-container.left-group.clientLeft-12}px`;pin.style.width=`${source.right-source.left}px`;
+            pin.style.height=`${isFolder?source.bottom-source.top:36}px`;pin.dataset.kind=isFolder?'folder':'document';
+            if(direction==='top')dock.style.top=`${bodyBounds.top-container.top-group.clientTop+4}px`;else dock.style.bottom=`${container.bottom-bodyBounds.bottom-group.clientTop+4}px`;
+            pin.dataset.status=status||'observed';pin.title=`${label} · ${direction==='top'?'above':'below'} · click to reveal`;
+            pin.replaceChildren();const arrow=document.createElement('span');arrow.className='edge-pin-direction';arrow.textContent=isFolder?(item.el.closest('details').open?'▾':'▸'):'▤';const text=document.createElement('span');text.className='edge-pin-label';text.textContent=label;pin.append(arrow,text);
+            if(isFolder){const count=document.createElement('span');count.className='edge-pin-count';count.textContent=item.el.querySelector('.category-count')?.textContent||'';pin.appendChild(count);const statusText=item.el.querySelector('.category-status')?.textContent;if(statusText){const meta=document.createElement('span');meta.className='edge-pin-status';meta.textContent=statusText;pin.appendChild(meta)}}
+            const directionMark=document.createElement('span');directionMark.className='edge-pin-indicator';directionMark.textContent=direction==='top'?'↑':'↓';directionMark.setAttribute('aria-hidden','true');pin.appendChild(directionMark);
+            if(i===2&&items.length>3){const count=document.createElement('span');count.className='edge-pin-count';count.textContent=`+${items.length-3}`;pin.appendChild(count)}
+            pin.onclick=()=>{item.el.scrollIntoView({block:'center',behavior:'smooth'});if(item.el.tagName==='SUMMARY')selectCategory(item.el.closest('details').dataset.category);else select(item.id)};dock.appendChild(pin);slotPins[slot]=pin;
+          }
+          if(pin)edgePins.set(item.el,pin);
+        }
+        for(const [key,el] of existing)if(!seen.has(key))el.remove();dock.hidden=!items.length;
+      }
+    }
+    function visibleEndpoint(id){const el=baseEndpoint(id);return edgePins.get(el)||el}
+    function updateDocumentNavigation(){
+      const body=$('documents-container'),location=$('document-location');if(!body||!location)return;
+      const bounds=body.getBoundingClientRect();let path='Documents';
+      if(body.scrollTop>6){for(const row of body.querySelectorAll('.card,summary')){const r=row.getBoundingClientRect();if(!row.checkVisibility()||!r.width||r.bottom<=bounds.top+8||r.top>=bounds.bottom)continue;path=row.closest('details')?.dataset.category||'Project files';break}}
+      if(location.textContent!==path)location.textContent=path;location.title=path;
+    }
+    function orthogonalRoute(start,end,obstacles){
+      const inside=p=>obstacles.some(r=>p.x>r.left+.1&&p.x<r.right-.1&&p.y>r.top+.1&&p.y<r.bottom-.1);if(inside(start)||inside(end))return null;
+      const xs=[...new Set([start.x,end.x,...obstacles.flatMap(r=>[r.left,r.right])])].sort((a,b)=>a-b),ys=[...new Set([start.y,end.y,...obstacles.flatMap(r=>[r.top,r.bottom])])].sort((a,b)=>a-b);
+      const clear=(a,b)=>!obstacles.some(r=>a.x===b.x?a.x>r.left+.1&&a.x<r.right-.1&&Math.max(a.y,b.y)>r.top+.1&&Math.min(a.y,b.y)<r.bottom-.1:a.y>r.top+.1&&a.y<r.bottom-.1&&Math.max(a.x,b.x)>r.left+.1&&Math.min(a.x,b.x)<r.right-.1);
+      const key=(x,y,dir)=>`${x}:${y}:${dir}`,initial={x:xs.indexOf(start.x),y:ys.indexOf(start.y),dir:'start'},goal={x:xs.indexOf(end.x),y:ys.indexOf(end.y)},initialKey=key(initial.x,initial.y,initial.dir);
+      // Include travel direction in the search state so extra elbows have a cost.
+      const open=[{...initial,cost:0,rank:0}],best=new Map([[initialKey,0]]),parent=new Map(),closed=new Set();
+      while(open.length){
+        open.sort((a,b)=>a.rank-b.rank);const cur=open.shift(),id=key(cur.x,cur.y,cur.dir);if(closed.has(id))continue;closed.add(id);
+        if(cur.x===goal.x&&cur.y===goal.y){const path=[];let k=id;while(k){const [x,y]=k.split(':').map(Number);path.push({x:xs[x],y:ys[y]});k=parent.get(k)}return path.reverse()}
+        for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+          const x=cur.x+dx,y=cur.y+dy;if(x<0||y<0||x>=xs.length||y>=ys.length)continue;const dir=dx?'h':'v',nextId=key(x,y,dir),a={x:xs[cur.x],y:ys[cur.y]},b={x:xs[x],y:ys[y]};if(closed.has(nextId)||!clear(a,b))continue;
+          const cost=cur.cost+Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+(cur.dir!=='start'&&cur.dir!==dir?28:0);if(cost>=(best.get(nextId)??Infinity))continue;best.set(nextId,cost);parent.set(nextId,id);open.push({x,y,dir,cost,rank:cost+Math.abs(b.x-end.x)+Math.abs(b.y-end.y)});
+        }
+      }
+      // Never invent an unchecked detour across the rest of the canvas.
+      return null;
+    }
+    function chooseGroupRoute(source,target,from,to,obstacles,clearance){
+      const toRight=target.left>=source.right+clearance,toLeft=source.left>=target.right+clearance;
+      const preferred=toRight?[['e','w']]:toLeft?[['w','e']]:[['e','e'],['w','w']];
+      const port=(node,side)=>({x:side==='w'?node.left:node.right,y:node.cy});
+      const gate=(group,side,y)=>({x:side==='w'?group.left-clearance:group.right+clearance,y});
+      const score=points=>points.slice(1).reduce((sum,p,i)=>sum+Math.abs(p.x-points[i].x)+Math.abs(p.y-points[i].y),0)+points.slice(1,-1).reduce((sum,p,i)=>{const a=points[i],c=points[i+2];return sum+((a.x===p.x)!==(p.x===c.x)?28:0)},0);
+      function find(pairs){let best=null;for(const [sourceSide,targetSide] of pairs){const a=port(from,sourceSide),b=port(to,targetSide),start=gate(source,sourceSide,a.y),end=gate(target,targetSide,b.y),spine=orthogonalRoute(start,end,obstacles);if(!spine)continue;const cost=score([a,...spine,b]);if(!best||cost<best.cost)best={sourceSide,targetSide,spine,cost}}return best}
+      return find(preferred)||find([['e','w'],['w','e'],['e','e'],['w','w']]);
+    }
+    function roundedRoute(points){
+      const clean=[];for(const p of points){const last=clean.at(-1);if(last&&p.x===last.x&&p.y===last.y)continue;clean.push(p);while(clean.length>2){const a=clean.at(-3),b=clean.at(-2),c=clean.at(-1);if(a.x===b.x&&b.x===c.x||a.y===b.y&&b.y===c.y)clean.splice(clean.length-2,1);else break}}
+      let path=`M${clean[0].x},${clean[0].y}`;
+      for(let i=1;i<clean.length-1;i++){const a=clean[i-1],b=clean[i],c=clean[i+1],ab=Math.hypot(b.x-a.x,b.y-a.y),bc=Math.hypot(c.x-b.x,c.y-b.y),r=Math.min(10,ab/2,bc/2);const p={x:b.x-(b.x-a.x)/ab*r,y:b.y-(b.y-a.y)/ab*r},q={x:b.x+(c.x-b.x)/bc*r,y:b.y+(c.y-b.y)/bc*r};path+=` L${p.x},${p.y} Q${b.x},${b.y} ${q.x},${q.y}`}
+      const last=clean.at(-1);return `${path} L${last.x},${last.y}`;
+    }
+    let edgeFrame=null;
+    const routeCache=new Map();
+    function setSvgAttribute(el,name,value){value=String(value);if(el.getAttribute(name)!==value)el.setAttribute(name,value)}
+    function renderEdges(){if(edgeFrame!==null)return;edgeFrame=requestAnimationFrame(()=>{edgeFrame=null;drawEdges()})}
+    function drawEdges(){
+      settleLayout();if(overlayScrollReady)refreshOverlayScrollbars();updateDocumentNavigation();if(!state)return;prepareEdgePins();const clearance=8,groups=[...document.querySelectorAll('.group')].map(el=>({el,...elementBox(el)})),obstacles=groups.map(r=>({left:r.left-clearance,right:r.right+clearance,top:r.top-clearance,bottom:r.bottom+clearance}));
+      const ww=world.offsetWidth,wh=world.offsetHeight;setSvgAttribute(svg,'viewBox',`0 0 ${ww} ${wh}`);if(svg.style.width!==`${ww}px`)svg.style.width=`${ww}px`;if(svg.style.height!==`${wh}px`)svg.style.height=`${wh}px`;
+      const geometryKey=JSON.stringify(obstacles),boxes=new Map(),box=el=>{if(!boxes.has(el))boxes.set(el,elementBox(el));return boxes.get(el)};
+      const existing=new Map([...svg.querySelectorAll('g[data-edge]')].map(el=>[el.dataset.edge,el])),seen=new Set(),visiblePairs=new Set();
+      svg.querySelectorAll(':scope>.edge,:scope>.edge-port').forEach(el=>el.remove());
+      const endpointKey=el=>el.id||el.dataset.pinKey||el.closest('details')?.dataset.category||`group:${el.closest('.group')?.dataset.group}`;
+      for(const edge of [...state.edges||[]].sort((a,b)=>(b.step||0)-(a.step||0))){
+        const fromEl=visibleEndpoint(edge.from),toEl=visibleEndpoint(edge.to);if(!fromEl||!toEl||!fromEl.offsetWidth||!toEl.offsetWidth)continue;
+        const pair=`${endpointKey(fromEl)}>${endpointKey(toEl)}`;if(visiblePairs.has(pair))continue;visiblePairs.add(pair);const key=`${edge.from}>${edge.to}`;seen.add(key);
+        const from=box(fromEl),to=box(toEl),sourceGroup=groups.find(r=>r.el===fromEl.closest('.group')),targetGroup=groups.find(r=>r.el===toEl.closest('.group'));if(!sourceGroup||!targetGroup)continue;
+        // Cache by logical edge and group geometry, never by scroll position.
+        // The first route uses the actual ports; later scrolling only moves its local tails.
+        const routeKey=JSON.stringify([geometryKey,key]);let route=routeCache.get(routeKey);
+        if(route===undefined){route=chooseGroupRoute(sourceGroup,targetGroup,from,to,obstacles,clearance);if(routeCache.size>500)routeCache.clear();routeCache.set(routeKey,route)}
+        if(!route){seen.delete(key);continue}
+        const {sourceSide,targetSide,spine}=route;
+        const a={x:sourceSide==='w'?from.left:from.right,y:from.cy},b={x:targetSide==='w'?to.left:to.right,y:to.cy};
+        const exit={x:spine[0].x,y:a.y},entry={x:spine.at(-1).x,y:b.y},tip={x:b.x+(targetSide==='w'?-4:4),y:b.y};
+        const routed=roundedRoute([a,exit,...spine,entry,tip]);
+        const status=edge.to==='agent-hub'?({running:'active',complete:'hit',error:'error',waiting:'waiting'})[state.orchestrator_phase]||'idle':toEl.classList.contains('edge-pin')?toEl.dataset.status:toEl.tagName==='SUMMARY'?toEl.closest('details').dataset.status:state.nodes?.[edge.to]?.status||'observed';
+        let group=existing.get(key);if(!group){group=document.createElementNS('http://www.w3.org/2000/svg','g');group.dataset.edge=key;group.innerHTML='<path class="edge" marker-end="url(#arrow)"/><circle class="edge-port source-port" r="3"/><circle class="edge-port" r="3"/><text class="edge-step"/>';svg.appendChild(group)}
+        const path=group.querySelector('path');setSvgAttribute(path,'d',routed);const focused=Boolean(callFocus?.targets.has(edge.to));setSvgAttribute(path,'class',`edge ${statusClass(status)}${focused?' current-call':''}`);
+        let signal=group.querySelector('.edge-signal');if(!signal){signal=document.createElementNS('http://www.w3.org/2000/svg','path');signal.setAttribute('pathLength','100');group.insertBefore(signal,path.nextSibling)}setSvgAttribute(signal,'d',routed);setSvgAttribute(signal,'class',`edge-signal${focused&&status==='active'?' in-flight':''}`);
+        const previousStatus=group.dataset.status;if(previousStatus&&previousStatus!==status&&['hit','error'].includes(status))completionGlow(path,status==='error',true);group.dataset.status=status;
+        let label=group.querySelector('.edge-step');if(!label){label=document.createElementNS('http://www.w3.org/2000/svg','text');label.setAttribute('class','edge-step');group.appendChild(label)}const text=focused?`#${callFocus.step+1}`:edge.step?`#${edge.step}`:'';if(label.textContent!==text)label.textContent=text;setSvgAttribute(label,'class',`edge-step${focused?' current-call-label':''}`);setSvgAttribute(label,'x',entry.x+(targetSide==='w'?-5:5));setSvgAttribute(label,'text-anchor',targetSide==='w'?'end':'start');setSvgAttribute(label,'y',b.y-8);
+        const color=({active:'#4bdcf1',hit:'#42d5a1',error:'#ff697e',waiting:'#efc46b',observed:'#74a9ca'})[status]||'#40546a';
+        [...group.querySelectorAll('circle')].forEach((port,index)=>{const point=index===0?a:b;setSvgAttribute(port,'cx',point.x);setSvgAttribute(port,'cy',point.y);setSvgAttribute(port,'fill',color);setSvgAttribute(port,'class',`edge-port ${statusClass(status)}`)});
+      }
+      for(const [key,el] of existing)if(!seen.has(key))el.remove();
+    }
+    window.addEventListener('resize',renderEdges);
+    document.addEventListener('scroll',e=>{if(e.target&&e.target.classList&&(e.target.classList.contains('group-body')))renderEdges()},{capture:true,passive:true});
+
+    let historySelection='';
+    function setRuns(list){runs=(list||[]).filter(r=>r.steps?.length);renderHistory(historySelection)}
+    function renderHistory(selected=historySelection){
+      historySelection=selected;const holder=$('history-list');holder.replaceChildren();if(!runs.length){holder.innerHTML='<div class="empty-history">No saved Agent routes yet.</div>';return}
+      for(const run of runs){const row=document.createElement('button');row.className=`history-row ${run.run_id===selected?'selected':''}`;row.innerHTML=`<div class="history-row-title">${run.status==='completed'?'✓':run.status==='failed'?'!':'…'} ${esc(run.project||'Project')}</div><div class="history-row-meta">${esc(run.mode||'CAD run')} · ${new Date(run.started_at).toLocaleString()} · ${run.steps.length} events · ${esc(run.status)}</div><div class="history-row-meta">${esc((run.prompt||'').slice(0,120))}</div>`;row.onclick=()=>renderRunDetail(run);holder.appendChild(row)}
+    }
+    function renderRunDetail(run){
+      renderHistory(run.run_id);const panel=$('history-detail'),used=new Map();for(const step of run.steps)for(const n of Object.values(step.nodes||{}))if(n.status&&n.status!=='idle')used.set(n.id,n);
+      for(const n of deriveWorkingFiles(run.steps,run.status==='running'?'running':'complete'))used.set(n.id,n);
+      const events=run.steps.map(step=>{const ev=eventFor(step),type=eventType(ev),command=ev.input||ev.command||'',result=ev.result||ev.output||'',usage=ev.usage_kind==='token_usage'?`Input ${Number(ev.input_tokens||0).toLocaleString()} · Output ${Number(ev.output_tokens||0).toLocaleString()}`:'';return `<div class="history-entry ${failedEvent(ev)?'error':type.startsWith('TOOL_')?'tool':''}"><strong>${esc(routeStepCaption(step))}</strong>${command?`<pre>Command / input: ${esc(String(command))}</pre>`:''}${result?`<pre>Result: ${esc(String(result))}</pre>`:''}${usage?`<div class="history-meta">${esc(usage)}</div>`:''}</div>`}).join('');
+      const list=[...used.values()].filter(n=>n.kind!=='result').map(n=>`<div class="history-entry ${n.status==='error'?'error':n.kind==='tool'?'tool':''}"><strong>${esc(n.kind==='document'?'Document':n.kind==='file'?'Working file':isCommandNode(n)?'Command':'Tool')} · ${esc(n.label)}</strong><div class="history-meta">${esc(n.status==='active'&&run.status!=='running'?'Called · result not captured':statusLabel(n.status))}${n.reason?` · ${esc(n.reason)}`:''}</div></div>`).join('');
+      panel.innerHTML=`<h2>${esc(run.project||'Project')} · ${esc(run.mode||'Route')}</h2><div class="history-meta">${new Date(run.started_at).toLocaleString()} · ${esc(run.status)} · ${run.steps.length} recorded events</div><button id="open-saved-route" class="primary">Open route on graph</button><div class="history-section"><h3>Project prompt</h3><div class="history-text">${esc(run.prompt||'—')}</div></div>${run.project_spec?`<div class="history-section"><h3>Project specification</h3><div class="history-text">${esc(run.project_spec)}</div></div>`:''}<div class="history-section"><h3>Refinement comments</h3>${(run.prompt_blocks||[]).filter(b=>b.kind==='comment').map(b=>`<div class="history-entry"><strong>${esc(requestBlockLabel(b))}</strong><div class="history-text">${esc(b.text)}</div>${b.region?`<div class="history-meta">${esc(b.region)}</div>`:''}</div>`).join('')||'<div class="history-meta">None</div>'}</div><div class="history-section"><h3>Attachments</h3><div>${(run.attachments||[]).map(esc).join(', ')||'None recorded'}</div></div><div class="history-section"><h3>Observed resources & commands</h3>${list||'<div class="history-meta">No resource event recorded</div>'}</div><div class="history-section"><h3>Event log</h3>${events}</div>`;
+      $('open-saved-route').onclick=()=>{showRun(run);switchTab('graph')};
+    }
+    function showRun(run,tail=false){
+      if(!run?.steps?.length)return;stopPlayback();stopDemo();viewMode='saved';followNewRun=tail;viewRunId=run.run_id;
+      steps=run.steps.map(step=>({...step,run_id:run.run_id,run_started_at:step.run_started_at||run.started_at,run_finished_at:run.finished_at}));
+      clearSelection();showStep(tail?steps.length-1:0);switchTab('graph');
+    }
+    function routeStepCaption(step){
+      const ev=step.event||step.latest_step?.event||{},type=String(ev.type||ev.event_type||'').toUpperCase(),tool=ev.tool||ev.tool_name||'tool';
+      if(type==='GENERATION_END')return `Agent · ${ev.success===false?'failed':ev.status||'completed'}`;
+      if(type==='PROMPT_START')return 'Request received';
+      if(type==='GENERATION_START')return 'Agent started';
+      if(type==='TOOL_CALL_START'||type==='TOOL_ACCESS')return `Tool call · ${tool}`;
+      if(type==='TOOL_CALL_END'||type==='TOOL_RESULT')return `Tool result · ${tool} · ${ev.success===false?'failed':ev.status||'completed'}`;
+      if(type==='KNOWLEDGE_ACCESS')return `Document read · ${ev.target_id||ev.path||'document'}`;
+      if(ev.usage_kind==='token_usage')return 'Model token usage reported';
+      if(type==='THINKING')return String(ev.phase||step.orchestrator_action||'Agent phase').replace(/\s+/g,' ').slice(0,180);
+      if(ev.usage_kind==='token_usage')return 'Model token usage reported';
+      return String(step.description||step.orchestrator_action||type||'Route event').split(/\r?\n/)[0].replace(/\s+/g,' ').slice(0,180);
+    }
+    function showStep(i){if(!steps.length)return;i=Math.max(0,Math.min(steps.length-1,Number(i)||0));currentStepIndex=i;$('timeline-slider').max=steps.length-1;$('timeline-slider').value=i;$('step-label').textContent=`Step ${i+1} of ${steps.length}`;const caption=routeStepCaption(steps[i]);$('step-description').textContent=caption;$('step-description').title=caption;renderState(steps[i])}
+
+    function updateNavigation(){
+      $('timeline-title').textContent=viewMode==='saved'?'SAVED ROUTE':viewMode==='demo'?'DEMO ROUTE':'CURRENT ROUTE';
+      $('timeline-slider').max=Math.max(0,steps.length-1);$('timeline-slider').disabled=!steps.length;
+      $('step-start').disabled=$('step-prev').disabled=!steps.length||currentStepIndex<=0;
+      $('step-next').disabled=$('step-end').disabled=!steps.length||currentStepIndex>=steps.length-1;
+      $('step-play').disabled=steps.length<2;
+      $('live-button').classList.toggle('selected',viewMode==='live');$('live-button').textContent=viewMode==='live'&&currentStepIndex<liveSteps.length-1?'Follow live':'Live';
+      if(!steps.length){$('step-label').textContent='Waiting for events';$('step-description').textContent='Launch an agent request or open a saved route';$('timeline-slider').value=0}
+    }
+    function showLive(){stopPlayback();stopDemo();clearSelection();viewMode='live';followNewRun=true;viewRunId=liveSnapshot?.run_id||'';steps=liveSteps;currentStepIndex=steps.length-1;if(steps.length)showStep(currentStepIndex);else renderState(liveSnapshot||{nodes:{},edges:[],orchestrator_phase:'idle'});switchTab('graph')}
+    function acceptInitial(msg){
+      const catalogChanged=JSON.stringify(config.nodes)!==JSON.stringify(msg.config?.nodes||config.nodes);config=msg.config||config;if(catalogChanged||!$('documents-container').children.length)renderCatalog();
+      setRuns(msg.runs||runs);liveSnapshot=msg.state||liveSnapshot;liveSteps=msg.history||[];
+      if(!initialized){initialized=true;if(liveSnapshot?.prompt){showLive()}else if(runs.length){showRun(runs[0],true)}else{showLive()}if(hasSavedCamera)setWorld();else autoFit()}
+      else if(viewMode==='live'){steps=liveSteps;if(steps.length)showStep(steps.length-1);else{currentStepIndex=-1;renderState(liveSnapshot)}}
+      else if(catalogChanged&&state)renderState(state);
+    }
+    function onWsMessage(msg){
+      if(msg.type==='INIT'){acceptInitial(msg);return}
+      if(msg.config){config=msg.config;renderCatalog()}
+      if(msg.runs)setRuns(msg.runs);
+      if(msg.type==='RESET'){liveSnapshot=msg.state;liveSteps=msg.history||[];if(viewMode==='live'){steps=liveSteps;currentStepIndex=-1;renderState(msg.state)}return}
+      if(msg.type!=='STATE_UPDATE')return;
+      const previousRun=liveSnapshot?.run_id,nextRun=msg.state?.run_id||msg.history_step?.run_id,newRun=msg.history_step&&(eventType(eventFor(msg.history_step))==='PROMPT_START'||nextRun&&previousRun&&nextRun!==previousRun),following=currentStepIndex===steps.length-1;
+      liveSnapshot=msg.state||liveSnapshot;if(newRun){liveSteps=[];if(viewMode==='live')clearSelection()}
+      if(msg.history_step){const step=msg.history_step,index=step.step_index;const prior=liveSteps.findIndex(x=>index!=null&&x.step_index===index);if(prior>=0)liveSteps[prior]=step;else liveSteps.push(step)}
+      // The CAD Studio sender broadcasts snapshots without a separate run_update.
+      if(!msg.run_update&&msg.history_step){const id=nextRun||previousRun||liveSteps[0]?.run_id;if(id){const snapshot=msg.state||{},phase=snapshot.orchestrator_phase;msg.run_update={run_id:id,project:snapshot.project,mode:snapshot.mode,prompt:snapshot.prompt,project_spec:snapshot.project_spec,prompt_blocks:snapshot.prompt_blocks||[],attachments:snapshot.attachments||[],started_at:snapshot.run_started_at||liveSteps[0]?.timestamp,status:phase==='complete'?'completed':phase==='error'?'failed':'running',finished_at:phase==='complete'||phase==='error'?msg.history_step.timestamp:null}}}
+      if(msg.run_update){const metadata=msg.run_update,previous=runs.find(r=>r.run_id===metadata.run_id),updated={...previous,...metadata,steps:liveSteps.slice()};runs=[updated,...runs.filter(r=>r.run_id!==metadata.run_id)].slice(0,50);renderHistory(historySelection)}
+      if(newRun&&followNewRun&&viewMode==='saved'){viewMode='live';clearSelection()}if(viewMode==='live'){steps=liveSteps;if(steps.length){if(following||newRun)showStep(steps.length-1);else updateNavigation()}else renderState(liveSnapshot)}else if(msg.config&&state)renderState(state);
+    }
+    function connect(){const scheme=location.protocol==='https:'?'wss:':'ws:';ws=new WebSocket(`${scheme}//${location.host}/ws`,window.__BOOTSTRAP__?.token?['cad-xray',window.__BOOTSTRAP__.token]:[]);ws.onopen=()=>{$('connection').textContent='Connected';$('connection').className='badge live'};ws.onclose=()=>{$('connection').textContent='Offline';$('connection').className='badge';setTimeout(connect,2000)};ws.onmessage=e=>{try{onWsMessage(JSON.parse(e.data))}catch(err){console.error(err)}}}
+    function postAction(action){if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({action}))}
+
+    function zoomAt(next,px=viewport.clientWidth/2,py=viewport.clientHeight/2){const x=(px-panX)/scale,y=(py-panY)/scale;scale=Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,next));panX=px-x*scale;panY=py-y*scale;setWorld()}
+    $('zoom-in').onclick=()=>zoomAt(scale*1.15);$('zoom-out').onclick=()=>zoomAt(scale/1.15);
+    function settleLayout(){
+      if(viewMode!=='demo'&&!manuallyPlaced.has('commands')){const tools=document.querySelector('.g-tools'),commands=document.querySelector('.g-commands');groupPositions.commands=[groupDefaults.commands[0],Math.max(groupDefaults.commands[1],tools.offsetTop+tools.offsetHeight+30)];commands.style.left=`${groupPositions.commands[0]}px`;commands.style.top=`${groupPositions.commands[1]}px`}
+      if(viewMode!=='demo'&&!manuallyPlaced.has('files')){const docs=document.querySelector('.g-docs'),files=document.querySelector('.g-files');groupPositions.files=[groupDefaults.files[0],docs.offsetTop+docs.offsetHeight+30];files.style.left=`${groupPositions.files[0]}px`;files.style.top=`${groupPositions.files[1]}px`}
+      const groups=[...document.querySelectorAll('.group')];world.style.width=`${Math.max(2380,...groups.map(el=>el.offsetLeft+el.offsetWidth+40))}px`;world.style.height=`${Math.max(1250,...groups.map(el=>el.offsetTop+el.offsetHeight+40))}px`;
+    }
+    function autoFit(){
+      if(!viewport.clientWidth||!viewport.clientHeight)return;settleLayout();const groups=[...document.querySelectorAll('.group')],left=Math.min(...groups.map(el=>el.offsetLeft)),top=Math.min(...groups.map(el=>el.offsetTop)),right=Math.max(...groups.map(el=>el.offsetLeft+el.offsetWidth)),bottom=Math.max(...groups.map(el=>el.offsetTop+el.offsetHeight));
+      scale=Math.min(1,Math.max(MIN_ZOOM,Math.min((viewport.clientWidth-152)/(right-left),(viewport.clientHeight-48)/(bottom-top))));panX=(viewport.clientWidth-(right-left)*scale)/2-left*scale;panY=(viewport.clientHeight-(bottom-top)*scale)/2-top*scale-8;setWorld();renderEdges();
+    }
+    $('fit').onclick=autoFit;
+    $('toggle-inspector').onclick=()=>{document.body.classList.toggle('inspector-hidden');syncPanelControls();writeLocal('inspector-hidden',document.body.classList.contains('inspector-hidden'));setTimeout(()=>{renderEdges()},220)};$('close-inspector').onclick=()=>$('toggle-inspector').click();document.body.classList.toggle('inspector-hidden',readLocal('inspector-hidden',false));$('close-bottom').onclick=()=>$('toggle-bottom').click();
+    $('reset-layout').onclick=()=>{groupPositions=structuredClone(groupDefaults);manuallyPlaced.clear();removeLocal('cad-map-groups');groupSizes={};removeLocal('cad-map-group-sizes');applyGroupSizes();applyGroupPositions();autoFit()};
+    function applyGroupPositions(){document.querySelectorAll('.group').forEach(el=>{const key=el.dataset.group;let pos=groupPositions[key];if(!Array.isArray(pos)||pos.length!==2||!pos.every(Number.isFinite))pos=groupPositions[key]=groupDefaults[key];el.style.left=`${pos[0]}px`;el.style.top=`${pos[1]}px`})}
+    let groupSizes=readLocal('cad-map-group-sizes',{});if(!groupSizes||typeof groupSizes!=='object')groupSizes={};
+    function applyGroupSizes(){for(const group of document.querySelectorAll('.group')){const key=group.dataset.group,size=groupSizes[key],valid=key!=='documents'&&Array.isArray(size)&&size.length===2&&size.every(Number.isFinite);group.classList.toggle('user-sized',valid);group.style.width=valid?`${Math.max(220,size[0])}px`:'';group.style.height=valid&&key!=='commands'?`${Math.max(key==='agent'?484:160,size[1])}px`:''}}
+    function clearSnapGuides(){world.querySelectorAll('.resize-guide').forEach(el=>el.remove());document.querySelectorAll('.snap-target').forEach(el=>el.classList.remove('snap-target'))}
+    function snapGroupRect(group,rect,edges='',disabled=false){
+      clearSnapGuides();if(disabled)return rect;
+      const move=!edges,threshold=12/scale,minW=220,minH=group.dataset.group==='agent'?484:160;
+      const others=[...document.querySelectorAll('.group')].filter(el=>el!==group),candidates={x:[],y:[]};
+      const anchors=axis=>axis==='x'?(move?[['left',rect.left],['center',rect.left+rect.width/2],['right',rect.left+rect.width]]:edges.includes('w')?[['left',rect.left]]:edges.includes('e')?[['right',rect.left+rect.width]]:[]):(move?[['top',rect.top],['middle',rect.top+rect.height/2],['bottom',rect.top+rect.height]]:edges.includes('n')?[['top',rect.top]]:edges.includes('s')?[['bottom',rect.top+rect.height]]:[]);
+      for(const other of others){const r={left:other.offsetLeft,top:other.offsetTop,width:other.offsetWidth,height:other.offsetHeight};for(const axis of ['x','y']){
+        const targets=axis==='x'?[['left',r.left],['center',r.left+r.width/2],['right',r.left+r.width]]:[['top',r.top],['middle',r.top+r.height/2],['bottom',r.top+r.height]];
+        for(const [edge,value] of anchors(axis))for(const [target,at] of targets){const delta=at-value;if(Math.abs(delta)>threshold)continue;const width=axis==='x'&&!move?rect.width+delta*(edges.includes('w')?-1:1):rect.width,height=axis==='y'&&!move?rect.height+delta*(edges.includes('n')?-1:1):rect.height;if(!move&&((axis==='x'&&width<minW)||(axis==='y'&&height<minH)))continue;candidates[axis].push({delta,at,other,label:edge===target?target:'Edge',priority:edge===target?0:1})}
+        if(!move&&anchors(axis).length){const old=anchors(axis)[0],at=axis==='x'?(edges.includes('w')?rect.left+rect.width-r.width:rect.left+r.width):(edges.includes('n')?rect.top+rect.height-r.height:rect.top+r.height),delta=at-old[1];if(Math.abs(delta)<=threshold&&(axis==='x'?r.width>=minW:r.height>=minH))candidates[axis].push({delta,at,other,label:axis==='x'?`Width ${r.width}`:`Height ${r.height}`,priority:2})}
+      }}
+      for(const axis of ['x','y']){const hit=candidates[axis].sort((a,b)=>Math.abs(a.delta)-Math.abs(b.delta)||a.priority-b.priority)[0];if(!hit)continue;
+        if(axis==='x'){if(move||edges.includes('w'))rect.left+=hit.delta;if(!move)rect.width+=hit.delta*(edges.includes('w')?-1:1)}else{if(move||edges.includes('n'))rect.top+=hit.delta;if(!move)rect.height+=hit.delta*(edges.includes('n')?-1:1)}
+        hit.other.classList.add('snap-target');const guide=document.createElement('div');guide.className=`resize-guide ${axis==='x'?'vertical':'horizontal'}`;const other=hit.other;
+        guide.style.setProperty('--guide-scale',String(1/scale));if(axis==='x'){guide.style.left=`${hit.at}px`;guide.style.top=`${Math.min(rect.top,other.offsetTop)-12/scale}px`;guide.style.height=`${Math.max(rect.top+rect.height,other.offsetTop+other.offsetHeight)-Math.min(rect.top,other.offsetTop)+24/scale}px`}else{guide.style.top=`${hit.at}px`;guide.style.left=`${Math.min(rect.left,other.offsetLeft)-12/scale}px`;guide.style.width=`${Math.max(rect.left+rect.width,other.offsetLeft+other.offsetWidth)-Math.min(rect.left,other.offsetLeft)+24/scale}px`}
+        const label=document.createElement('span');label.textContent=hit.label;guide.appendChild(label);world.appendChild(guide);
+      }return rect;
+    }
+    for(const group of document.querySelectorAll('.group:not(.g-docs)'))for(const edge of group.dataset.group==='commands'?['w','e']:['n','s','w','e','nw','ne','sw','se']){const handle=document.createElement('button');handle.type='button';handle.className='group-resize';handle.dataset.edge=edge;handle.title='Resize · drag near an edge to align · Alt disables snapping';handle.setAttribute('aria-label',`Resize ${group.dataset.group} ${edge}`);handle.tabIndex=-1;group.appendChild(handle)}
+    applyGroupSizes();
+    applyGroupPositions();if(hasSavedCamera)setWorld();
+    viewport.addEventListener('wheel',e=>{
+      const rect=viewport.getBoundingClientRect(),pinch=e.ctrlKey||e.metaKey;
+      if(pinch){e.preventDefault();zoomAt(scale*Math.exp(-e.deltaY*.012),e.clientX-rect.left,e.clientY-rect.top);return}
+      if(e.target.closest('.group-body,.content,.resource-category,textarea,.activity-list,.edge-pin'))return;
+      e.preventDefault();const trackpad=e.deltaMode===0&&(Math.abs(e.deltaX)>0||Math.abs(e.deltaY)<50);
+      if(trackpad||panMode){panX-=e.deltaX;panY-=e.deltaY;setWorld()}else zoomAt(scale*Math.exp(-e.deltaY*.0015),e.clientX-rect.left,e.clientY-rect.top);
+    },{passive:false});
+    let gestureScale=1;
+    viewport.addEventListener('gesturestart',e=>{e.preventDefault();gestureScale=scale},{passive:false});
+    viewport.addEventListener('gesturechange',e=>{e.preventDefault();const r=viewport.getBoundingClientRect();zoomAt(gestureScale*e.scale,(e.clientX||r.left+r.width/2)-r.left,(e.clientY||r.top+r.height/2)-r.top)},{passive:false});
+    viewport.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
+    let panMode=false;function setPanMode(value){panMode=value;$('pan-mode').setAttribute('aria-pressed',String(value));$('select-mode').setAttribute('aria-pressed',String(!value));viewport.classList.toggle('pan-mode',value)}$('pan-mode').onclick=()=>setPanMode(true);$('select-mode').onclick=()=>setPanMode(false);
+    $('actual-size').onclick=()=>zoomAt(1);$('zoom-label').onclick=()=>{const menu=$('zoom-menu');menu.hidden=!menu.hidden;$('zoom-label').setAttribute('aria-expanded',String(!menu.hidden));if(!menu.hidden){const a=$('zoom-label').getBoundingClientRect(),v=viewport.getBoundingClientRect();menu.style.right='auto';menu.style.left=`${Math.max(8,Math.min(a.left-v.left-menu.offsetWidth-12,viewport.clientWidth-menu.offsetWidth-8))}px`;menu.style.top=`${Math.max(8,Math.min(a.top-v.top,viewport.clientHeight-menu.offsetHeight-8))}px`;menu.querySelectorAll('[data-zoom]').forEach(b=>b.setAttribute('aria-pressed',String(Math.abs(Number(b.dataset.zoom)-scale)<.005)))}};
+    function closeZoomMenu(returnFocus=false){const menu=$('zoom-menu'),restore=!menu.hidden&&(returnFocus||menu.contains(document.activeElement));menu.hidden=true;$('zoom-label').setAttribute('aria-expanded','false');if(restore)$('zoom-label').focus()}
+    new ResizeObserver(()=>closeZoomMenu()).observe(viewport);
+    document.querySelectorAll('[data-zoom]').forEach(button=>button.onclick=()=>{zoomAt(Number(button.dataset.zoom));closeZoomMenu(true)});
+    document.addEventListener('pointerdown',e=>{if(!e.target.closest('.canvas-controls,.zoom-menu')){$('zoom-menu').hidden=true;$('zoom-label').setAttribute('aria-expanded','false')}});
+    $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{}};
+    document.addEventListener('keydown',e=>{if(noteDialog?.open||e.target.closest('input,textarea,select,[contenteditable="true"]')||e.ctrlKey||e.metaKey||e.altKey)return;const key=e.key.toLowerCase();if(key==='h')setPanMode(true);else if(key==='v')setPanMode(false);else if(key==='0')autoFit();else if(key==='1')zoomAt(1);else if(key==='+'||key==='=')zoomAt(scale*1.15);else if(key==='-')zoomAt(scale/1.15);else if(key==='escape'){closeZoomMenu();setPanMode(false)}else return;e.preventDefault()});
+    const bottomHidden=readLocal('bottom-panel-hidden',false);document.body.classList.toggle('bottom-hidden',bottomHidden);
+    function syncPanelControls(){closeZoomMenu();for(const [id,cls] of [['toggle-inspector','inspector-hidden'],['toggle-bottom','bottom-hidden']])$(id).setAttribute('aria-pressed',String(!document.body.classList.contains(cls)))}
+    syncPanelControls();
+    $('toggle-bottom').onclick=()=>{const hidden=document.body.classList.toggle('bottom-hidden');syncPanelControls();writeLocal('bottom-panel-hidden',hidden);renderEdges()};
+    let drag=null;
+    viewport.addEventListener('pointerdown',e=>{
+      if(e.button!==0)return;const resizer=e.target.closest('.group-resize'),handle=e.target.closest('[data-drag-handle]');
+      if(resizer||handle){const group=resizer?resizer.parentElement:handle.parentElement;for(const key of Object.keys(groupDefaults))manuallyPlaced.add(key);drag={kind:resizer?'resize':'group',group,edges:resizer?.dataset.edge||'',startX:e.clientX,startY:e.clientY,base:{left:group.offsetLeft,top:group.offsetTop,width:group.offsetWidth,height:group.offsetHeight}};viewport.setPointerCapture(e.pointerId);e.preventDefault();return}
+      if(e.target.closest('button,summary,select,input,textarea,.canvas-controls'))return;if(!panMode&&e.target.closest('.group'))return;drag={kind:'pan',startX:e.clientX,startY:e.clientY,base:[panX,panY]};viewport.setPointerCapture(e.pointerId);e.preventDefault();
+    });
+    viewport.addEventListener('pointermove',e=>{
+      if(!drag)return;if(drag.kind==='pan'){panX=drag.base[0]+e.clientX-drag.startX;panY=drag.base[1]+e.clientY-drag.startY;setWorld();return}
+      const dx=(e.clientX-drag.startX)/scale,dy=(e.clientY-drag.startY)/scale,rect={...drag.base},key=drag.group.dataset.group,minH=key==='agent'?484:160;
+      if(drag.kind==='group'){rect.left+=dx;rect.top+=dy}else{
+        if(drag.edges.includes('e'))rect.width=Math.max(220,rect.width+dx);if(drag.edges.includes('s'))rect.height=Math.max(minH,rect.height+dy);
+        if(drag.edges.includes('w')){rect.width=Math.max(220,rect.width-dx);rect.left=drag.base.left+drag.base.width-rect.width}if(drag.edges.includes('n')){rect.height=Math.max(minH,rect.height-dy);rect.top=drag.base.top+drag.base.height-rect.height}
+      }
+      const snapped=snapGroupRect(drag.group,rect,drag.kind==='resize'?drag.edges:'',e.altKey);groupPositions[key]=[snapped.left,snapped.top];drag.group.style.left=`${snapped.left}px`;drag.group.style.top=`${snapped.top}px`;
+      if(drag.kind==='resize'){groupSizes[key]=[snapped.width,snapped.height];applyGroupSizes()}renderEdges();refreshOverlayScrollbars();
+    });
+    const finishDrag=()=>{clearSnapGuides();if(drag&&drag.kind!=='pan'){writeLocal('cad-map-groups',groupPositions);if(drag.kind==='resize')writeLocal('cad-map-group-sizes',groupSizes);settleLayout()}drag=null;renderEdges();refreshOverlayScrollbars()};viewport.addEventListener('pointerup',finishDrag);viewport.addEventListener('pointercancel',finishDrag);
+    function switchTab(tab){const history=tab==='history';document.body.classList.toggle('history-active',history);$('graph-tab').classList.toggle('selected',!history);$('history-tab').classList.toggle('selected',history);$('graph-tab').setAttribute('aria-pressed',String(!history));$('history-tab').setAttribute('aria-pressed',String(history));closeZoomMenu();if(history){stopPlayback();renderHistory()}else{updateNavigation();renderEdges()}}
+    $('graph-tab').onclick=()=>switchTab('graph');$('history-tab').onclick=()=>switchTab('history');
+    for(const bar of document.querySelectorAll('.canvas-tools,.canvas-controls')){
+      const buttons=[...bar.querySelectorAll('button')];
+      buttons.forEach((button,index)=>{button.tabIndex=index===0?0:-1;button.addEventListener('focus',()=>buttons.forEach(b=>b.tabIndex=b===button?0:-1))});
+      bar.addEventListener('keydown',event=>{const index=buttons.indexOf(document.activeElement);if(index<0)return;const next=event.key==='ArrowDown'?(index+1)%buttons.length:event.key==='ArrowUp'?(index+buttons.length-1)%buttons.length:event.key==='Home'?0:event.key==='End'?buttons.length-1:null;if(next===null)return;event.preventDefault();event.stopPropagation();buttons[next].focus();buttons[next].scrollIntoView({block:'nearest',inline:'nearest'})});
+    }
+
+    $('demo-button').onclick=()=>{if(demoTimers.length)showLive();else startDemo()};$('live-button').onclick=showLive;
+    function startDemo(){
+      stopPlayback();stopDemo();viewMode='demo';followNewRun=false;viewRunId='demo-local';selectedResource=null;switchTab('graph');
+      const cad=config.nodes.some(n=>/OpenSCAD CLI/i.test(n.label)),prompt=cad?'Refine a compact gearbox housing and verify its printable geometry.':'Inspect project files, make a small refinement, then report the result.';
+      const demo={orchestrator_action:'Demo · local preview',orchestrator_phase:'running',run_source:'demo',run_id:'demo-local',project:`${config.project_title||'Project'} · demo`,mode:'Example workflow',prompt,project_spec:'Demo only · preserve project requirements and report observed outcomes.',attachments:[],run_started_at:new Date().toISOString(),prompt_blocks:[{id:'request_prompt',kind:'prompt',label:'Project prompt',text:prompt},{id:'project_spec',kind:'spec',label:'Project specification',text:'Preserve existing behavior and report actual outcomes.'},{id:'demo_comment',kind:'comment',label:'Refinement comment',text:cad?'Increase clearance around the bearing pocket by 0.2 mm.':'Make the requested change and explain the result.'}],nodes:Object.fromEntries(config.nodes.map(n=>[n.id,{...n,status:'idle',reason:'',payload:''}])),edges:[],recent_events:[],history_count:0};
+      const doc=Object.values(demo.nodes).find(n=>n.kind==='document'&&n.label.includes('/knowledge/cad_domain/'))||Object.values(demo.nodes).find(n=>n.kind==='document');
+      const readTool={id:'demo_read_file',label:'read_file',kind:'command',category:'command',description:'Demo only · simulated read',status:'idle'},runner=Object.values(demo.nodes).find(n=>n.kind==='tool'&&(cad?/OpenSCAD CLI/i.test(n.label):true))||{id:'demo_runner',label:'Example build',kind:'tool',category:'tool',description:'Demo only · simulated build',status:'idle'};
+      demo.nodes[runner.id]=runner;for(const id of ['request_prompt','project_spec','demo_comment'])demo.edges.push({from:id,to:'agent-hub',label:'request'});
+      let demoSteps=[];const snapshot=(description,event)=>{const timestamp=new Date().toISOString();demo.recent_events.push({timestamp,description,event});demo.history_count++;demoSteps.push(structuredClone({...demo,timestamp,description,event,step_index:demoSteps.length}));steps=demoSteps;showStep(steps.length-1)};
+      const events=[{delay:1200,event:{type:'THINKING',phase:'Inspecting the request'}},{delay:2600,event:doc?{type:'KNOWLEDGE_ACCESS',target_id:doc.label,success:true,reason:'Demo only · simulated document read'}:{type:'THINKING',phase:'Preparing an example file read'}},{delay:4000,event:{type:'TOOL_CALL_START',tool:'read_file',call_id:'demo-read',input:JSON.stringify({path:doc?.label||'example/project.txt'})}},{delay:5500,event:{type:'TOOL_CALL_END',tool:'read_file',call_id:'demo-read',success:true,result:'Demo only · example content loaded'}},{delay:7500,event:{type:'TOOL_CALL_START',tool:runner.label,call_id:'demo-build',input:cad?'openscad -o work/models/demo/housing.stl work/models/demo/housing.scad':'example-build --check example/project.txt'}},{delay:9300,event:{type:'TOOL_CALL_END',tool:runner.label,call_id:'demo-build',success:true,result:'Demo only · example operation completed'}},{delay:10500,event:{type:'THINKING',usage_kind:'token_usage',phase:'Demo usage reported',input_tokens:1480,output_tokens:330}},{delay:11500,event:{type:'GENERATION_END',success:true,status:'completed',result:'DEMO ONLY · example result; no project commands were executed'}}];
+      snapshot('Demo request received',{type:'PROMPT_START',prompt});$('demo-button').textContent='■ Stop demo';
+      for(const item of events)demoTimers.push(setTimeout(()=>{const ev=item.event,type=ev.type;let description=ev.phase||type;
+        if(type==='THINKING')demo.orchestrator_action=ev.phase;
+        else if(type==='KNOWLEDGE_ACCESS'&&doc){doc.status='hit';doc.reason=ev.reason;demo.edges.push({from:'agent-hub',to:doc.id,label:'read'});demo.orchestrator_action=`Read · ${doc.label}`}
+        else if(type==='TOOL_CALL_START'||type==='TOOL_CALL_END'){const node=ev.tool==='read_file'?readTool:runner;demo.nodes[node.id]=node;node.status=type==='TOOL_CALL_START'?'active':'hit';node.payload=ev.input||ev.result||'';if(!demo.edges.some(e=>e.to===node.id))demo.edges.push({from:'agent-hub',to:node.id,label:'call'});if(node===readTool&&doc){doc.status=node.status;demo.edges.push({from:node.id,to:doc.id,label:'file read'})}description=`${type==='TOOL_CALL_START'?'Tool call':'Tool result'} · ${ev.tool}`;demo.orchestrator_action=description}
+        else if(type==='GENERATION_END'){demo.orchestrator_phase='complete';demo.orchestrator_action='Demo complete';demo.nodes.run_result={id:'run_result',kind:'result',label:'Agent result',status:'hit',payload:ev.result};demo.edges.push({from:runner.id,to:'run_result',label:'result'})}
+        snapshot(description,ev);if(type==='GENERATION_END'){demoTimers=[];$('demo-button').textContent='▶ Demo'}
+      },item.delay));
+    }
+
+    $('timeline-slider').oninput=e=>{stopPlayback();showStep(Number(e.target.value))};
+    $('step-start').onclick=()=>{stopPlayback();showStep(0)};$('step-prev').onclick=()=>{stopPlayback();showStep(currentStepIndex-1)};$('step-next').onclick=()=>{stopPlayback();showStep(currentStepIndex+1)};$('step-end').onclick=()=>{stopPlayback();showStep(steps.length-1)};
+    $('step-play').onclick=()=>{if(playing){stopPlayback();return}if(currentStepIndex>=steps.length-1)showStep(0);$('step-play').textContent='Ⅱ';playing=setInterval(()=>{if(currentStepIndex>=steps.length-1)stopPlayback();else showStep(currentStepIndex+1)},900)};
+    $('request_prompt').addEventListener('click',()=>select('request_prompt'));
+    $('agent-hub').addEventListener('click',()=>select('agent-hub'));
+    document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.card[role="button"],.token-dock[role="button"]')){e.preventDefault();e.target.click()}});
+    const scrollSelector='.group-body,.activity-list,.content,.agent-phase,.inspector-body,.invocation-list,.notes-list,.history-list,.history-detail,#history-view,#call-track,#token-summary';
+    let activeScroller=null,scrollHideTimer=null,scrollFrame=null,scrollDrag=null;
+    const overlayTracks=['y','x'].map(axis=>{const track=document.createElement('div');track.className=`overlay-scrollbar axis-${axis}`;track.dataset.axis=axis;track.tabIndex=-1;track.setAttribute('role','scrollbar');track.setAttribute('aria-orientation',axis==='y'?'vertical':'horizontal');track.setAttribute('aria-label',axis==='y'?'Scroll content vertically':'Scroll content horizontally');const thumb=document.createElement('div');thumb.className='overlay-scrollbar-thumb';track.appendChild(thumb);document.body.appendChild(track);return track});
+    function hideOverlayScrollbars(){if(scrollDrag||overlayTracks.some(el=>el.matches(':hover')||el===document.activeElement)){scrollHideTimer=setTimeout(hideOverlayScrollbars,900);return}overlayTracks.forEach(el=>{el.classList.remove('visible');el.tabIndex=-1});activeScroller=null}
+    function revealScroller(el){if(!el?.matches?.(scrollSelector))return;activeScroller=el;clearTimeout(scrollHideTimer);scrollHideTimer=setTimeout(hideOverlayScrollbars,1100);refreshOverlayScrollbars()}
+    function refreshOverlayScrollbars(){if(scrollFrame!==null)return;scrollFrame=requestAnimationFrame(()=>{scrollFrame=null;const el=activeScroller;if(!el||!el.isConnected){overlayTracks.forEach(t=>{t.classList.remove('visible');t.tabIndex=-1});return}const r=el.getBoundingClientRect();let clip={left:Math.max(0,r.left),right:Math.min(innerWidth,r.right),top:Math.max(0,r.top),bottom:Math.min(innerHeight,r.bottom)};
+      for(let parent=el.parentElement;parent;parent=parent.parentElement){const style=getComputedStyle(parent);if(/auto|scroll|hidden|clip/.test(style.overflowX+' '+style.overflowY)){const p=parent.getBoundingClientRect();clip.left=Math.max(clip.left,p.left);clip.right=Math.min(clip.right,p.right);clip.top=Math.max(clip.top,p.top);clip.bottom=Math.min(clip.bottom,p.bottom)}}
+      overlayTracks.forEach(track=>{const host=noteDialog?.open&&noteDialog.contains(el)?noteDialog:document.body;if(track.parentElement!==host)host.appendChild(track);const vertical=track.dataset.axis==='y',client=vertical?el.clientHeight:el.clientWidth,total=vertical?el.scrollHeight:el.scrollWidth,position=vertical?el.scrollTop:el.scrollLeft,length=(vertical?clip.bottom-clip.top:clip.right-clip.left)-10;
+        const available=total>client+1&&length>24&&clip.right>clip.left&&clip.bottom>clip.top;track.classList.toggle('visible',available);track.tabIndex=available?0:-1;if(!available)return;
+        const size=Math.max(24,length*client/total),offset=(length-size)*position/(total-client);track.style.left=`${vertical?clip.right-10:clip.left+5}px`;track.style.top=`${vertical?clip.top+5:clip.bottom-10}px`;track.style.width=vertical?'8px':`${length}px`;track.style.height=vertical?`${length}px`:'8px';const thumb=track.firstElementChild;thumb.style.width=vertical?'100%':`${size}px`;thumb.style.height=vertical?`${size}px`:'100%';thumb.style.transform=vertical?`translateY(${offset}px)`:`translateX(${offset}px)`;track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax',String(total-client));track.setAttribute('aria-valuenow',String(Math.round(position)));track.setAttribute('aria-controls',el.id||'');track._scrollMetrics={length,size,range:total-client};
+      });
+    })}
+    overlayTracks.forEach(track=>{track.addEventListener('pointerdown',e=>{if(e.button!==0||!activeScroller||!track._scrollMetrics)return;e.preventDefault();e.stopPropagation();const vertical=track.dataset.axis==='y',r=track.getBoundingClientRect(),t=track.firstElementChild.getBoundingClientRect(),coordinate=vertical?e.clientY:e.clientX;scrollDrag={track,el:activeScroller,vertical,grab:e.target===track.firstElementChild?coordinate-(vertical?t.top:t.left):track._scrollMetrics.size/2};track.setPointerCapture(e.pointerId);track.classList.add('dragging');const offset=coordinate-(vertical?r.top:r.left)-scrollDrag.grab;scrollDrag.el[vertical?'scrollTop':'scrollLeft']=Math.max(0,offset/Math.max(1,track._scrollMetrics.length-track._scrollMetrics.size))*track._scrollMetrics.range;refreshOverlayScrollbars()});
+      track.addEventListener('pointermove',e=>{if(!scrollDrag||scrollDrag.track!==track)return;const r=track.getBoundingClientRect(),m=track._scrollMetrics,offset=(scrollDrag.vertical?e.clientY-r.top:e.clientX-r.left)-scrollDrag.grab;scrollDrag.el[scrollDrag.vertical?'scrollTop':'scrollLeft']=Math.max(0,Math.min(1,offset/Math.max(1,m.length-m.size)))*m.range;revealScroller(scrollDrag.el)});
+      const release=()=>{track.classList.remove('dragging');scrollDrag=null;if(activeScroller)revealScroller(activeScroller)};track.addEventListener('pointerup',release);track.addEventListener('pointercancel',release);
+      track.addEventListener('keydown',e=>{if(!activeScroller)return;const vertical=track.dataset.axis==='y',property=vertical?'scrollTop':'scrollLeft',page=vertical?activeScroller.clientHeight:activeScroller.clientWidth;if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft','PageDown','PageUp','Home','End'].includes(e.key)){e.preventDefault();activeScroller[property]=e.key==='Home'?0:e.key==='End'?track._scrollMetrics.range:activeScroller[property]+(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)?-1:1)*(e.key.startsWith('Page')?page*.85:36);revealScroller(activeScroller)}});
+    });
+    document.addEventListener('scroll',e=>revealScroller(e.target),{capture:true,passive:true});
+    document.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey)return;for(let el=e.target instanceof Element?e.target:null;el;el=el.parentElement)if(el.matches(scrollSelector)&&((Math.abs(e.deltaY)>0&&el.scrollHeight>el.clientHeight+1)||(Math.abs(e.deltaX)>0&&el.scrollWidth>el.clientWidth+1))){revealScroller(el);break}},{capture:true,passive:true});
+    window.addEventListener('resize',refreshOverlayScrollbars);overlayScrollReady=true;
+    const layoutObserver=new ResizeObserver(renderEdges);document.querySelectorAll('.group,.document-navigation,.group-body').forEach(el=>layoutObserver.observe(el));
+    $('agent-input-dock')?.addEventListener('click',()=>select('agent-input-dock',{id:'agent-input-dock',kind:'tokens',category:'Inbound Tokens',label:'Input Tokens · Prompt & Specs',reason:'Initial prompt, specification text, and refinement instructions entering the agent.',payload:`Estimated prompt tokens: ${$('agent-input-val').textContent}\nSubtitle: ${$('agent-input-sub').textContent}`,status:'hit'}));
+    $('result-input-dock')?.addEventListener('click',()=>select('result-input-dock',{id:'result-input-dock',kind:'tokens',category:'Cumulative Tokens',label:'Total Input · Prompt + Docs Context',reason:'Cumulative input tokens fed to LLM including all read knowledge and skills.',payload:`Total input tokens: ${$('result-input-val').textContent}\nSubtitle: ${$('result-input-sub').textContent}`,status:'hit'}));
+    $('result-output-dock')?.addEventListener('click',()=>select('result-output-dock',{id:'result-output-dock',kind:'tokens',category:'Generated Tokens',label:'Output Tokens · CAD Code',reason:'Completion tokens produced by Agent (OpenSCAD, STL, code structure).',payload:`Generated output tokens: ${$('result-output-val').textContent}\nSubtitle: ${$('result-output-sub').textContent}`,status:'hit'}));
+
+    setInterval(updateTimer,1000);
+
+    function initLoad(){
+      const boot=window.__BOOTSTRAP__;if(boot)acceptInitial({...boot,history:boot.history||[]});
+      else{renderCatalog();renderState({nodes:{},edges:[],orchestrator_phase:'idle'})}
+      connect();
+    }
+    initLoad();
+  </script>
+</body>
+</html>
