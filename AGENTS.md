@@ -1,9 +1,41 @@
-# Agent Observer — source and synchronization rules
+# Agent Observer
 
-Use `rtk` as a shell proxy when available; otherwise run commands directly.
+## Граф и команды
 
-- The canonical source has observer.py at its root and implementation under src/agent_observer. In an installation, observer.install.json identifies the canonical source; shared changes belong there.
-- Project settings live in config/observer.project.json. Credentials, histories, local caches and archived data are never part of the shared bundle.
-- After shared code, web UI, requirements, README, prompts or docs change, run python observer.py sync and python observer.py status from the canonical source. The running watcher performs the same synchronization. Never overwrite an installed local edit: merge it into the source first.
-- Keep the root limited to README.md, AGENTS.md and observer.py. Code goes under src, configuration under config, instructions/prompts under docs, examples under examples, compatibility adapters under integrations, local data under var.
-- Preserve CAD authentication, history locations and compatibility launchers. UI text is English; user prompts and document text retain their language. Never infer successful access or private reasoning from keywords.
+Граф состоит из запроса и уточнений, агента с журналом, документов knowledge-базы, инструментов и служб, команд, рабочих файлов и результата. Стрелки показывают зафиксированные обращения; история позволяет пройти маршрут по шагам, счётчики показывают токены.
+
+- `glob`, `grep` — поиск файлов и текста.
+- `read`, `read_image` — чтение документов и просмотр изображений.
+- `write`, `edit`, `apply_patch` — создание и изменение файлов.
+- `bash` — запуск команд. Другие типы появляются после события вызова.
+
+Граф наблюдает действия агента, сам команды не выполняет. Подключайте события по [контракту](docs/EVENTS.md) и [примеру Python](examples/instrumented_agent.py); наличие файла в каталоге не означает его чтение.
+
+## Установка и запуск
+
+Из корня скачанного репозитория (Python 3.10+):
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r config/requirements.txt
+.venv/bin/python observer.py run
+```
+
+Откройте http://127.0.0.1:8766/. Для тестового цикла во втором терминале запустите `.venv/bin/python examples/replay_demo.py`.
+
+Для своего проекта:
+
+```bash
+.venv/bin/python observer.py install "/path/to/project"
+.venv/bin/python observer.py run --config "/path/to/project/.agent-observer/config/observer.project.json"
+```
+
+Адрес установленного графа по умолчанию — http://127.0.0.1:8765/. Документы и инструменты задаются в конфигурации установки; доставка событий требует подключения агента. Подробнее — [руководство](docs/USAGE.md).
+
+## Правила изменений
+
+- Общий исходник: `observer.py` и `src/agent_observer/`; в установленной копии путь к нему указан в `observer.install.json`. Общие изменения вносите в исходник.
+- После правок запускайте `python observer.py sync` и `python observer.py status`. Изменения установленных файлов сначала объединяйте с исходником; не перезаписывайте их принудительно.
+- Корень: `README.md`, `AGENTS.md`, `observer.py`. Код — в `src`, настройки — в `config`, документация — в `docs`, примеры — в `examples`, адаптеры — в `integrations`, локальные данные — в `var`. Секреты и историю не публикуйте.
+- Сохраняйте CAD-аутентификацию, пути истории и совместимые точки запуска. Интерфейс — на английском; пользовательский текст сохраняет свой язык. Не приписывайте агенту скрытые рассуждения или неподтверждённые действия.
+- Используйте `rtk` для команд терминала, если он доступен.

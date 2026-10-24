@@ -19,7 +19,7 @@ _manifest = LOCAL_ROOT / "observer.install.json"
 _source = json.loads(_manifest.read_text()).get("source") if _manifest.is_file() else None
 ROOT = Path(_source) if _source and (Path(_source) / "observer.py").is_file() else LOCAL_ROOT
 REGISTRY = ROOT / ".observer/installations.json"
-_SHARED = ["observer.py", "README.md", "AGENTS.md", "config/requirements.txt", "config/observer.project.example.json", "docs/README.md", "docs/USAGE.md", "docs/assets/graph-demo.png", "docs/EVENTS.md", "docs/prompts/INTEGRATE.md", "examples/instrumented_agent.py", "integrations/cad-agent/xray_server.py", "integrations/cad-agent/xray_auth.py"]
+_SHARED = ["observer.py", "README.md", "AGENTS.md", "config/requirements.txt", "config/observer.project.example.json", "docs/README.md", "docs/USAGE.md", "docs/assets/graph-demo.png", "docs/EVENTS.md", "examples/instrumented_agent.py", "integrations/cad-agent/xray_server.py", "integrations/cad-agent/xray_auth.py"]
 def shared_bundle():
     paths = list(_SHARED)
     paths += [str(path.relative_to(ROOT)) for path in (ROOT / "src/agent_observer").rglob("*") if path.is_file() and (path.suffix == ".py" or path.name == "dashboard.html") and "__pycache__" not in path.parts]
