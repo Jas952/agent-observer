@@ -213,7 +213,7 @@
     function eventFor(step){return step?.event||step?.latest_step?.event||{}}
     function eventType(ev){const type=String(ev.type||ev.event_type||'').toUpperCase();return ({GENERATION_START:'PROMPT_START',PROMPT_RECEIVED:'PROMPT_START',TOOL_ACCESS:'TOOL_CALL_START',TOOL_RESULT:'TOOL_CALL_END',GENERATION_ERROR:'GENERATION_END'})[type]||type}
     function failedEvent(ev){return ['false','0','no','failed','error','cancelled'].includes(String(ev.success).toLowerCase())||/^(error|failed|failure|cancelled)$/.test(String(ev.status||'').toLowerCase())||String(ev.type||ev.event_type||'').toUpperCase()==='GENERATION_ERROR'}
-    function requestBlockLabel(block){return block.kind==='spec'?'Project specification':block.label==='Общий комментарий'?'Refinement note':String(block.label||'Refinement comment').replace(/^Комментарий\s+(\d+)$/,'Refinement comment $1')}
+    function requestBlockLabel(block){return block.kind==='spec'?'Project specification':block.label==='\u041e\u0431\u0449\u0438\u0439 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439'?'Refinement note':String(block.label||'Refinement comment').replace(/^\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439\s+(\d+)$/,'Refinement comment $1')}
     function observedStatus(status){return ['active','hit','error','waiting','observed'].includes(status)?status:'idle'}
     function stopPlayback(){if(playing)clearInterval(playing);playing=null;$('step-play').textContent='▶'}
     function stopDemo(){demoTimers.forEach(clearTimeout);demoTimers=[];$('demo-button').textContent='▶ Demo'}
@@ -288,7 +288,7 @@
     }
     const noteIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2z M7 9h10 M7 13h6"/></svg>';
     let noteDialog=null,noteOpener=null;const noteDrafts=new Map();
-    function noteKeys(key){const all=readLocal('cad-route-comments',{}),keys=[key];if(key==='category:docs / Root files')keys.push('category:docs / Общее');if(key.startsWith('node:command_template_')||key.startsWith('node:command_observed_'))for(const [old,items] of Object.entries(all)){if(old===key||!old.startsWith('node:')||old.startsWith('node:command_template_'))continue;const target=items[0]?.context?.match(/^Target: (?:command|tool): (.+)$/m)?.[1];if(target&&commandTemplateFor(target).id===key.slice(5))keys.push(old)}return keys}
+    function noteKeys(key){const all=readLocal('cad-route-comments',{}),keys=[key];if(key==='category:docs / Root files')keys.push('category:docs / \u041e\u0431\u0449\u0435\u0435');if(key.startsWith('node:command_template_')||key.startsWith('node:command_observed_'))for(const [old,items] of Object.entries(all)){if(old===key||!old.startsWith('node:')||old.startsWith('node:command_template_'))continue;const target=items[0]?.context?.match(/^Target: (?:command|tool): (.+)$/m)?.[1];if(target&&commandTemplateFor(target).id===key.slice(5))keys.push(old)}return keys}
     function notesFor(key){const all=readLocal('cad-route-comments',{});return noteKeys(key).flatMap(k=>all[k]||[])}
     function refreshNoteButtons(){for(const wrap of document.querySelectorAll('.comment-widget')){const count=notesFor(wrap.dataset.commentKey).length,button=wrap.querySelector('button');button.dataset.count=count||'';button.classList.toggle('has-notes',count>0);button.title=`${count?count+' saved notes · ':''}${wrap.dataset.commentLabel}`;button.setAttribute('aria-label',`Comments: ${wrap.dataset.commentLabel}${count?' · '+count+' saved':''}`)}}
     function openNotes(key,label,opener){
@@ -469,7 +469,7 @@
       for(const el of document.querySelectorAll('#commands-container>.card,#tools-container>.card'))if(!state.nodes[el.id])el.remove();
       for(const n of Object.values(state.nodes)){
         if(n.kind!=='document'&&n.kind!=='tool'&&n.kind!=='command')continue;
-        let el=$(n.id);if(!el){if(n.kind==='document')continue;if(n.description==='Инструмент обнаружен по реальному событию Agent.')n.description='Tool observed in a Agent event.';el=nodeCard(n)}
+        let el=$(n.id);if(!el){if(n.kind==='document')continue;if(n.description==='\u0418\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442 \u043e\u0431\u043d\u0430\u0440\u0443\u0436\u0435\u043d \u043f\u043e \u0440\u0435\u0430\u043b\u044c\u043d\u043e\u043c\u0443 \u0441\u043e\u0431\u044b\u0442\u0438\u044e Agent.')n.description='Tool observed in an agent event.';el=nodeCard(n)}
         if(n.kind==='tool'||n.kind==='command'){const holder=isCommandNode(n)?$('commands-container'):$('tools-container');if(el.parentElement!==holder)holder.insertBefore(el,holder.querySelector('.group-comment'))}
         el.className=`card ${statusClass(n.status)}`;const badge=el.querySelector('.card-status');if(badge)badge.textContent=statusLabel(n.status);let meta=el.querySelector('.call-meta');if(n.last_step){if(!meta){meta=document.createElement('div');meta.className='call-meta';el.insertBefore(meta,el.querySelector('.comment-widget'))}meta.textContent=`Last call · #${n.last_step}`}else if((n.id.startsWith('command_template_')||n.id.startsWith('command_observed_'))){if(meta)meta.textContent='No calls yet'}else meta?.remove();
       }

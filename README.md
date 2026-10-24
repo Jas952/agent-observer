@@ -1,15 +1,15 @@
 # Agent Observer
 
-Локальный интерактивный граф работы AI-агента: от запроса и требований до вызовов инструментов и результата. Показывает обращения, зафиксированные событиями агента.
+A local, interactive graph of an AI agent's workflow, from the request and requirements to tool calls and the final result. It shows interactions recorded by agent events.
 
-- Подсветка вызовов, успешных действий и ошибок.
-- Документы, команды и рабочие файлы в одном графе.
-- История запросов и воспроизведение маршрута по шагам.
-- Учёт токенов с разделением оценок и данных провайдера.
+- Highlights tool calls, successful actions, and errors.
+- Documents, commands, and working files in one graph.
+- Request history and step-by-step route replay.
+- Token tracking with separate estimates and provider-reported usage.
 
-![Граф после полного тестового цикла; все данные вымышленные](docs/assets/graph-demo.png)
+![Graph after a complete test cycle; all data is fictional](docs/assets/graph-demo.png)
 
-В основе категории документов — проектная **knowledge-база**: Markdown-заметки с YAML-описаниями и Obsidian-ссылками. У проектов общая структура, но своё содержание; база пополняется по мере работы агента. Пример структуры (можно подключать и другие папки):
+The document category is based on a project **knowledge base**: Markdown notes with YAML descriptions and Obsidian links. Projects share a structure but keep their own content; the knowledge base grows as the agent works. Example structure (other folders are supported too):
 
 ```text
 docs/knowledge/
@@ -24,4 +24,4 @@ docs/knowledge/
     └── Performance.md
 ```
 
-Установка, запуск и настройка — в [AGENTS.md](AGENTS.md).
+See [AGENTS.md](AGENTS.md) for installation, startup, and configuration.

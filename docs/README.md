@@ -1,12 +1,12 @@
-# Документы проекта в Agent Observer
+# Project documents in Agent Observer
 
-## 1. Это каталог файлов, а не обязательная база данных
+## 1. A file catalog, not a required database
 
-`docs/`, `docs/knowledge` и Obsidian — варианты организации знаний. Ни одна из этих папок не обязательна. Граф не создаёт и не требует Obsidian, не читает SQL-базы автоматически и не меняет расположение файлов проекта.
+`docs/`, `docs/knowledge`, and Obsidian are ways to organize knowledge. None is required. The graph does not create or require Obsidian, automatically read SQL databases, or move project files.
 
-Можно оставить `README.md`, `AGENTS.md`, `notes/`, `documentation/`, каталог спецификаций или существующее хранилище Obsidian. Источники задаются в **конфигурации конкретной установки** `config/observer.project.json`. Без явной настройки используются Markdown-файлы `docs/` и корня проекта; отсутствующая папка просто не добавляет документов.
+Keep your existing `README.md`, `AGENTS.md`, `notes/`, `documentation/`, specifications folder, or Obsidian vault. Set sources in each **installation's configuration**, `config/observer.project.json`. Without explicit settings, Markdown files in `docs/` and the project root are used; a missing folder simply adds no documents.
 
-## 2. Подключить свои источники
+## 2. Connect your sources
 
 ```json
 {
@@ -23,15 +23,15 @@
 }
 ```
 
-`project.root` считается относительно файла конфигурации. `documents[].path` — относительно корня проекта. Источники должны находиться внутри него; выходящие за корень симлинки не индексируются. Шаблоны применяются внутри указанной папки. Не добавляйте секреты и служебные каталоги.
+`project.root` is relative to the configuration file. `documents[].path` is relative to the project root. Sources must remain inside the project; symlinks pointing outside it are not indexed. Patterns apply within the specified folder. Do not include secrets or service directories.
 
-Для папки без Obsidian последнюю строку просто удалите. Для агента без документов можно указать `"documents": []`: инструменты, команды, рабочие файлы и маршрут продолжат работать.
+Without Obsidian, remove the last document source. For an agent without documents, set `"documents": []`: tools, commands, working files, and routes will still work.
 
-## 3. Иерархия и якоря
+## 3. Hierarchy and anchors
 
-Граф повторяет настоящее дерево папок проекта. Папки раскрываются внутри родительских папок; файлы текущего уровня показаны непосредственно рядом с подпапками, без искусственной категории Root. Например, `docs/000_Home.md` находится прямо внутри `docs`. Раскрытие папок сохраняется в браузере. Счётчик папки включает документы во всех её подпапках. Если используемый файл скрыт, стрелка и статус показываются у ближайшей видимой родительской папки. Каталог и факт чтения независимы.
+The graph follows the project's actual folder tree. Folders expand inside their parents; files appear alongside subfolders without an artificial Root category. For example, `docs/000_Home.md` appears directly inside `docs`. Folder expansion is saved in the browser. Each folder count includes documents in its subfolders. When an accessed file is hidden, its arrow and status appear on the nearest visible parent folder. Catalog membership and recorded access are separate.
 
-Дополнительные якоря **не обязательны**. Если нужна особая группировка, используйте настоящий YAML frontmatter в начале документа:
+Additional anchors are **optional**. For custom grouping, use actual YAML frontmatter at the beginning of a document:
 
 ```markdown
 ---
@@ -43,28 +43,28 @@ description: Requirements and limits for this project.
 # Project requirements
 ```
 
-`graph_id` — уникальный стабильный идентификатор; без него ID строится по пути. `graph_group` задаёт логическую группу в данных событий; расположение файла в дереве графа всегда определяется настоящим путём файла. `graph_category` уточняет тип. Можно также задать общий `group` для источника в JSON. Примеры якорей в тексте документа не интерпретируются как настройки.
+`graph_id` is a unique, stable identifier; without it, the ID is derived from the path. `graph_group` specifies a logical group in event data; the document tree always follows the actual file path. `graph_category` specifies the type. You can also set a shared `group` for a source in JSON. Anchor examples inside document text are not interpreted as settings.
 
-## 4. Когда документ подсвечивается
+## 4. When a document is highlighted
 
-Сначала агент действительно читает файл. Затем его адаптер отправляет `KNOWLEDGE_ACCESS` с относительным путём или фиксирует реальную пару `TOOL_CALL_START/END` с путём в аргументах. Ключевое слово в промпте, наличие статьи в каталоге или подготовленный manifest не доказывают чтение.
+The agent first reads a file. Its adapter then emits `KNOWLEDGE_ACCESS` with the relative path, or records an actual `TOOL_CALL_START/END` pair with the path in its arguments. A keyword in a prompt, a catalog entry, or a prepared manifest does not prove a read.
 
-Передача текста документа в запрос модели может быть отдельным фактом; отметка чтения сама по себе не доказывает, что модель использовала его в ответе. Успех команды также не доказывает правильность построенной модели или полученных данных.
+Passing document text to the model can be a separate event; a recorded read alone does not prove the model used it in its answer. A successful command also does not prove that the resulting model or data is correct.
 
-Новые документы подхватываются при следующем запуске запроса. После изменения конфигурации перезапустите сервер. Содержимое документов не отправляется внешним сервисам самим Observer.
+New documents are discovered when the next request starts. Restart the server after changing configuration. Observer itself does not send document contents to external services.
 
-## 5. Минимальная структура, если начинаете с нуля
+## 5. Minimal structure for a new project
 
 ```text
 project/
-  README.md                 # назначение и запуск
-  AGENTS.md                 # правила работы агента, если нужны
+  README.md                 # purpose and startup
+  AGENTS.md                 # agent rules, if needed
   docs/
-    requirements.md         # требования
-    architecture.md         # устройство проекта
-    decisions.md            # принятые решения
+    requirements.md         # requirements
+    architecture.md         # project structure
+    decisions.md            # recorded decisions
   .agent-observer/
-    config/observer.project.json   # настройки наблюдения
+    config/observer.project.json   # observer settings
 ```
 
-Это рекомендация, а не контракт. Не создавайте пустые статьи и шаблонные базы ради графа. Подключайте только реальные материалы, которые полезны вашему агенту.
+This is a suggestion, not a requirement. Do not create empty articles or placeholder knowledge bases for the graph. Connect real material that helps your agent.

@@ -194,7 +194,7 @@ class GraphState:
         stable_id = node_id or ("observed_tool_" + hashlib.sha1(raw_name.encode("utf-8")).hexdigest()[:12])
         if stable_id not in self.nodes:
             self.nodes[stable_id] = {"id": stable_id, "label": raw_name, "category": "tool",
-                                     "group": "Инструменты, вызванные агентом", "kind": "tool",
+                                     "group": "Tools called by the agent", "kind": "tool",
                                      "description": "Tool observed in an agent event.",
                                      "status": "idle", "reason": "", "payload": "", "duration_ms": 0.0}
         return self.nodes[stable_id]
@@ -222,7 +222,7 @@ class GraphState:
         return None
 
     def _connect_agent_to(self, target_id: str):
-        edge = {"from": "agent-hub", "to": target_id, "label": "фактическое обращение"}
+        edge = {"from": "agent-hub", "to": target_id, "label": "observed interaction"}
         if edge not in self.edges:
             self.edges.append(edge)
 
@@ -267,11 +267,11 @@ class GraphState:
             self.mode = str(event.get("mode", ""))
             self.project_spec = str(event.get("project_spec", ""))
             self.attachments = [str(item) for item in event.get("attachments", []) if str(item).strip()]
-            self.prompt_blocks = [{"id": "request_prompt", "kind": "prompt", "label": "Промпт проекта",
+            self.prompt_blocks = [{"id": "request_prompt", "kind": "prompt", "label": "Project prompt",
                                    "text": self.prompt}]
             project_spec = str(event.get("project_spec", "")).strip()
             if project_spec:
-                self.prompt_blocks.append({"id": "project_spec", "kind": "spec", "label": "Закреплённое ТЗ проекта",
+                self.prompt_blocks.append({"id": "project_spec", "kind": "spec", "label": "Project specification",
                                            "text": project_spec})
             comments = event.get("comments", [])
             if isinstance(comments, list):
@@ -281,14 +281,14 @@ class GraphState:
                     text = str(comment.get("text", "")).strip()
                     if text:
                         self.prompt_blocks.append({"id": str(comment.get("id") or f"comment_{index}"),
-                                                   "kind": "comment", "label": str(comment.get("label") or f"Комментарий {index}"),
+                                                   "kind": "comment", "label": str(comment.get("label") or f"Refinement comment {index}"),
                                                    "text": text, "region": str(comment.get("region", ""))})
             self.orchestrator_phase = "running"
             self.orchestrator_action = "Agent started the request"
             sources = [block["id"] for block in self.prompt_blocks]
             for source_id in sources:
-                self.edges.append({"from": source_id, "to": "agent-hub", "label": "поступило агенту"})
-            self._record_step(event, "Запрос получен Agent; маршрут начат.")
+                self.edges.append({"from": source_id, "to": "agent-hub", "label": "request input"})
+            self._record_step(event, "Request received by the agent; route started.")
             self._persist_run("running")
             return self.get_snapshot()
 
@@ -330,7 +330,7 @@ class GraphState:
             self.orchestrator_action = description
         elif event_type in {"TOOL_CALL_START", "TOOL_CALL_END", "SANDBOX_CHECK"}:
             candidate = target or str(event.get("path") or event.get("file_path") or event.get("input") or event.get("query", ""))
-            node = self._ensure_tool(tool_name or candidate or "Инструмент", event.get("node_id"))
+            node = self._ensure_tool(tool_name or candidate or "Tool", event.get("node_id"))
             document = self._find_document(candidate) or self._document_from_input(event.get("input", ""))
             is_start = event_type == "TOOL_CALL_START" and str(event.get("status", "")).lower() not in {"ok", "success", "pass", "error", "failed"}
             success_raw = event.get("success", str(event.get("status", "ok")).lower() not in {"error", "failed", "failure"})
@@ -343,9 +343,9 @@ class GraphState:
             self._connect_agent_to(node["id"])
             if document:
                 document["status"] = "active" if is_start else ("hit" if success else "error")
-                document["reason"] = f"Обращение через инструмент {tool_name or node['label']}"
+                document["reason"] = f"Access through tool {tool_name or node['label']}"
                 document["payload"] = node["payload"]
-                doc_edge = {"from": node["id"], "to": document["id"], "label": "файл вызова"}
+                doc_edge = {"from": node["id"], "to": document["id"], "label": "call file"}
                 if doc_edge not in self.edges: self.edges.append(doc_edge)
                 self.latest_resource_id = document["id"]
             description = ("Tool call · " if is_start else "Tool result · ") + (tool_name or node["label"])
@@ -362,19 +362,19 @@ class GraphState:
                 if node.get("status") == "active": node["status"] = "observed"
             result_id = "run_result"
             self.nodes[result_id] = {"id": result_id, "label": "Agent result", "category": "result",
-                                     "group": "Результат запуска", "kind": "result",
+                                     "group": "Run result", "kind": "result",
                                      "description": "Final response delivered by the agent.",
                                      "status": "waiting" if waiting else ("hit" if success else "error"), "reason": "",
                                      "payload": str(event.get("result", event.get("payload_preview", "")))[:1200], "duration_ms": 0.0}
             if self.latest_resource_id:
-                self.edges.append({"from": self.latest_resource_id, "to": result_id, "label": "результат"})
+                self.edges.append({"from": self.latest_resource_id, "to": result_id, "label": "result"})
             else:
-                self.edges.append({"from": "request_prompt", "to": result_id, "label": "результат"})
+                self.edges.append({"from": "request_prompt", "to": result_id, "label": "result"})
             self.orchestrator_phase = "waiting" if waiting else ("complete" if success else "error")
             self.orchestrator_action = "Waiting for user input" if waiting else ("Result delivered" if success else "Generation failed")
             description = str(event.get("result", event.get("payload_preview", self.orchestrator_action)))[:1200]
         else:
-            raise ValueError(f"Неизвестный тип события: {event_type or 'пусто'}")
+            raise ValueError(f"Unknown event type: {event_type or 'empty'}")
 
         self._record_step(event, description)
         if event_type == "GENERATION_END":
@@ -634,7 +634,7 @@ def trace_knowledge_node(node_id: str):
                 "type": "TOOL_CALL_START",
                 "node_id": node_id,
                 "tool": func.__name__,
-                "reason": "Вызвана Python-функция",
+                "reason": "Python function called",
                 "query": query_str[:250]
             })
 
@@ -663,7 +663,7 @@ def trace_knowledge_node(node_id: str):
                     "output": str(output)[:400] if output else "",
                     "rows": rows,
                     "duration_ms": duration_ms,
-                    "reason": "Python-функция завершилась"
+                    "reason": "Python function completed"
                 })
 
         return wrapper

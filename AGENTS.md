@@ -1,19 +1,19 @@
 # Agent Observer
 
-## Граф и команды
+## Graph and commands
 
-Граф состоит из запроса и уточнений, агента с журналом, документов knowledge-базы, инструментов и служб, команд, рабочих файлов и результата. Стрелки показывают зафиксированные обращения; история позволяет пройти маршрут по шагам, счётчики показывают токены.
+The graph contains the request and refinements, an agent with its activity log, knowledge-base documents, tools and services, commands, working files, and the result. Arrows show recorded interactions; history provides step-by-step replay, and counters show token usage.
 
-- `glob`, `grep` — поиск файлов и текста.
-- `read`, `read_image` — чтение документов и просмотр изображений.
-- `write`, `edit`, `apply_patch` — создание и изменение файлов.
-- `bash` — запуск команд. Другие типы появляются после события вызова.
+- `glob`, `grep` — find files and search text.
+- `read`, `read_image` — read documents and inspect images.
+- `write`, `edit`, `apply_patch` — create and modify files.
+- `bash` — run shell commands. Other command types appear after a recorded call.
 
-Граф наблюдает действия агента, сам команды не выполняет. Подключайте события по [примеру Python](examples/instrumented_agent.py); наличие файла в каталоге не означает его чтение.
+The graph observes the agent's actions; it does not execute commands. Connect events using the [Python example](examples/instrumented_agent.py). A file in the catalog is not evidence that it was read.
 
-## Установка и запуск
+## Installation and startup
 
-Из корня скачанного репозитория (Python 3.10+):
+From the downloaded repository root (Python 3.10+):
 
 ```bash
 python3 -m venv .venv
@@ -21,21 +21,21 @@ python3 -m venv .venv
 .venv/bin/python observer.py run
 ```
 
-Откройте http://127.0.0.1:8766/. Для тестового цикла во втором терминале запустите `.venv/bin/python examples/replay_demo.py`.
+Open http://127.0.0.1:8766/. To replay the test workflow, run `.venv/bin/python examples/replay_demo.py` in a second terminal.
 
-Для своего проекта:
+For your own project:
 
 ```bash
 .venv/bin/python observer.py install "/path/to/project"
 .venv/bin/python observer.py run --config "/path/to/project/.agent-observer/config/observer.project.json"
 ```
 
-Адрес установленного графа по умолчанию — http://127.0.0.1:8765/. Документы и инструменты задаются в конфигурации установки; доставка событий требует подключения агента.
+The installed graph defaults to http://127.0.0.1:8765/. Configure documents and tools in the installation's configuration file; event delivery requires integrating the agent.
 
-## Правила изменений
+## Change rules
 
-- Общий исходник: `observer.py` и `src/agent_observer/`; в установленной копии путь к нему указан в `observer.install.json`. Общие изменения вносите в исходник.
-- После правок запускайте `python observer.py sync` и `python observer.py status`. Изменения установленных файлов сначала объединяйте с исходником; не перезаписывайте их принудительно.
-- Корень: `README.md`, `AGENTS.md`, `observer.py`. Код — в `src`, настройки — в `config`, документация — в `docs`, примеры — в `examples`, адаптеры — в `integrations`, локальные данные — в `var`. Секреты и историю не публикуйте.
-- Сохраняйте CAD-аутентификацию, пути истории и совместимые точки запуска. Интерфейс — на английском; пользовательский текст сохраняет свой язык. Не приписывайте агенту скрытые рассуждения или неподтверждённые действия.
-- Используйте `rtk` для команд терминала, если он доступен.
+- Canonical source: `observer.py` and `src/agent_observer/`. An installed copy records its source in `observer.install.json`. Make shared changes in the canonical source.
+- After changes, run `python observer.py sync` and `python observer.py status`. Merge installed local edits into the source first; never overwrite them forcibly.
+- Keep the root limited to `README.md`, `AGENTS.md`, and `observer.py`. Code belongs in `src`, configuration in `config`, documentation in `docs`, examples in `examples`, adapters in `integrations`, and local data in `var`. Never publish secrets or histories.
+- Preserve CAD authentication, history locations, and compatibility launchers. UI text is English; user text keeps its original language. Never infer private reasoning or unobserved actions.
+- Use `rtk` for terminal commands when available.
