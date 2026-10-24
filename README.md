@@ -16,9 +16,12 @@ docs/knowledge/
 ├── ContentStrategy.md
 ├── Audience.md
 ├── Decisions.md
-├── ideas/ContentIdeas.md
-├── publication/PublicationQueue.md
-└── analytics/Performance.md
+├── ideas/
+│   └── ContentIdeas.md
+├── publication/
+│   └── PublicationQueue.md
+└── analytics/
+    └── Performance.md
 ```
 
 Установка, запуск и настройка описаны в [руководстве](docs/USAGE.md). Для подключения своего агента используйте [промпт внедрения](docs/prompts/INTEGRATE.md).
