@@ -36,11 +36,11 @@ Use the header's **Agent connections** button. Save or pin the project folder, t
 ## Command Observation & Unification
 
 Observer visualizes command execution and tool calls for both project agents and Codex:
-– `read` (file reading, internal URIs, and resource loading)
-– `write` (file creation and atomic replacement)
-– `edit` / `patch` (content patching and modifications)
-– `bash` / `shell` (terminal commands and script execution)
-– `search` / `grep` (content pattern search)
-– `glob` (file and directory discovery)
-– `image` (visual inspection and dimensions)
-– and more depending on connected tools, MCP servers, or agent skills. Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
+- `read` (file reading, internal URIs, and resource loading)
+- `write` (file creation and atomic replacement)
+- `edit` / `patch` (content patching and modifications)
+- `bash` / `shell` (terminal commands and script execution)
+- `search` / `grep` (content pattern search)
+- `glob` (file and directory discovery)
+- `image` (visual inspection and dimensions)
+- and more depending on connected tools, MCP servers, or agent skills. Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
