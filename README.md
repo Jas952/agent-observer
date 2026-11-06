@@ -26,37 +26,21 @@ docs/knowledge/
 
 See [AGENTS.md](AGENTS.md) for installation, startup, and configuration.
 
-For OMP, run `.venv/bin/python observer.py connect-omp "/path/to/project"` from this repository, then start a new OMP session. The [block settings and runtime inventory guide](docs/README.md#project-level-block-defaults) explains connection evidence, RTK highlighting, and List/Grid/Free resource layouts.
-
 ## Connect Codex & Project Agents
 
 Use the header's **Agent connections** button. Save or pin the project folder, then connect one of two modules:
 
-- **Project agent**: Connects to the project's own agent (such as CAD Studio built on DeepSeek Harness / HarnessBridge, or OMP). Its model, router, and authentication stay entirely within that agent.
+- **Project agent**: Connects to the project's own agent. Its model, router, and authentication stay entirely within that agent.
 - **Codex Desktop / CLI**: Reads that folder's existing Codex session journals. Continue working in the normal application or CLI; Observer does not launch a replacement Codex.
 
 ## Command Observation & Unification
 
-Observer visualizes command execution and tool calls for both project agents (including Harness-based CAD agents) and Codex:
-- Unified operational categories for distinct underlying command sets:
-  – `read` (file reading, internal URIs, and resource loading)
-  – `write` (file creation and atomic replacement)
-  – `edit` / `patch` (content patching and modifications)
-  – `bash` / `shell` (terminal commands and script execution)
-  – `search` / `grep` (content pattern search)
-  – `glob` (file and directory discovery)
-  – `image` (visual inspection and dimensions)
-  – and more depending on connected tools, MCP servers, or agent skills.
-- Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
-
-Manual setup and launch:
-
-```bash
-.venv/bin/python observer.py connect "/path/to/project" --module codex
-# Or an existing project agent:
-.venv/bin/python observer.py connect "/path/to/project" --module project
-```
-
-Add `--no-run` to configure without starting a graph. Switching folders opens the verified graph for that project in the same window; histories and settings remain project-local.
-
-Desktop journals provide recorded tool completions, explicit file paths, public responses and token reports—not a guaranteed instantaneous tool-start stream. Attachment starts at the current journal position; **Load latest recorded turn** explicitly imports history. See the [connection and capture guide](docs/README.md#codex-installation-and-capture) for limits and the optional full-stream CLI relay.
+Observer visualizes command execution and tool calls for both project agents and Codex:
+– `read` (file reading, internal URIs, and resource loading)
+– `write` (file creation and atomic replacement)
+– `edit` / `patch` (content patching and modifications)
+– `bash` / `shell` (terminal commands and script execution)
+– `search` / `grep` (content pattern search)
+– `glob` (file and directory discovery)
+– `image` (visual inspection and dimensions)
+– and more depending on connected tools, MCP servers, or agent skills. Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
