@@ -46,6 +46,8 @@ Observer visualizes command execution and tool calls for both project agents (in
   – `search` / `grep` (content pattern search)
   – `glob` (file and directory discovery)
   – `image` (visual inspection and dimensions)
+  – and more depending on connected tools, MCP servers, or agent skills.
+- Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
 
 Manual setup and launch:
 
