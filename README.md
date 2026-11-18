@@ -8,12 +8,13 @@ An interactive graph that helps you track how an AI agent works, from the initia
 
 ## Features
 
-– Connect Codex Desktop, Codex CLI, OMP, and agents embedded in a project.
-– Group sessions by project and switch between projects.
-– Explore the activity history and review the recorded execution path step by step.
-View documents, Obsidian knowledge bases, tools, MCP servers, agent skills, and third-party memory systems.
-– Inspect working files, results, errors, and token usage, distinguishing estimates from provider-reported data. The agent log includes /commands, /model, and /session tabs with information about commands, the model, and the current session when the connected agent provides it. Calls to read, edit, bash, and other tools are displayed with their arguments, status, and results. These tabs do not execute commands.
-– Access a terminal for each project folder, with tabs for project-related processes. Examples include a web server started with npm run dev and available at http://localhost:3000, or a local Hindsight memory API if its association with the folder has been confirmed. Each process displays its launch command, working directory, port, and available logs.
+- Connect Codex Desktop, Codex CLI, OMP, and agents embedded in a project.
+- Group sessions by project and switch between projects.
+- Explore the activity history and review the recorded execution path step by step.
+- View documents, Obsidian knowledge bases, tools, MCP servers, agent skills, and third-party memory systems.
+- Inspect working files, results, errors, and token usage, distinguishing estimates from provider-reported data.
+- Explore `/commands`, `/model`, and `/session` tabs in the agent log when the connected agent provides this information. Tool calls such as `read`, `edit`, and `bash` are displayed with their arguments, status, and results.
+- Access a terminal for each project folder, with tabs for project-related processes. Each process displays its launch command, working directory, port, and available logs.
 
 <p align="center">
   <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="48%" alt="Agent connections"></a>
