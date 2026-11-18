@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/observer-title-light.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/observer-flow-light.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/observer-icons-light.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии">
+  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии">
 </div>
 
 <p align="center">
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/graph-overview-light.png" width="100%" alt="Интерфейс Agent Observer: граф сессии, документы, команды и инструменты">
+  <img src="docs/assets/graph-overview.png" width="100%" alt="Интерфейс Agent Observer: граф сессии, документы, команды и инструменты">
 </p>
 
 Интерактивный граф, который помогает следить за работой ИИ-агента: от запроса до результата. На нём видны зарегистрированные действия, инструменты, документы и рабочие файлы.
