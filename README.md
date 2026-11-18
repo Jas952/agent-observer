@@ -130,7 +130,7 @@ Open **http://localhost:8766/**. in your Windows browser. Run the project, agent
 <img src="docs/assets-github/telegram-titlebar.svg" alt="Telegram Workflow title bar" />
 
 <p>
-  <img src="./n1.gif" alt="Project Demo" width="92" height="92" align="left"/>
+  <img src="docs/assets-github/n1.gif" alt="Project Demo" width="92" height="92" align="left"/>
 </p>
 <pre hspace="12">
   <img src="docs/assets-github/contacts/tg.jpg" alt="Telegram" height="14" /> Telegram ······ <a href="https://t.me/Jas953/">t.me/Jas953</a>
