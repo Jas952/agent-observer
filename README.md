@@ -126,9 +126,6 @@ Open **http://localhost:8766/**. in your Windows browser. Run the project, agent
 > [!NOTE]
 > Windows support via WSL2 is currently experimental. If you encounter any issues during installation or launch, please [open an issue](https://github.com/Jas952/agent-observer/issues/new) with a description of the problem and relevant error logs.
 
-
-<img src="docs/assets-github/telegram-titlebar.svg" alt="Telegram Workflow title bar" />
-
 <p>
   <img src="docs/assets-github/n1.gif" alt="Project Demo" width="92" height="92" align="left"/>
 </p>
