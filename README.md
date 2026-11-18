@@ -1,17 +1,9 @@
 <div align="center">
-  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии">
+  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии"><a href="#возможности"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Возможности"></a><a href="#детали-интерфейса"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Интерфейс"></a><a href="#подключение"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Подключение"></a><a href="#база-знаний-obsidian"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="База знаний"></a><a href="AGENTS.md"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Установка"></a>
 </div>
 
 <p align="center">
-  <a href="#возможности">Возможности</a> ·
-  <a href="#детали-интерфейса">Интерфейс</a> ·
-  <a href="#подключение">Подключение</a> ·
-  <a href="#база-знаний-obsidian">База знаний</a> ·
-  <a href="AGENTS.md">Установка</a>
-</p>
-
-<p align="center">
-  <img src="docs/assets/graph-overview.png" width="100%" alt="Интерфейс Agent Observer: граф сессии, документы, команды и инструменты">
+  <img src="docs/assets/graph-overview-original.png" width="100%" alt="Интерфейс Agent Observer: граф сессии, документы, команды и инструменты">
 </p>
 
 Интерактивный граф, который помогает следить за работой ИИ-агента: от запроса до результата. На нём видны зарегистрированные действия, инструменты, документы и рабочие файлы.
