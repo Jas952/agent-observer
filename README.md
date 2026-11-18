@@ -17,14 +17,11 @@
 - Рабочие файлы, результат, ошибки и расход токенов с разделением оценок и данных провайдера. В журнале агента доступны вкладки `/commands`, `/model` и `/session`: сведения о командах, модели и текущей сессии, если их передаёт подключённый агент. Вызовы `read`, `edit`, `bash` и других инструментов показываются с аргументами, статусом и результатом; вкладки не запускают команды.
 - Терминал для каждой папки с вкладками процессов, связанных с проектом. Например, сервер сайта, запущенный через `npm run dev` и доступный по адресу `http://localhost:3000`, или локальный API памяти Hindsight, если подтверждена его связь с этой папкой. Для процесса видны команда запуска, рабочая папка, порт и доступные журналы.
 
-## Детали интерфейса
-
 <p align="center">
   <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="31%" alt="Подключение агентов"></a>
   &nbsp;
   <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel-preview.png" width="31%" alt="Команды и вызовы"></a>
   &nbsp;
-  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map-preview.png" width="31%" alt="Документы и связи"></a>
 </p>
 
 ## Подключение
@@ -43,6 +40,8 @@
 
 Граф показывает документы проекта и связанные заметки Obsidian. Например, база для контентного проекта может выглядеть так:
 
+  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map-preview.png" width="31%" alt="Документы и связи"></a>
+
 ```text
 docs/knowledge/
 ├── ContentStrategy.md      # стратегия
@@ -59,6 +58,7 @@ docs/knowledge/
 └── analytics/
     └── Performance.md      # результаты
 ```
+
 
 Это пример, а не обязательная структура: можно подключить собственные папки и заметки. Файлы, к которым агент действительно обратился, выделяются на графе.
 
