@@ -1,7 +1,5 @@
 <div align="center">
-  <img src="docs/assets/observer-title-light.svg" width="100%" alt="Agent Observer — граф работы ИИ-агента">
-  <img src="docs/assets/observer-flow-light.gif" width="100%" alt="Анимированные связи агента с его ресурсами">
-  <img src="docs/assets/observer-icons-light.svg" width="100%" alt="Команды, память, MCP, документы, статистика и сессии">
+  <img src="docs/assets/observer-title-light.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/observer-flow-light.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/observer-icons-light.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии">
 </div>
 
 <p align="center">
