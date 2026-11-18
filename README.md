@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии"><a href="#возможности"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Возможности"></a><a href="#детали-интерфейса"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Интерфейс"></a><a href="#подключение"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Подключение"></a><a href="#база-знаний-obsidian"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="База знаний"></a><a href="#установка"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Установка"></a>
+  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии"><a href="#возможности"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Возможности"></a><a href="#возможности"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Интерфейс"></a><a href="#подключение"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Подключение"></a><a href="#база-знаний-obsidian"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="База знаний"></a><a href="#установка"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Установка"></a>
 </div>
 
 <p align="center">
@@ -18,10 +18,9 @@
 - Терминал для каждой папки с вкладками процессов, связанных с проектом. Например, сервер сайта, запущенный через `npm run dev` и доступный по адресу `http://localhost:3000`, или локальный API памяти Hindsight, если подтверждена его связь с этой папкой. Для процесса видны команда запуска, рабочая папка, порт и доступные журналы.
 
 <p align="center">
-  <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="31%" alt="Подключение агентов"></a>
+  <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="48%" alt="Подключение агентов"></a>
   &nbsp;
-  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel-preview.png" width="31%" alt="Команды и вызовы"></a>
-  &nbsp;
+  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel-preview.png" width="48%" alt="Команды и вызовы"></a>
 </p>
 
 ## Подключение
@@ -38,9 +37,9 @@
 
 ## База знаний Obsidian
 
-Граф показывает документы проекта и связанные заметки Obsidian. Например, база для контентного проекта может выглядеть так:
+Obsidian позволяет хранить заметки проекта в файлах Markdown и связывать их между собой. В такой базе можно собирать решения, требования, источники и другую информацию, к которой агент сможет обращаться при работе.
 
-  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map-preview.png" width="31%" alt="Документы и связи"></a>
+Подробнее о программе — на [сайте Obsidian](https://obsidian.md/) и в [официальной документации](https://obsidian.md/help/). Ниже — пример базы для контентного проекта:
 
 ```text
 docs/knowledge/
@@ -59,8 +58,25 @@ docs/knowledge/
     └── Performance.md      # результаты
 ```
 
+Это пример, а не обязательная структура: можно подключить собственные папки и заметки.
 
-Это пример, а не обязательная структура: можно подключить собственные папки и заметки. Файлы, к которым агент действительно обратился, выделяются на графе.
+Если в инструкциях проекта настроена работа с базой, агент читает подходящие заметки перед задачей и самостоятельно дополняет их подтверждёнными сведениями по мере работы. Obsidian помогает просматривать и связывать эти заметки, а Observer показывает их структуру и выделяет зафиксированные обращения агента. Сам по себе граф не создаёт и не обновляет память.
+
+<p align="center">
+  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map.png" width="75%" alt="Карта документов и связей Obsidian"></a><br>
+  <sub>Документы и связи между ними</sub>
+</p>
+
+## Другие системы памяти
+
+Кроме заметок проекта, агент может использовать отдельную память для сохранения и поиска опыта между сессиями. Например, в OMP доступны:
+
+- **Hindsight** — память с поиском по сохранённым сведениям через отдельный сервис.
+- **Mnemopi** — локальная память на базе SQLite.
+- **Local summaries** — локальные сводки и уроки по проекту.
+- **Sharpshooter** — файлы с решениями по архитектуре, продукту и стилю.
+
+Observer показывает обнаруженные и настроенные системы памяти, их доступность и обращения, если они зафиксированы. Наличие системы в списке не означает, что агент использовал её в текущей сессии; доступные возможности зависят от агента и его настроек.
 
 ## Установка
 
