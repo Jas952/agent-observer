@@ -1,94 +1,94 @@
 <div align="center">
-  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — граф работы ИИ-агента"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Анимированные связи агента с его ресурсами"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Команды, память, MCP, документы, статистика и сессии"><a href="#возможности"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Возможности"></a><a href="#возможности"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Интерфейс"></a><a href="#подключение"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Подключение"></a><a href="#база-знаний-obsidian"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="База знаний"></a><a href="#установка"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Установка"></a>
+  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — AI agent activity graph"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Animated connections between the agent and its resources"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Commands, memory, MCP, documents, analytics, and sessions"><a href="#features"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Features"></a><a href="#features"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Interface"></a><a href="#connecting-agents"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Connecting agents"></a><a href="#obsidian-knowledge-base"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="Knowledge base"></a><a href="#installation"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Installation"></a>
 </div>
 
 <p align="center">
-  <img src="docs/assets/graph-overview-original.png" width="100%" alt="Интерфейс Agent Observer: граф сессии, документы, команды и инструменты">
+  <img src="docs/assets/graph-overview-original.png" width="100%" alt="Agent Observer interface: session graph, documents, commands, and tools">
 </p>
 
-Интерактивный граф, который помогает следить за работой ИИ-агента: от запроса до результата. На нём видны зарегистрированные действия, инструменты, документы и рабочие файлы.
+An interactive graph that helps you track how an AI agent works, from the initial request to the final result. It visualizes recorded actions, tools, documents, and working files.
 
-## Возможности
+## Features
 
-- Подключение Codex Desktop, Codex CLI, OMP и агента, встроенного в проект.
-- Группировка сессий по проектам, между которыми можно переключаться. 
-- История действий и пошаговый просмотр записанного маршрута.
-- Документы и база знаний Obsidian, инструменты, MCP-серверы, навыки агента, сторонние системы памяти. 
-- Рабочие файлы, результат, ошибки и расход токенов с разделением оценок и данных провайдера. В журнале агента доступны вкладки `/commands`, `/model` и `/session`: сведения о командах, модели и текущей сессии, если их передаёт подключённый агент. Вызовы `read`, `edit`, `bash` и других инструментов показываются с аргументами, статусом и результатом; вкладки не запускают команды.
-- Терминал для каждой папки с вкладками процессов, связанных с проектом. Например, сервер сайта, запущенный через `npm run dev` и доступный по адресу `http://localhost:3000`, или локальный API памяти Hindsight, если подтверждена его связь с этой папкой. Для процесса видны команда запуска, рабочая папка, порт и доступные журналы.
+– Connect Codex Desktop, Codex CLI, OMP, and agents embedded in a project.
+– Group sessions by project and switch between projects.
+– Explore the activity history and review the recorded execution path step by step.
+View documents, Obsidian knowledge bases, tools, MCP servers, agent skills, and third-party memory systems.
+– Inspect working files, results, errors, and token usage, distinguishing estimates from provider-reported data. The agent log includes /commands, /model, and /session tabs with information about commands, the model, and the current session when the connected agent provides it. Calls to read, edit, bash, and other tools are displayed with their arguments, status, and results. These tabs do not execute commands.
+– Access a terminal for each project folder, with tabs for project-related processes. Examples include a web server started with npm run dev and available at http://localhost:3000, or a local Hindsight memory API if its association with the folder has been confirmed. Each process displays its launch command, working directory, port, and available logs.
 
 <p align="center">
-  <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="48%" alt="Подключение агентов"></a>
+  <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections-preview.png" width="48%" alt="Agent connections"></a>
   &nbsp;
-  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel-preview.png" width="48%" alt="Команды и вызовы"></a>
+  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel-preview.png" width="48%" alt="Commands and tool calls"></a>
 </p>
 
-## Подключение
+## Connecting Agents
 
-1. Откройте **Agent connections** — подключение агентов.
-2. Выберите папку проекта и тип агента.
-3. Запустите анализ папки и после его завершения создайте граф.
-4. Выберите нужную сессию в списке слева.
+1. Open Agent connections.
+2. Select the project folder and agent type.
+3. Start the folder analysis and create a graph once the analysis is complete.
+4. Select the desired session from the list on the left.
 
-Команды установки приведены [ниже](#установка), дополнительные инструкции — в [AGENTS.md](AGENTS.md).
+Installation commands are provided [below](#Installation), with additional instructions in — в [AGENTS.md](AGENTS.md).
 
 > [!NOTE]
-> Подключение агентов пока в бета-тестировании: не все варианты интеграции изучены и проверены, поэтому работа в каждом окружении не гарантируется. Если возникнут проблемы, попросите своего ИИ-агента помочь с подключением, передав ему инструкции из `AGENTS.md` и текст ошибки.
+> Agent connections are currently in beta. Not all integration scenarios have been explored and tested, so compatibility with every environment cannot be guaranteed. If you encounter any issues, ask your AI agent to help with the setup by providing the instructions from `AGENTS.md` and the error message.
 
-## База знаний Obsidian
+## Obsidian Knowledge Base
 
-Obsidian позволяет хранить заметки проекта в файлах Markdown и связывать их между собой. В такой базе можно собирать решения, требования, источники и другую информацию, к которой агент сможет обращаться при работе.
+Obsidian lets you store project notes as Markdown files and link them together. A knowledge base can contain decisions, requirements, sources, and other information that the agent can reference while working.
 
-Подробнее о программе — на [сайте Obsidian](https://obsidian.md/) и в [официальной документации](https://obsidian.md/help/). Ниже — пример базы для контентного проекта:
+Learn more on the [Obsidian website](https://obsidian.md/) and in [official documentation](https://obsidian.md/help/). Below is an example of a knowledge base for a content project:
 
 ```text
 docs/knowledge/
-├── ContentStrategy.md      # стратегия
-├── Audience.md             # аудитория
-├── VoiceAndStyle.md        # стиль
-├── Channels.md             # площадки
-├── Sources.md              # источники
-├── EditorialWorkflow.md    # порядок работы
-├── Decisions.md            # решения
+├── ContentStrategy.md      
+├── Audience.md             
+├── VoiceAndStyle.md        
+├── Channels.md             
+├── Sources.md             
+├── EditorialWorkflow.md    
+├── Decisions.md            
 ├── ideas/
-│   └── ContentIdeas.md     # идеи
+│   └── ContentIdeas.md    
 ├── publication/
-│   └── PublicationQueue.md # очередь публикаций
+│   └── PublicationQueue.md 
 └── analytics/
-    └── Performance.md      # результаты
+    └── Performance.md    
 ```
 
-Это пример, а не обязательная структура: можно подключить собственные папки и заметки.
+his is an example, not a required structure. You can connect your own folders and notes.
 
-Если в инструкциях проекта настроена работа с базой, агент читает подходящие заметки перед задачей и самостоятельно дополняет их подтверждёнными сведениями по мере работы. Obsidian помогает просматривать и связывать эти заметки, а Observer показывает их структуру и выделяет зафиксированные обращения агента. Сам по себе граф не создаёт и не обновляет память.
+If the project instructions define how to work with the knowledge base, the agent reads relevant notes before starting a task and updates them with verified information as it works. Obsidian helps you browse and link these notes, while Observer visualizes their structure and highlights recorded accesses by the agent. The graph itself does not create or update memory.
 
 <p align="center">
-  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map.png" width="75%" alt="Карта документов и связей Obsidian"></a><br>
-  <sub>Документы и связи между ними</sub>
+  <a href="docs/assets/document-map.png"><img src="docs/assets/document-map.png" width="75%" alt="Map of Obsidian documents and their connections"></a><br>
+  <sub>Documents and the connections between them</sub>
 </p>
 
-## Другие системы памяти
+## Other Memory Systems
 
-Кроме заметок проекта, агент может использовать отдельную память для сохранения и поиска опыта между сессиями. Например, в OMP доступны:
+In addition to project notes, an agent can use dedicated memory systems to store and retrieve knowledge and experience across sessions. For example, OMP supports:
 
-- **Hindsight** — память с поиском по сохранённым сведениям через отдельный сервис.
-- **Mnemopi** — локальная память на базе SQLite.
-- **Local summaries** — локальные сводки и уроки по проекту.
-- **Sharpshooter** — файлы с решениями по архитектуре, продукту и стилю.
+- **Hindsight** — a memory system that retrieves stored information through a separate service.
+- **Mnemopi** — local memory powered by SQLite.
+- **Local summaries** — local summaries and lessons learned throughout the project.
+- **Sharpshooter** — files containing architecture, product, and style decisions.
+  
+Observer displays detected and configured memory systems, their availability, and recorded access events. A system appearing in the list does not mean the agent used it in the current session. Available capabilities depend on the agent and its configuration.
 
-Observer показывает обнаруженные и настроенные системы памяти, их доступность и обращения, если они зафиксированы. Наличие системы в списке не означает, что агент использовал её в текущей сессии; доступные возможности зависят от агента и его настроек.
+## Installation
 
-## Установка
-
-**Требуется:**
+**Requirements:**
 
 - **Git**
-- **Python 3.10 или новее**
-- **Codex или OMP** — для подключения агента
+- **Python 3.10 or later**
+- **Codex или OMP** — to connect an agent
 
 ### macOS
 
-При необходимости установите зависимости через Homebrew: `brew install python git`. Затем в Терминале:
+If needed, install the dependencies using Homebrew: `brew install python git`. ЗThen run the following commands in Terminal::
 
 ```sh
 git clone https://github.com/Jas952/agent-observer.git
@@ -98,19 +98,17 @@ python3 -m venv .venv
 .venv/bin/python observer.py run
 ```
 
-Откройте в браузере **http://127.0.0.1:8766/**. Для повторного запуска из папки `agent-observer`: `.venv/bin/python observer.py run`.
+Open **http://127.0.0.1:8766/** in your browser. To launch the application again from the `agent-observer` folder, run `.venv/bin/python observer.py run`.
 
 ### Windows — через WSL2
 
-Требуется **WSL2 с Ubuntu**. Прямой запуск в Windows не поддерживается; работа через WSL2 пока не проверена.
-
-В PowerShell от имени администратора:
+**WSL2 с Ubuntu** is required. Run the following command in PowerShell as an administrator:
 
 ```powershell
 wsl --install -d Ubuntu
 ```
 
-При запросе перезагрузите компьютер, откройте Ubuntu и выполните:
+Restart your computer if prompted, open Ubuntu, and run:
 
 ```sh
 sudo apt update
@@ -122,4 +120,7 @@ python3 -m venv .venv
 .venv/bin/python observer.py run
 ```
 
-Откройте в браузере Windows **http://localhost:8766/**. Проект, агента и сервисы запускайте внутри Ubuntu; процессы Windows могут быть недоступны.
+Open **http://localhost:8766/**. in your Windows browser. Run the project, agent, and services inside Ubuntu.
+
+> [!NOTE]
+> Windows support via WSL2 is currently experimental. If you encounter any issues during installation or launch, please [open an issue](https://github.com/Jas952/agent-observer/issues/new) with a description of the problem and relevant error logs.
