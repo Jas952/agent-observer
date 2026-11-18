@@ -15,6 +15,25 @@
 
 Граф показывает записанные события и не выполняет команды повторно. Наличие документа или инструмента в списке ещё не означает, что агент обращался к нему.
 
+## Детали интерфейса
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections.png" alt="Окно подключения агентов Codex и OMP" height="180"></a><br>
+      <sub>Подключение Codex и OMP</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel.png" alt="Панель команд агента со счётчиками вызовов" height="180"></a><br>
+      <sub>Команды и счётчики вызовов</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="docs/assets/document-map.png"><img src="docs/assets/document-map.png" alt="Карта документов и связей Obsidian" height="180"></a><br>
+      <sub>Документы и их связи</sub>
+    </td>
+  </tr>
+</table>
+
 ## Подключение
 
 1. Откройте **Agent connections** — подключение агентов.
