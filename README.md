@@ -1,8 +1,10 @@
 <div align="center">
-  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — AI agent activity graph"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Animated connections between the agent and its resources"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Commands, memory, MCP, documents, analytics, and sessions"><a href="#features"><img src="docs/assets/nav-features.svg" width="20%" align="top" alt="Features"></a><a href="#features"><img src="docs/assets/nav-interface.svg" width="20%" align="top" alt="Interface"></a><a href="#connecting-agents"><img src="docs/assets/nav-connection.svg" width="20%" align="top" alt="Connecting agents"></a><a href="#obsidian-knowledge-base"><img src="docs/assets/nav-knowledge.svg" width="20%" align="top" alt="Knowledge base"></a><a href="#installation"><img src="docs/assets/nav-install.svg" width="20%" align="top" alt="Installation"></a>
-</div><p align="center">
+  <img src="docs/assets/agent-observer-title.svg" width="100%" align="top" alt="Agent Observer — AI agent activity graph"><img src="docs/assets/agent-observer-flow.gif" width="100%" align="top" alt="Animated connections between the agent and its resources"><img src="docs/assets/agent-observer-icons.svg" width="100%" align="top" alt="Commands, memory, MCP, documents, analytics, and sessions"><a href="#features"><img src="docs/assets/nav-features.svg?v=2" width="20%" align="top" alt="Features"></a><a href="#features"><img src="docs/assets/nav-interface.svg?v=2" width="20%" align="top" alt="Interface"></a><a href="#connecting-agents"><img src="docs/assets/nav-connection.svg?v=2" width="20%" align="top" alt="Connecting agents"></a><a href="#obsidian-knowledge-base"><img src="docs/assets/nav-knowledge.svg?v=2" width="20%" align="top" alt="Knowledge base"></a><a href="#installation"><img src="docs/assets/nav-install.svg?v=2" width="20%" align="top" alt="Installation"></a>
+</div>
+
+<p align="center">
   <img src="docs/assets/graph-overview-original.png" width="100%" alt="Agent Observer interface: session graph, documents, commands, and tools">
-</p> 
+</p>
 
 An interactive graph that helps you track how an AI agent works, from the initial request to the final result. It visualizes recorded actions, tools, documents, and working files.
 
