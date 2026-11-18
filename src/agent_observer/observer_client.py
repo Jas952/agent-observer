@@ -8,8 +8,8 @@ from .observer_config import load_settings
 from .xray_auth import load_token
 
 class ObserverClient:
-    def __init__(self, project_root=None, config_file=None, endpoint=None, timeout=0.2, enabled=True):
-        self.settings = load_settings(config_file, project_root)
+    def __init__(self, project_root=None, config_file=None, endpoint=None, timeout=0.2, enabled=True, *, environment=None):
+        self.settings = load_settings(config_file, project_root, environment=environment)
         self.endpoint = endpoint or f"http://127.0.0.1:{self.settings['port']}/api/event"
         from urllib.parse import urlparse
         parsed = urlparse(self.endpoint)
@@ -23,7 +23,7 @@ class ObserverClient:
         try:
             token = load_token(path=self.settings["token_file"])
             body = json.dumps(event, ensure_ascii=False).encode("utf-8")
-            if len(body) > 262144: raise ValueError("Event exceeds 256 KB; send a bounded summary")
+            if len(body) > 8 * 1024 * 1024: raise ValueError("Event exceeds 8 MB; use an explicit artifact path")
             request = urllib.request.Request(self.endpoint, data=body, headers={"Content-Type": "application/json", "X-CAD-Token": token, "X-Agent-Observer-Token": token})
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 ok = response.status == 200
@@ -49,7 +49,7 @@ class ObservedRun:
         return self
 
     def __exit__(self, kind, error, traceback):
-        self.event("GENERATION_END", success=kind is None, status="failed" if kind else "completed", result=(str(error) if error else self.result)[:1200])
+        self.event("GENERATION_END", success=kind is None, status="failed" if kind else "completed", result=str(error) if error else self.result)
         return False
 
     def phase(self, text):
@@ -61,6 +61,10 @@ class ObservedRun:
         if estimated_tokens is not None: fields["estimated_tokens"] = int(estimated_tokens)
         return self.event("KNOWLEDGE_ACCESS", **fields)
 
+    def model(self, reported_model):
+        """Record an identifier returned by the model transport, not an inferred route."""
+        return self.event("MODEL_INFO", model=str(reported_model)[:240])
+
     def usage(self, input_tokens, output_tokens, model_call_id=None):
         return self.event("THINKING", usage_kind="token_usage", input_tokens=int(input_tokens), output_tokens=int(output_tokens), model_call_id=model_call_id)
 
@@ -69,12 +73,12 @@ class ObservedRun:
         call_id, start = str(uuid.uuid4()), time.monotonic()
         try: argument_text = arguments if isinstance(arguments, str) else json.dumps(arguments or {}, ensure_ascii=False, default=str)
         except Exception: argument_text = "[Arguments omitted: not serializable]"
-        self.event("TOOL_CALL_START", tool=name, call_id=call_id, input=argument_text[:4000])
+        self.event("TOOL_CALL_START", tool=name, call_id=call_id, input=argument_text)
         summary = {"result": "Command completed"}
         try:
             yield summary
         except BaseException as error:
-            self.event("TOOL_CALL_END", tool=name, call_id=call_id, success=False, result=str(error)[:1200], duration_ms=(time.monotonic()-start)*1000)
+            self.event("TOOL_CALL_END", tool=name, call_id=call_id, success=False, result=str(error), duration_ms=(time.monotonic()-start)*1000)
             raise
         else:
-            self.event("TOOL_CALL_END", tool=name, call_id=call_id, success=True, result=str(summary.get("result", "Command completed"))[:1200], duration_ms=(time.monotonic()-start)*1000)
+            self.event("TOOL_CALL_END", tool=name, call_id=call_id, success=True, result=summary.get("result", "Command completed"), duration_ms=(time.monotonic()-start)*1000)

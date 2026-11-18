@@ -1,0 +1,4 @@
+.language-toggle{flex:none;font:600 11px/1 var(--mono,monospace);letter-spacing:.02em}
+html[lang="ru"] .connection-button,html[lang="ru"] .graph-settings-button{white-space:normal}
+html[lang="ru"] .graph-settings-name small{text-transform:none}
+@media(max-width:480px){body>header .header-actions :is(.icon-button,#demo-button,#toggle-bottom,#toggle-inspector){width:26px;min-width:26px;max-width:26px;height:28px;flex-basis:26px;padding:4px}body>header .header-actions{gap:2px}body>header .header-actions :is(.tabs,.toolbar){gap:1px;padding-inline:0}.language-toggle{font-size:10px}}

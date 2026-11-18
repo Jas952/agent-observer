@@ -1,0 +1,725 @@
+/* ==========================================================================
+   Observer Activity View Styles
+   Scoped specifically to dialog[data-view="activity"] and activity components
+   ========================================================================== */
+
+/* Compact Dialog Sizing: Scoped strictly to data-view="activity" */
+.resource-dialog[data-view="activity"] {
+  height: min(70vh, 680px) !important;
+  max-height: 70vh !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.resource-dialog[data-view="activity"][data-scope="group"],
+.resource-dialog[data-view="activity"]:not([data-scope="single"]),
+.resource-dialog[data-view="activity"]:has(.activity-group-layout) {
+  width: min(920px, calc(100vw - 32px)) !important;
+}
+
+.resource-dialog[data-view="activity"][data-scope="single"]:not(:has(.activity-group-layout)) {
+  width: min(740px, calc(100vw - 32px)) !important;
+}
+
+/* Ensure #resource-content does not double-scroll when hosting activity view */
+.resource-dialog[data-view="activity"] #resource-content {
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+/* Holder and Root Container */
+.activity-view-holder {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.activity-view-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--panel);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Summary Bar */
+.activity-summary-bar {
+  flex: none;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.activity-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.activity-kind-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.activity-stats {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.activity-decision-note {
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.activity-decision-note[data-decision="bypassed"] {
+  color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 40%, var(--line));
+}
+
+/* Empty State */
+.activity-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  flex: 1;
+}
+
+.activity-empty-icon {
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.activity-empty-state h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* Layouts: Group vs Single */
+.activity-group-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.activity-single-layout {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Chronological Call List (Group scope only) */
+.activity-call-list {
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--panel);
+}
+
+.activity-call-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel2);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s ease;
+  width: 100%;
+}
+
+.activity-call-item:hover {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 6%, var(--panel2));
+}
+
+.activity-call-item.selected {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, var(--panel2));
+  box-shadow: 0 0 0 1px var(--cyan);
+}
+
+.activity-call-item.failed {
+  border-color: color-mix(in srgb, var(--red) 45%, var(--line));
+}
+
+.activity-call-item.failed.selected {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+  background: color-mix(in srgb, var(--red) 12%, var(--panel2));
+}
+
+.activity-call-item:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+.activity-call-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.activity-call-item-num {
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--cyan);
+}
+
+.activity-call-item-tool {
+  font-weight: 600;
+  font-size: 12px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-call-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.activity-call-item-detail {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Detail Pane */
+.activity-detail-pane {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.activity-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Detail Header */
+.activity-detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.activity-detail-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-detail-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.activity-route-line {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cyan);
+  font-family: ui-monospace, monospace;
+}
+
+.activity-purpose {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Status Pills */
+.activity-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.3px;
+  flex: none;
+}
+
+.status-succeeded {
+  background: rgba(66, 213, 161, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(66, 213, 161, 0.35);
+}
+
+.status-failed {
+  background: rgba(255, 105, 126, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(255, 105, 126, 0.35);
+}
+
+.status-in-progress {
+  background: rgba(75, 220, 241, 0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(75, 220, 241, 0.35);
+}
+
+.status-not-recorded {
+  background: rgba(143, 164, 189, 0.15);
+  color: var(--muted);
+  border: 1px solid rgba(143, 164, 189, 0.35);
+}
+
+/* Detail Sections: Input, Execution, Output */
+.activity-section,
+.activity-panel-input,
+.activity-panel-execution,
+.activity-panel-output {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--panel2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  padding-bottom: 8px;
+}
+
+.activity-section-header h5 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+}
+
+.activity-section-badge {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+.activity-sub-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.activity-sub-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-family: ui-monospace, monospace;
+}
+
+/* Pre / Code Blocks */
+.activity-code {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 220px;
+  overflow: auto;
+  margin: 0;
+  color: var(--text);
+}
+
+.activity-not-captured {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--panel) 60%, transparent);
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* RTK Prefix Coloring */
+.rtk-prefix {
+  color: var(--cyan);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--cyan) 50%, transparent);
+}
+
+/* Execution Section Metadata Grid */
+.activity-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.activity-meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.activity-meta-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+}
+
+.activity-meta-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  font-family: ui-monospace, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Output Flow & Destinations */
+.activity-flow-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-recipient-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  width: fit-content;
+  font-size: 12px;
+}
+
+.activity-recipient-badge svg {
+  color: var(--cyan);
+}
+
+/* Chronology Note (Separately and explicitly labelled) */
+.activity-chronology-card {
+  border: 1px solid color-mix(in srgb, var(--amber) 40%, var(--line));
+  border-radius: 7px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--amber) 8%, var(--panel2));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.activity-chronology-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-chronology-pill {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--amber) 25%, transparent);
+  color: var(--amber);
+  border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+}
+
+.activity-chronology-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.activity-chronology-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-btn-step {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.activity-btn-step:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Item List for Referenced / Destination Files */
+.activity-item-list,
+.activity-ref-list,
+.activity-dest-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-item-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+}
+
+.activity-path-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-doc-btn {
+  flex: none;
+  padding: 2px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--cyan);
+  cursor: pointer;
+}
+
+.activity-doc-btn:hover {
+  border-color: var(--cyan);
+  background: var(--panel);
+}
+
+/* Expandable Raw Event Data */
+.activity-raw-details {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel2);
+  padding: 10px 14px;
+}
+
+.activity-raw-details summary {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+.activity-raw-details summary:hover {
+  color: var(--text);
+}
+
+.activity-raw-body {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-raw-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-raw-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+}
+
+/* Light Theme Refinements */
+:root[data-theme="light"] .activity-call-item {
+  background: #f6f9fc;
+  border-color: #c8d5e2;
+  color: #30495f;
+}
+
+:root[data-theme="light"] .activity-call-item:hover {
+  border-color: #438fa7;
+}
+
+:root[data-theme="light"] .activity-call-item.selected {
+  background: #e5f2f7;
+  border-color: #086d8a;
+  box-shadow: 0 0 0 1px #086d8a;
+}
+
+:root[data-theme="light"] .activity-code {
+  background: #f8fafc;
+  border-color: #d1deea;
+  color: #1d3044;
+}
+
+:root[data-theme="light"] .status-succeeded {
+  background: #edf8f2;
+  color: #176b4b;
+  border-color: #83b89f;
+}
+
+:root[data-theme="light"] .status-failed {
+  background: #fff0f3;
+  color: #b63350;
+  border-color: #d191a3;
+}
+
+:root[data-theme="light"] .status-in-progress {
+  background: #edf7fb;
+  color: #087b99;
+  border-color: #8fbdcf;
+}
+
+:root[data-theme="light"] .status-not-recorded {
+  background: #f1f5f9;
+  color: #596c80;
+  border-color: #d3deea;
+}
+
+:root[data-theme="light"] .activity-chronology-card {
+  background: #fff8e9;
+  border-color: #d7c18e;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .resource-dialog[data-view="activity"] {
+    width: calc(100vw - 16px) !important;
+    height: calc(100dvh - 24px) !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+
+  .activity-group-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .activity-call-list {
+    max-height: 180px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .activity-detail-pane,
+  .activity-single-layout {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+}

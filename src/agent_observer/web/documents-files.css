@@ -1,0 +1,827 @@
+/* Observer Documents Files - Single Unified Collapsible Tree View */
+
+.observer-documents-files {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--panel, #0b131e);
+  color: var(--text, #d0e2f2);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+}
+
+.observer-documents-files[hidden] {
+  display: none !important;
+}
+
+/* Toolbar: Header, search, expand/collapse */
+.doc-files-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  height: 38px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line, #20334a);
+  background: var(--panel2, #101a27);
+  flex: none;
+  box-sizing: border-box;
+}
+
+.doc-tree-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: none;
+}
+
+.doc-tree-header-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted, #7e9bb4);
+  white-space: nowrap;
+}
+
+.doc-tree-header-count {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted, #7e9bb4);
+}
+
+.doc-files-search-wrap {
+  flex: 0 1 200px;
+  min-width: 0;
+  max-width: 200px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.doc-files-search {
+  width: 100%;
+  min-width: 0;
+  height: 24px;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--bg, #060b12);
+  border: 1px solid var(--line, #20334a);
+  border-radius: 5px;
+  color: var(--text, #d0e2f2);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.doc-files-search:focus {
+  border-color: var(--cyan, #4bdcf1);
+}
+
+.doc-tree-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.doc-tree-action-btn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted, #7e9bb4);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.doc-tree-action-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text, #d0e2f2);
+  border-color: var(--line, #20334a);
+}
+
+/* Tree Container: Internal vertical scrolling only, never changes outer dimensions */
+.doc-tree-container {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-tree-container:focus-visible {
+  outline: none;
+}
+
+.doc-tree-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-tree-group[hidden] {
+  display: none !important;
+}
+
+/* Tree Rows (Base) */
+/* Tree Rows (Base) - Flat rows without persistent borders, card frame or full-row stripes */
+.doc-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding-right: 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  border: none !important;
+  border-left: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  margin: 0 !important;
+  transition: background 0.1s ease;
+}
+
+.doc-tree-row:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: none !important;
+  border-left: none !important;
+}
+
+.doc-tree-row:focus-visible,
+.doc-tree-row[tabindex="0"]:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Keyboard focus visible on filename and disclosure toggle without full-row frame */
+.doc-tree-row:focus-visible .card-title,
+.doc-tree-row:focus-visible .doc-tree-label,
+.doc-tree-row[tabindex="0"]:focus .card-title,
+.doc-tree-row[tabindex="0"]:focus .doc-tree-label {
+  outline: 2px solid var(--cyan, #4bdcf1);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.doc-tree-folder:focus-visible .doc-tree-toggle,
+.doc-tree-folder[tabindex="0"]:focus .doc-tree-toggle {
+  outline: 2px solid var(--cyan, #4bdcf1);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* Folder Row */
+.doc-tree-folder {
+  color: var(--text, #d0e2f2);
+  font-weight: 500;
+}
+
+.doc-tree-toggle {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-right: 0;
+  background: transparent;
+  border: none;
+  color: var(--muted, #7e9bb4);
+  cursor: pointer;
+  flex: none;
+}
+
+.doc-tree-toggle:hover {
+  color: var(--text, #d0e2f2);
+}
+
+.doc-tree-chevron {
+  transition: transform 0.15s ease;
+}
+
+.doc-tree-folder[aria-expanded="true"] .doc-tree-chevron {
+  transform: rotate(90deg);
+}
+
+.doc-tree-icon {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--muted, #7e9bb4);
+  flex: none;
+}
+
+.doc-tree-folder:hover .doc-tree-icon {
+  color: var(--cyan, #4bdcf1);
+}
+
+.doc-tree-folder[aria-expanded="true"] > .doc-tree-icon {
+  color: var(--cyan, #4bdcf1);
+}
+
+.doc-tree-label {
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+}
+
+/* Finder-style leading circular status marker */
+.doc-tree-marker {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  min-height: 7px;
+  max-width: 7px;
+  max-height: 7px;
+  border-radius: 50%;
+  flex: none;
+  box-sizing: border-box;
+  margin: 0 2px;
+  vertical-align: middle;
+  transition: background-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Idle marker: strictly reserves space in indentation gutter, completely transparent */
+.doc-tree-marker.idle,
+.doc-tree-marker:not(.hit):not(.active):not(.error):not(.waiting) {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+/* Semantic status states (Finder colored tags) - Dark Theme */
+.doc-tree-marker.hit {
+  background: var(--green, #42d5a1) !important;
+  box-shadow: 0 0 4px rgba(66, 213, 161, 0.45);
+  opacity: 1 !important;
+}
+
+.doc-tree-marker.active {
+  background: var(--cyan, #4bdcf1) !important;
+  box-shadow: 0 0 4px rgba(75, 220, 241, 0.55);
+  opacity: 1 !important;
+}
+
+.doc-tree-marker.waiting {
+  background: var(--amber, #efc46b) !important;
+  box-shadow: 0 0 4px rgba(239, 196, 107, 0.45);
+  opacity: 1 !important;
+}
+
+.doc-tree-marker.error {
+  background: var(--red, #ff697e) !important;
+  box-shadow: 0 0 4px rgba(255, 105, 126, 0.5);
+  opacity: 1 !important;
+}
+/* Descendant Counts Badge */
+.doc-tree-badge {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  padding: 0 5px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted, #7e9bb4);
+  border: 1px solid var(--line, #20334a);
+  margin-left: auto;
+  flex: none;
+}
+
+.doc-tree-badge.used-badge {
+  background: rgba(66, 213, 161, 0.12);
+  color: var(--green, #42d5a1);
+  border-color: rgba(66, 213, 161, 0.35);
+  font-weight: 600;
+}
+
+/* Folder Status: no border stripe or full-row background; status is conveyed by leading marker & badge */
+.doc-tree-folder,
+.doc-tree-folder.hit,
+.doc-tree-folder.active,
+.doc-tree-folder.waiting,
+.doc-tree-folder.error,
+.doc-tree-folder.has-hidden-activity,
+.doc-tree-folder.has-hidden-activity.hit,
+.doc-tree-folder.has-hidden-activity.active,
+.doc-tree-folder.has-hidden-activity.error,
+.doc-tree-folder.has-hidden-activity.waiting {
+  border-left: none !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.doc-tree-folder:hover,
+.doc-tree-folder.hit:hover,
+.doc-tree-folder.active:hover,
+.doc-tree-folder.waiting:hover,
+.doc-tree-folder.error:hover,
+.doc-tree-folder.has-hidden-activity:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+/* Document File Row: Flattened tree row with no card frame, borders, or semantic backgrounds */
+.doc-tree-file,
+.doc-tree-file.card,
+#documents-container .doc-tree-file,
+#documents-container .doc-tree-file.card,
+#documents-container .card.doc-tree-file {
+  position: relative;
+  min-height: 26px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: var(--text, #d0e2f2);
+  margin: 0 !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  opacity: 1 !important;
+}
+
+.doc-tree-file:hover,
+.doc-tree-file.card:hover,
+#documents-container .doc-tree-file:hover,
+#documents-container .doc-tree-file.card:hover,
+#documents-container .card.doc-tree-file:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+/* Neutralize full-row semantic backgrounds on file rows across all status classes */
+.doc-tree-file.hit,
+.doc-tree-file.active,
+.doc-tree-file.waiting,
+.doc-tree-file.error,
+.doc-tree-file.card.hit,
+.doc-tree-file.card.active,
+.doc-tree-file.card.waiting,
+.doc-tree-file.card.error,
+#documents-container .doc-tree-file.hit,
+#documents-container .doc-tree-file.active,
+#documents-container .doc-tree-file.waiting,
+#documents-container .doc-tree-file.error,
+#documents-container .card.hit,
+#documents-container .card.active,
+#documents-container .card.waiting,
+#documents-container .card.error {
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+.doc-tree-file.hit:hover,
+.doc-tree-file.active:hover,
+.doc-tree-file.waiting:hover,
+.doc-tree-file.error:hover,
+.doc-tree-file.card.hit:hover,
+.doc-tree-file.card.active:hover,
+.doc-tree-file.card.waiting:hover,
+.doc-tree-file.card.error:hover,
+#documents-container .doc-tree-file.hit:hover,
+#documents-container .doc-tree-file.active:hover,
+#documents-container .doc-tree-file.waiting:hover,
+#documents-container .doc-tree-file.error:hover,
+#documents-container .card.hit:hover,
+#documents-container .card.active:hover,
+#documents-container .card.waiting:hover,
+#documents-container .card.error:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: none !important;
+  border-left: none !important;
+}
+
+/* Sequence focus & wire endpoint: isolate to filename & folder label, no full-row outline */
+.observer-documents-files .doc-tree-row.sequence-focus,
+.observer-documents-files .doc-tree-file.sequence-focus,
+.observer-documents-files .card.sequence-focus,
+.observer-documents-files .doc-tree-row.wire-endpoint,
+.observer-documents-files .doc-tree-file.wire-endpoint,
+.observer-documents-files .card.wire-endpoint,
+#documents-container .doc-tree-row.sequence-focus,
+#documents-container .doc-tree-file.sequence-focus,
+#documents-container .card.sequence-focus,
+#documents-container .doc-tree-row.wire-endpoint,
+#documents-container .doc-tree-file.wire-endpoint,
+#documents-container .card.wire-endpoint {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+.observer-documents-files .doc-tree-row.sequence-focus .card-title,
+.observer-documents-files .doc-tree-row.sequence-focus .doc-tree-label,
+#documents-container .doc-tree-row.sequence-focus .card-title,
+#documents-container .doc-tree-row.sequence-focus .doc-tree-label {
+  outline: 2px solid var(--cyan, #4bdcf1);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.observer-documents-files .doc-tree-row.wire-endpoint .card-title,
+.observer-documents-files .doc-tree-row.wire-endpoint .doc-tree-label,
+#documents-container .doc-tree-row.wire-endpoint .card-title,
+#documents-container .doc-tree-row.wire-endpoint .doc-tree-label {
+  outline: 2px solid #86dced !important;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Eliminate breathing card pseudo-element animation */
+.observer-documents-files .doc-tree-row::after,
+.observer-documents-files .doc-tree-file::after,
+.observer-documents-files .card::after,
+#documents-container .doc-tree-row::after,
+#documents-container .doc-tree-file::after,
+#documents-container .card::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+.doc-card-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.doc-file-icon {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: var(--muted, #7e9bb4);
+  flex: none;
+}
+
+.doc-tree-file.card:hover .doc-file-icon {
+  color: var(--cyan, #4bdcf1);
+}
+
+.doc-card-main .card-title {
+  font-size: 11.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-file-count {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  padding: 0 4px;
+  height: 14px;
+  line-height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted, #7e9bb4);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.doc-file-count[hidden] {
+  display: none !important;
+}
+
+:root[data-theme="light"] .doc-file-count {
+  background: #e9eff5;
+  color: #557088;
+}
+
+.doc-tree-file .card-meta,
+.doc-tree-file .call-meta,
+.doc-tree-file .card-status,
+.doc-tree-folder .card-status,
+.doc-tree-row .card-status,
+#documents-container .card-status,
+#documents-container .card-meta,
+#documents-container .call-meta {
+  display: none !important;
+}
+
+/* Card Actions: Edit & Comments */
+.doc-tree-file .document-edit-button {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  color: var(--muted, #7e9bb4);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease;
+  flex: none;
+}
+
+.doc-tree-file:hover .document-edit-button,
+.doc-tree-file:focus-within .document-edit-button {
+  opacity: 1;
+}
+
+.doc-tree-file .document-edit-button:hover {
+  color: var(--cyan, #4bdcf1);
+  background: var(--panel2, #101a27);
+  border-color: var(--line, #20334a);
+}
+
+.doc-tree-file .comment-widget,
+#documents-container .doc-tree-file > .comment-widget {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-left: 2px;
+  position: static !important;
+  bottom: auto !important;
+  right: auto !important;
+}
+
+.doc-tree-file:not(:has(.document-edit-button)) .comment-widget {
+  margin-left: auto;
+}
+
+#documents-container .doc-tree-file:has(> .comment-widget),
+#documents-container .card:has(> .comment-widget) {
+  padding-bottom: 2px !important;
+}
+
+.doc-tree-file .comment-action {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  color: var(--muted, #7e9bb4);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.doc-tree-file:hover .comment-action,
+.doc-tree-file:focus-within .comment-action,
+.doc-tree-file .comment-action.has-notes {
+  opacity: 1;
+}
+
+.doc-tree-file .comment-action:hover {
+  color: var(--cyan, #4bdcf1);
+  background: rgba(75, 220, 241, 0.1);
+  border-color: rgba(75, 220, 241, 0.25);
+}
+
+/* Empty State */
+.doc-tree-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--muted, #7e9bb4);
+  font-size: 11.5px;
+  font-style: italic;
+}
+
+/* Reveal Pulse Animation */
+@keyframes doc-reveal-pulse {
+  0% {
+    background-color: rgba(75, 220, 241, 0.35);
+    box-shadow: 0 0 12px rgba(75, 220, 241, 0.6);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.reveal-pulse {
+  animation: doc-reveal-pulse 1.2s ease-in-out;
+}
+
+/* Responsive Compact View (<= 360px) */
+@container (max-width: 360px) {
+  .doc-tree-header-title {
+    display: none;
+  }
+  .doc-files-search-wrap {
+    flex-basis: 110px;
+    max-width: 110px;
+  }
+}
+
+.observer-documents-files.is-compact .doc-tree-header-title {
+  display: none;
+}
+
+.observer-documents-files.is-compact .doc-files-search-wrap {
+  flex-basis: 110px;
+  max-width: 110px;
+}
+
+/* Light Theme Overrides */
+:root[data-theme="light"] .observer-documents-files {
+  background: #ffffff;
+  color: #20374c;
+}
+
+:root[data-theme="light"] .doc-files-toolbar {
+  background: #f4f7fa;
+  border-color: #dbe4ed;
+}
+
+:root[data-theme="light"] .doc-files-search {
+  background: #ffffff;
+  border-color: #cbd7e2;
+  color: #20374c;
+}
+
+
+:root[data-theme="light"] .doc-tree-badge {
+  background: #e9eff5;
+  color: #557088;
+  border-color: #dbe4ed;
+}
+
+:root[data-theme="light"] .doc-tree-badge.used-badge {
+  background: #dcf5eb;
+  color: #0b8054;
+  border-color: #b5e7d4;
+}
+
+/* Light Theme: Flat rows, neutral hover, no card borders or semantic background fill */
+:root[data-theme="light"] .doc-tree-row,
+:root[data-theme="light"] #documents-container .doc-tree-row,
+:root[data-theme="light"] #documents-container .doc-tree-file,
+:root[data-theme="light"] #documents-container .card {
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  color: #20374c;
+}
+
+:root[data-theme="light"] .doc-tree-row:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row:hover,
+:root[data-theme="light"] #documents-container .doc-tree-file:hover,
+:root[data-theme="light"] #documents-container .card:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="light"] .doc-tree-row:focus-visible,
+:root[data-theme="light"] .doc-tree-row[tabindex="0"]:focus,
+:root[data-theme="light"] #documents-container .doc-tree-row:focus-visible,
+:root[data-theme="light"] #documents-container .doc-tree-row[tabindex="0"]:focus {
+  background: rgba(0, 0, 0, 0.05) !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Light Theme: Status states without full-row semantic background */
+:root[data-theme="light"] #documents-container .doc-tree-row.hit,
+:root[data-theme="light"] #documents-container .doc-tree-row.active,
+:root[data-theme="light"] #documents-container .doc-tree-row.error,
+:root[data-theme="light"] #documents-container .doc-tree-row.waiting,
+:root[data-theme="light"] #documents-container .doc-tree-row.idle,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity.hit,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity.active,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity.error,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity.waiting,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.hit,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.active,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.error,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.waiting,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.idle,
+:root[data-theme="light"] #documents-container .card.hit,
+:root[data-theme="light"] #documents-container .card.active,
+:root[data-theme="light"] #documents-container .card.error,
+:root[data-theme="light"] #documents-container .card.waiting {
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="light"] #documents-container .doc-tree-row.hit:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row.active:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row.error:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row.waiting:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row.idle:hover,
+:root[data-theme="light"] #documents-container .doc-tree-row.has-hidden-activity:hover,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.hit:hover,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.active:hover,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.error:hover,
+:root[data-theme="light"] #documents-container .doc-tree-file.card.waiting:hover,
+:root[data-theme="light"] #documents-container .card.hit:hover,
+:root[data-theme="light"] #documents-container .card.active:hover,
+:root[data-theme="light"] #documents-container .card.error:hover,
+:root[data-theme="light"] #documents-container .card.waiting:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+/* Light Theme Finder tag marker colors */
+:root[data-theme="light"] .doc-tree-marker.hit {
+  background: #10b981 !important;
+  box-shadow: 0 0 2px rgba(16, 185, 129, 0.4);
+  opacity: 1 !important;
+}
+
+:root[data-theme="light"] .doc-tree-marker.active {
+  background: #0284c7 !important;
+  box-shadow: 0 0 2px rgba(2, 132, 199, 0.4);
+  opacity: 1 !important;
+}
+
+:root[data-theme="light"] .doc-tree-marker.waiting {
+  background: #d97706 !important;
+  box-shadow: 0 0 2px rgba(217, 119, 6, 0.4);
+  opacity: 1 !important;
+}
+
+:root[data-theme="light"] .doc-tree-marker.error {
+  background: #e11d48 !important;
+  box-shadow: 0 0 2px rgba(225, 29, 72, 0.4);
+  opacity: 1 !important;
+}
+
+:root[data-theme="light"] .doc-tree-marker.idle,
+:root[data-theme="light"] .doc-tree-marker:not(.hit):not(.active):not(.error):not(.waiting) {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+/* Light Theme focus rings on filename & disclosure */
+:root[data-theme="light"] .doc-tree-row:focus-visible .card-title,
+:root[data-theme="light"] .doc-tree-row:focus-visible .doc-tree-label,
+:root[data-theme="light"] .doc-tree-row[tabindex="0"]:focus .card-title,
+:root[data-theme="light"] .doc-tree-row[tabindex="0"]:focus .doc-tree-label,
+:root[data-theme="light"] #documents-container .doc-tree-row:focus-visible .card-title,
+:root[data-theme="light"] #documents-container .doc-tree-row:focus-visible .doc-tree-label,
+:root[data-theme="light"] #documents-container .doc-tree-row[tabindex="0"]:focus .card-title,
+:root[data-theme="light"] #documents-container .doc-tree-row[tabindex="0"]:focus .doc-tree-label {
+  outline-color: #0078d4;
+}
+
+:root[data-theme="light"] .doc-tree-folder:focus-visible .doc-tree-toggle,
+:root[data-theme="light"] .doc-tree-folder[tabindex="0"]:focus .doc-tree-toggle,
+:root[data-theme="light"] #documents-container .doc-tree-folder:focus-visible .doc-tree-toggle,
+:root[data-theme="light"] #documents-container .doc-tree-folder[tabindex="0"]:focus .doc-tree-toggle {
+  outline-color: #0078d4;
+}
+
+:root[data-theme="light"] .observer-documents-files .doc-tree-row.sequence-focus .card-title,
+:root[data-theme="light"] .observer-documents-files .doc-tree-row.sequence-focus .doc-tree-label,
+:root[data-theme="light"] #documents-container .doc-tree-row.sequence-focus .card-title,
+:root[data-theme="light"] #documents-container .doc-tree-row.sequence-focus .doc-tree-label {
+  outline-color: #0078d4;
+}
+
+:root[data-theme="light"] .observer-documents-files .doc-tree-row.wire-endpoint .card-title,
+:root[data-theme="light"] .observer-documents-files .doc-tree-row.wire-endpoint .doc-tree-label,
+:root[data-theme="light"] #documents-container .doc-tree-row.wire-endpoint .card-title,
+:root[data-theme="light"] #documents-container .doc-tree-row.wire-endpoint .doc-tree-label {
+  outline-color: #368aa4 !important;
+}

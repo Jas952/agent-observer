@@ -1,0 +1,617 @@
+{
+  "version": "18.20.2",
+  "commands": [
+    {
+      "name": "/security",
+      "description": "Plan, run, inspect, import, and compare OMP-native security scans",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/model",
+      "description": "Show current model selection",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/switch",
+      "description": "Switch model for this session only",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/fast",
+      "description": "Toggle fast mode",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/slow",
+      "description": "Toggle slow mode",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/skillful",
+      "description": "Toggle skill listing",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/extended-context",
+      "description": "Toggle extended context",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/computer",
+      "description": "Toggle computer use",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/ratchet",
+      "description": "Build (or reuse) an eval for an LLM flow, then hillclimb it unattended",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/prewalk",
+      "description": "Arm, restart, or cancel prewalk",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/modelpreset",
+      "description": "Manage model presets",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/effort",
+      "description": "Set or show reasoning effort (thinking level, intelligence)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/advisor",
+      "description": "Toggle advisor",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/export",
+      "description": "Export session to HTML file",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/trace",
+      "description": "Open this session's trace in the stats dashboard",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/dump",
+      "description": "Return full transcript as plain text, with LLM request JSON path",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/share",
+      "description": "Share session via an encrypted link (share server or secret gist)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/browser",
+      "description": "Toggle browser eval-prelude headless vs visible mode",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/todo",
+      "description": "Manage todos",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/session",
+      "description": "Show or configure the current session",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/jobs",
+      "description": "Show background jobs",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/usage",
+      "description": "Show token usage",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/stats",
+      "description": "Launch the local stats dashboard",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/changelog",
+      "description": "Show changelog",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/tools",
+      "description": "Show available tools",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/context",
+      "description": "Show context usage",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/mcp",
+      "description": "Manage MCP servers",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/commit",
+      "description": "Commit only the changes this agent and its subagents made",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/ssh",
+      "description": "Manage SSH connections",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/fresh",
+      "description": "Reset provider stream state without changing the local transcript",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/compact",
+      "description": "Compact the conversation",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/shake",
+      "description": "Shake heavy content out of the conversation context",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/handoff",
+      "description": "Summarize the session into a handoff document and compact in place",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/pin",
+      "description": "Pin or unpin a session at the top of the resume list",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/unpin",
+      "description": "Unpin a session from the top of the resume list",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/retry",
+      "description": "Retry the last failed agent turn",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/memory",
+      "description": "Manage memory",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/rename",
+      "description": "Rename the current session (omit title to generate)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/move",
+      "description": "Move the current session to a different directory",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/wt",
+      "description": "Move this session into a new worktree, changes included",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/add-dir",
+      "description": "Add a workspace directory to this session",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/remove-dir",
+      "description": "Remove a workspace directory from this session",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/dirs",
+      "description": "List this session's workspace directories",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/marketplace",
+      "description": "Manage plugins from marketplaces",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/plugins",
+      "description": "Manage plugins",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/reload-plugins",
+      "description": "Reload all plugins",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/force",
+      "description": "Force next turn to use a specific tool",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "/forget-approvals",
+      "description": "Forget every file and folder approval Ask and remember has recorded",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp acp",
+      "description": "Run omp as an ACP (Agent Client Protocol) server over stdio",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp agents",
+      "description": "Manage bundled task agents",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp anonymize",
+      "description": "Write a shareable copy of a session and its subagents: turn contents redacted, metadata kept, paths and literals replaced by consistent mock tokens",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp auth",
+      "description": "Export or import stored provider credentials (API keys and OAuth logins) as JSON",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp auth-broker",
+      "description": "Manage the omp auth-broker (credential vault)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp auth-gateway",
+      "description": "Run an auth-gateway: an HTTP forward proxy backed by the configured broker, or JSON lines on stdio with your own credentials",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp bash",
+      "description": "Run bash 5.3 on the built-in pi-shell engine (all arguments go to bash)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp bench",
+      "description": "Benchmark models: TTFT/prefill vs decode throughput with p50/p95, across chat, prefill, generation, and prompt-cache workloads, or single-user vs parallel load (--detailed)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp browser-relay",
+      "description": "Run the local CDP relay that lets the browser prelude drive your own Chrome tabs",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp cleanse",
+      "description": "Detect and fix project diagnostics with weighted parallel subagents",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp clip",
+      "description": "Upload a /record recording to live.omp.sh as a public clip and print its URL",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp collab",
+      "description": "List active local Collab host metadata without URLs; use collab link <instanceId|pid> to retrieve a control link (--view for view-only)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp commit",
+      "description": "Generate a commit message and update changelogs",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp completions",
+      "description": "Print a shell completion script (bash, zsh, or fish)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp compress",
+      "description": "Rewrite a text file into the dense prompt register, reporting what it drops",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp config",
+      "description": "Manage configuration settings",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp dry-balance",
+      "description": "Dry-run OAuth account balancing across random session ids",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp find",
+      "description": "Semantic search: describe a behavior, get the files and line ranges that implement it",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp gallery",
+      "description": "Preview tool, composer, and status-line renderers in a deterministic visual gallery",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp gc",
+      "description": "Run storage garbage collection",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp git",
+      "description": "Interactive fullscreen git UI: split diff viewer, staging sidebar, and commit composer",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp grep",
+      "description": "Test grep tool",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp grievances",
+      "description": "View, clean, or push reported tool issues (auto-QA grievances)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp if-bench",
+      "description": "Benchmark instruction following and working memory: one cached thread of glyph array actions with a moving cat-sound directive",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp images",
+      "description": "Inspect, diagnose, probe, and purge image publication backends",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp install",
+      "description": "Install or link an extension package (alias of `plugin install`/`plugin link`)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp join",
+      "description": "Join a shared collab session (same as /join)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp login",
+      "description": "Log in to a model provider (terminal counterpart of /login)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp models",
+      "description": "List, search, and refresh available models",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp play",
+      "description": "Replay a /record session recording in the terminal (space pauses, q quits)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp plugin",
+      "description": "Manage plugins (install, uninstall, list, etc.)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp predict",
+      "description": "Type a prompt and compare every word-completion engine's ghost text live",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp ps",
+      "description": "List and control daemon-supervised background processes (logs, stop, kill, restart)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp read",
+      "description": "Show what the read tool will return for a path, URL, or internal URI",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp render",
+      "description": "Draw a session's entire thread through the production transcript pipeline (with repaint timing)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp say",
+      "description": "Synthesize text with the local TTS engine and play it through the speakers",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp search",
+      "description": "Test web search providers",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp session",
+      "description": "Hand a session to another machine (pack, unpack, moved) or check which sessions a running omp owns (lease)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp setup",
+      "description": "Run onboarding setup or install dependencies for optional features",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp sh",
+      "description": "Run a POSIX sh on the built-in pi-shell engine (all arguments go to sh)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp share",
+      "description": "Share a saved session via an encrypted link (same as /share)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp shell",
+      "description": "Interactive shell console",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp skill",
+      "description": "Install, search, publish, and manage skills on the Skillshare registry (skills.omp.sh)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp ssh",
+      "description": "Manage SSH host configurations",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp stats",
+      "description": "View usage statistics",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp stream",
+      "description": "Broadcast local omp session screens and chat to your public live channel",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp tiny-models",
+      "description": "Download tiny local models (session titles, memory, word completion)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp token",
+      "description": "Get the API key or OAuth token for a provider",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp toks",
+      "description": "Count a file or text with every embedded offline tokenizer (OpenAI, Claude, Qwen, …)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp ttsr",
+      "description": "Inspect and test Time-Traveling Stream Rules (TTSR)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp update",
+      "description": "Check for and install updates",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp usage",
+      "description": "Show provider usage limits for every authenticated account",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp worktree",
+      "description": "Add, list, or clear git worktrees (clone-first when enabled)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    },
+    {
+      "name": "omp zsh",
+      "description": "Run zsh 5.9 on the built-in pi-shell engine (all arguments go to zsh)",
+      "source": "omp-18.20.2-reference",
+      "availability": "configured"
+    }
+  ]
+}

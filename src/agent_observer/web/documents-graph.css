@@ -1,0 +1,46 @@
+.document-graph{position:relative;flex:1;min-height:0;min-width:0;overflow:clip;isolation:isolate;touch-action:none;background:var(--panel);cursor:grab}
+.document-graph[hidden]{display:none}
+.document-graph.is-panning{cursor:grabbing}
+.document-graph:focus{outline:none!important}
+.document-graph:focus-visible .doc-graph-zoom{border-color:var(--cyan);box-shadow:0 0 0 2px color-mix(in srgb,var(--cyan) 30%,transparent)}
+.doc-graph-scene{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:0 0}
+.doc-graph-zoom{position:absolute;top:8px;right:8px;z-index:8;display:flex;align-items:center;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.doc-graph-zoom button{padding:3px 6px;min-width:24px;height:25px;border:0;border-radius:4px;font:11px ui-monospace,monospace;background:transparent;color:var(--text)}
+.doc-graph-zoom button:disabled{opacity:.4;cursor:default}
+.doc-graph-zoom button:nth-child(2){min-width:44px;font-size:10px}
+.doc-graph-links,.doc-graph-nodes{position:absolute;inset:0;width:100%;height:100%}
+.doc-graph-nodes{user-select:none;z-index:2}
+.doc-graph-links{pointer-events:none;overflow:visible;z-index:0}
+.doc-graph-links line{stroke:var(--muted);stroke-width:1;opacity:.28}
+.doc-graph-node{position:absolute;left:0;top:0;width:0;height:0;z-index:1}
+.doc-graph-node:has(.doc-bubble:hover),.doc-graph-node:has(.doc-bubble:focus-visible),.doc-graph-node.is-active,.doc-graph-node.is-selected{z-index:10}
+.doc-bubble{position:absolute;left:-12px;top:-12px;width:24px;height:24px;min-width:24px;padding:0;border-radius:50%;border:2px solid var(--muted);background:var(--panel2);color:var(--muted);cursor:grab;touch-action:none;outline:none;transition:background .3s,border-color .3s,box-shadow .3s}
+.doc-bubble:active{cursor:grabbing}
+.document-graph .doc-bubble{outline:none!important}
+.document-graph .doc-bubble:hover{border-color:var(--cyan);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--cyan) 40%,transparent)}
+.document-graph .doc-bubble:focus-visible{border-color:var(--cyan);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--cyan) 80%,transparent)}
+.document-graph .doc-bubble.is-selected{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--text)}
+.document-graph .doc-bubble[data-status="hit"]{border-color:var(--green);background:color-mix(in srgb,var(--green) 28%,var(--panel))}
+.document-graph .doc-bubble[data-status="active"]{border-color:var(--cyan);background:color-mix(in srgb,var(--cyan) 24%,var(--panel));animation:doc-bubble-pulse 3s ease-in-out infinite}
+.document-graph .doc-bubble[data-status="error"]{border-color:var(--red);background:color-mix(in srgb,var(--red) 24%,var(--panel))}
+.document-graph .doc-bubble.sequence-focus{outline:none!important;box-shadow:0 0 0 3px var(--cyan)}
+.document-graph .doc-bubble.arrival-pending{opacity:.85;border-color:var(--muted)!important;transition:none!important;animation:none!important;outline:none!important;box-shadow:none!important}
+.document-graph .doc-bubble.doc-bubble-arrived{animation:doc-bubble-arrival-glow .8s ease-out}
+.document-graph .doc-bubble[style*="--doc-call-color"]{border-color:var(--doc-call-color)}
+.doc-graph-name{position:absolute;top:16px;left:calc(var(--document-label-width,76px) / -2);width:var(--document-label-width,76px);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none;visibility:hidden;color:var(--muted);font:9px/1.4 ui-monospace,monospace;background:var(--panel);border-radius:4px;padding:0 3px;z-index:2}
+.doc-graph-node[data-label-pos]:not([data-label-pos="hidden"]) .doc-graph-name{visibility:visible}
+.doc-graph-node[data-label-pos="hidden"] .doc-graph-name{visibility:hidden!important}
+.doc-graph-node:has(.doc-bubble:hover) .doc-graph-name,.doc-graph-node:has(.doc-bubble:focus-visible) .doc-graph-name,.doc-graph-node.is-active .doc-graph-name,.doc-graph-node.is-selected .doc-graph-name,.doc-graph-node:focus-within .doc-graph-name{color:var(--text);background:var(--panel2);z-index:10}
+.doc-graph-tooltip{position:absolute;z-index:9;max-width:min(280px,calc(100% - 16px));padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--text);box-shadow:0 5px 18px #0003;font:11px/1.5 ui-monospace,monospace;overflow-wrap:anywhere;touch-action:auto}
+.doc-graph-tooltip[hidden],.doc-graph-actions[hidden],.doc-graph-empty[hidden]{display:none}
+.doc-graph-tooltip strong,.doc-graph-tooltip span{display:block}
+.doc-graph-tooltip span{margin-top:4px;color:var(--muted);font:11px/1.5 system-ui,sans-serif}
+.doc-graph-actions{position:absolute;left:8px;right:8px;bottom:8px;z-index:8;display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--panel)}
+.doc-graph-actions>span{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font:10px ui-monospace,monospace}
+.doc-graph-actions button{flex:none;padding:4px 6px;font-size:10px;border-color:var(--line);background:var(--panel2)}
+.doc-graph-empty{position:absolute;inset:24px;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:12px;pointer-events:none}
+@keyframes doc-bubble-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--cyan) 12%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--cyan) 18%,transparent)}}
+@keyframes doc-bubble-arrival-glow{0%{box-shadow:0 0 0 0 var(--arrival-color,var(--cyan))}50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--arrival-color,var(--cyan)) 50%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+:root[data-theme="light"] .doc-graph-name{background:#ffffff;color:#37536a}
+:root[data-theme="light"] .doc-graph-node:has(.doc-bubble:hover) .doc-graph-name,:root[data-theme="light"] .doc-graph-node:has(.doc-bubble:focus-visible) .doc-graph-name,:root[data-theme="light"] .doc-graph-node.is-active .doc-graph-name,:root[data-theme="light"] .doc-graph-node.is-selected .doc-graph-name{background:#f8fafc;color:#20374c}
+@media(prefers-reduced-motion:reduce){.doc-bubble{transition:none;animation:none!important}.doc-bubble.doc-bubble-arrived{animation:none!important}}

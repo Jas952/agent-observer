@@ -1,0 +1,15 @@
+.message-markdown{white-space:normal;overflow-wrap:anywhere;line-height:1.7;color:inherit}
+.message-markdown>:first-child{margin-top:0}.message-markdown>:last-child{margin-bottom:0}
+.message-markdown p{margin:.65em 0}.message-markdown h1,.message-markdown h2,.message-markdown h3,.message-markdown h4,.message-markdown h5,.message-markdown h6{font-weight:650;line-height:1.35;margin:1.3em 0 .5em;letter-spacing:-.015em}
+.message-markdown h1{font-size:1.65em}.message-markdown h2{font-size:1.4em}.message-markdown h3{font-size:1.18em}.message-markdown h4,.message-markdown h5,.message-markdown h6{font-size:1em}
+.message-markdown strong{font-weight:650}.message-markdown ul,.message-markdown ol{margin:.6em 0;padding-left:1.5em}.message-markdown li{padding-left:.15em;margin:.25em 0}.message-markdown li>p{margin:.25em 0}
+.message-markdown a{color:var(--cyan);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--cyan) 45%,transparent);text-underline-offset:3px}
+.message-markdown code{font: .9em/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;background:color-mix(in srgb,var(--muted) 10%,transparent);padding:.12em .35em;border-radius:4px;white-space:break-spaces}
+.message-markdown pre{margin:1em 0;padding:12px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:7px;overflow-x:auto;white-space:pre;tab-size:4}.message-markdown pre code{display:block;min-width:max-content;padding:0;border:0;background:none;white-space:pre}
+.message-markdown blockquote{margin:1em 0;padding:.1em 0 .1em 1em;border-left:2px solid var(--line);color:var(--muted)}.message-markdown hr{border:0;border-top:1px solid var(--line);margin:1.4em 0}
+.message-markdown table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1em 0;font-size:.95em}.message-markdown th,.message-markdown td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}.message-markdown th{font-weight:650}.message-markdown input[type=checkbox]{margin-right:.55em;accent-color:var(--cyan)}
+/* Success is a quiet tint and one border, not a second frame around every card. */
+#world .card.hit:not(.doc-tree-file),#world #documents-container .card.hit:not(.doc-tree-file){background:color-mix(in srgb,var(--green) 5%,var(--panel));border-color:color-mix(in srgb,var(--green) 27%,var(--line))}
+#world .card.hit.sequence-focus:not(.doc-tree-file){outline-color:transparent;box-shadow:inset 2px 0 0 color-mix(in srgb,var(--green) 58%,transparent)}
+#world .card.error.sequence-focus:not(.doc-tree-file){outline-color:transparent;box-shadow:inset 2px 0 0 color-mix(in srgb,var(--red) 65%,transparent)}
+#world .card:not(.doc-tree-file):focus-visible{outline:2px solid var(--cyan);outline-offset:2px}

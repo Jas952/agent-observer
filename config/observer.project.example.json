@@ -5,7 +5,7 @@
     "root": "..",
     "agent_label": "Project Agent"
   },
-  "port": 8765,
+  "port": 8766,
   "storage_profile": "project",
   "documents": [
     {
@@ -28,6 +28,20 @@
       ]
     }
   ],
+  "capabilities": {"mcp": [], "skills": []},
+  "capability_links": {},
+  "memory_systems": [],
+  "vault_path": "",
+  "commands": {
+    "hidden": []
+  },
+  "block_layouts": {
+    "commands": "list",
+    "memory": "list",
+    "tools": "list",
+    "capabilities": "list",
+    "files": "list"
+  },
   "tools": [
     {
       "name": "Python",

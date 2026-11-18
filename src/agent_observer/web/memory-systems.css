@@ -1,0 +1,272 @@
+.g-memory{left:2200px;top:656px;width:380px;min-height:160px}.memory-state{font:10px/1.4 ui-monospace,monospace;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.memory-state[data-status="available"]{color:var(--cyan)}.memory-state[data-status="unavailable"],.memory-state[data-status="unauthorized"]{color:var(--amber)}
+.memory-details{display:flex;flex-direction:column;gap:14px;box-sizing:border-box;max-width:100%}.memory-overview{display:flex;align-items:flex-start;flex-wrap:wrap;gap:10px 14px}.memory-overview>div{flex:1;min-width:180px}.memory-overview small{font:10px/1.4 ui-monospace,monospace;color:var(--muted);letter-spacing:.08em}.memory-overview p{margin:0;color:var(--muted);font:11px/1.5 ui-monospace,monospace;overflow-wrap:anywhere}.memory-refresh{flex:none;padding:6px 10px;font-size:11px}.memory-availability{display:inline-flex;align-items:center;padding:4px 7px;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:10px/1.4 ui-monospace,monospace;white-space:nowrap}.memory-availability[data-status="available"]{color:var(--cyan)}.memory-availability[data-status="not_found"],.memory-availability[data-status="unauthorized"],.memory-availability[data-status="unavailable"]{color:var(--amber)}
+.memory-boundary,.memory-section-note,.memory-empty{font-size:11px;line-height:1.6;color:var(--muted);margin:0}.memory-facts{display:grid;grid-template-columns:minmax(90px,120px) minmax(0,1fr);gap:6px 14px;margin:0;font-size:12px;line-height:1.6}.memory-facts dt{color:var(--muted)}.memory-facts dd{margin:0;overflow-wrap:anywhere}.memory-facts code{font-size:11px}.memory-reference-links{display:flex;flex-wrap:wrap;gap:14px;margin:0;font-size:11px}.memory-reference-links a{color:var(--cyan)}.memory-section{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:14px}.memory-section h4{margin:0;font-size:13px}.memory-bank,.memory-store{border:1px solid var(--line);border-radius:9px;background:var(--panel2);padding:12px;display:flex;flex-direction:column;gap:10px}.memory-bank>header,.memory-store>header{height:auto;padding:0;border:0;background:transparent;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;font-size:12px}.memory-bank>header>div{display:flex;flex-direction:column;gap:4px;min-width:0}.memory-bank>header code{font-size:10px;color:var(--muted);overflow-wrap:anywhere}.memory-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}.memory-metric{display:flex;flex-direction:column;gap:3px;padding:8px;border:1px solid var(--line);border-radius:6px}.memory-metric strong{font:600 17px/1.3 ui-monospace,monospace}.memory-metric span{font-size:10px;color:var(--muted)}.memory-types{display:flex;flex-wrap:wrap;gap:6px}.memory-type,.memory-tag{display:inline-flex;gap:8px;align-items:center;max-width:100%;padding:3px 6px;border:1px solid var(--line);border-radius:5px;font:10px/1.5 ui-monospace,monospace;overflow-wrap:anywhere}.memory-tag{color:var(--muted)}.memory-type strong,.memory-tag strong{color:var(--text);font-variant-numeric:tabular-nums}.memory-error{color:var(--amber);font-size:11px;line-height:1.6;margin:0}.memory-taxonomy{border-collapse:collapse;width:100%;font-size:11px;text-align:left}.memory-taxonomy th{font-weight:500;color:var(--muted)}.memory-taxonomy th,.memory-taxonomy td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}.memory-taxonomy td:first-child{width:45%}.memory-taxonomy td small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}.memory-taxonomy code{font-size:10px;overflow-wrap:anywhere}.memory-taxonomy th:last-child,.memory-taxonomy td:last-child{text-align:right;font-variant-numeric:tabular-nums}.memory-store-engine,.memory-store-role{font-size:10px;color:var(--muted)}.memory-store-role{margin:0}
+
+/* Authoritative taxonomy & hero experience stats */
+.memory-hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:6px 0}.memory-hero-stat{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);min-width:0}.memory-hero-stat strong{font:600 19px/1.2 ui-monospace,monospace;color:var(--text);overflow-wrap:anywhere}.memory-hero-stat span{font-size:11px;color:var(--muted);line-height:1.3}.memory-taxonomy-distinction{font-size:11px;line-height:1.5;color:var(--muted);padding:8px 10px;border-left:2px solid var(--cyan);background:var(--panel2);border-radius:4px;margin:4px 0}.memory-taxonomy-distinction p{margin:0}.memory-taxonomy-distinction p+p{margin-top:6px}.memory-model-facts dt{color:var(--muted)}.memory-muted-val{color:var(--muted);font-style:italic}
+
+/* Compact, responsive settings form */
+.memory-settings-container{width:100%;max-width:100%;box-sizing:border-box}.memory-settings-form{display:flex;flex-direction:column;gap:12px;width:100%;max-width:100%;box-sizing:border-box}.memory-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;width:100%;box-sizing:border-box}.memory-settings-wide{grid-column:1/-1}.memory-field{display:flex;flex-direction:column;gap:4px;min-width:0;width:100%;box-sizing:border-box}.memory-field label{font-size:11px;font-weight:500;color:var(--muted);display:flex;justify-content:space-between;line-height:1.4}.memory-field input,.memory-field select,.memory-field textarea{width:100%;box-sizing:border-box;font-size:12px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);max-width:100%}.memory-field textarea{resize:vertical;min-height:55px;font:11px/1.4 ui-monospace,monospace}.memory-field input:focus,.memory-field select:focus,.memory-field textarea:focus{border-color:var(--cyan);outline:none}.memory-settings-actions{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap}
+
+/* Settings block entries from global settings dialog */
+.memory-settings-list{display:flex;flex-direction:column;gap:10px}.memory-settings-entry{position:relative;border:1px solid var(--line);border-radius:9px;padding:28px 12px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;min-width:0}.memory-settings-entry legend{padding:0 5px;max-width:calc(100% - 48px);font-size:12px;font-weight:600;overflow-wrap:anywhere}.memory-settings-entry label{display:flex;flex-direction:column;gap:4px;min-width:0;margin:0;font-size:11px;color:var(--muted)}.memory-settings-entry input,.memory-settings-entry select,.memory-settings-entry textarea{box-sizing:border-box;width:100%;min-width:0;font-size:12px}.memory-settings-entry>.memory-settings-wide{grid-column:1/-1}.memory-settings-entry details{grid-column:1/-1;min-width:0}.memory-settings-entry summary{display:flex;align-items:center;gap:8px;min-height:28px;padding:4px 8px;box-sizing:border-box;list-style:none;font-size:11px;cursor:pointer;color:var(--muted)}.memory-settings-entry summary::-webkit-details-marker{display:none}.memory-settings-entry summary::before{content:"";flex:none;width:6px;height:6px;margin-right:2px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg)}.memory-settings-entry details[open]>summary::before{transform:rotate(45deg)}.memory-settings-entry details label+label{margin-top:8px}.memory-settings-entry textarea[aria-invalid="true"]{border-color:var(--red)}.memory-settings-entry textarea.memory-settings-json{min-height:110px;font:11px/1.5 ui-monospace,monospace}.memory-settings-entry>.memory-settings-remove{position:absolute;top:0;right:8px}.memory-provider-value{margin:0;color:var(--muted);font-size:11px;line-height:1.4}
+
+@media(max-width:600px){
+  .memory-settings-grid{grid-template-columns:minmax(0,1fr)}
+  .memory-hero-stats{grid-template-columns:minmax(0,1fr)}
+  .memory-settings-entry{grid-template-columns:minmax(0,1fr)}
+  .memory-facts{grid-template-columns:90px minmax(0,1fr)}
+  .memory-taxonomy th,.memory-taxonomy td{padding:7px 3px}
+  .memory-overview>div{min-width:100%}
+}
+.memory-details .memory-bank>header,.memory-details .memory-store>header{background:transparent;white-space:normal;flex-wrap:wrap}.memory-bank>header strong,.memory-store>header strong,.memory-taxonomy td{overflow-wrap:anywhere}
+.memory-settings-actions{flex:none;padding:10px 0 2px;border-top:1px solid var(--line)}.memory-settings-actions button{height:30px;min-height:30px;padding:4px 10px;font-size:11px}.memory-settings-actions #mem-set-save{min-width:110px;background:var(--cyan);border-color:var(--cyan);color:var(--panel)}.memory-details .memory-taxonomy{table-layout:fixed}.memory-details .memory-taxonomy th,.memory-details .memory-taxonomy td{overflow-wrap:anywhere}#resource-tabs{flex-wrap:wrap;min-width:0}
+#resource-dialog[data-kind="memory"]{width:min(820px,calc(100vw - 24px));height:min(760px,calc(100dvh - 48px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 48px)}#resource-dialog[data-kind="memory"] .memory-settings-container{padding:18px 20px;min-width:0}
+#resource-dialog[data-kind="memory"]:has(.memory-settings-container){width:min(720px,calc(100vw - 24px));height:min(720px,calc(100dvh - 48px))}#resource-dialog[data-kind="memory"] .memory-settings-container{padding:12px 18px}.memory-settings-toolbar{display:flex;justify-content:flex-end;min-height:28px}.memory-settings-toolbar>.settings-help-button:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* Memory card & categories in graph */
+.g-memory .card,
+#memory-container > .card {
+  height: auto !important;
+  min-height: 120px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  box-sizing: border-box;
+}
+
+.memory-card-taxonomy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line, #263c55);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.memory-card-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.memory-card-categories::-webkit-scrollbar {
+  width: 5px;
+}
+.memory-card-categories::-webkit-scrollbar-track {
+  background: transparent;
+}
+.memory-card-categories::-webkit-scrollbar-thumb {
+  background: var(--line, #263c55);
+  border-radius: 4px;
+}
+
+.memory-card-category {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: background-color .15s ease, border-color .15s ease;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.memory-card-category:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(36, 200, 231, 0.15);
+}
+
+.memory-card-category-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+.memory-card-category-indicator {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--muted, #708ba7);
+  flex: none;
+  line-height: 1.35;
+  user-select: none;
+  opacity: 0.8;
+}
+
+.memory-card-category-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.memory-card-category-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text, #e2ecf7);
+  line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.memory-card-category-path {
+  font-size: 9.5px;
+  font-family: ui-monospace, monospace;
+  color: var(--muted, #708ba7);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.memory-card-category-count {
+  flex: none;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  padding: 1px 6px;
+  border-radius: 9px;
+  background: var(--panel2, #0e1a2a);
+  border: 1px solid var(--line, #263c55);
+  color: var(--cyan, #24c8e7);
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.memory-card-category-count[data-count="0"] {
+  color: var(--muted, #708ba7);
+}
+.memory-card-category-count[data-count="unknown"] {
+  color: var(--amber, #f59e0b);
+}
+
+.memory-card-empty {
+  font-size: 10.5px;
+  color: var(--muted, #708ba7);
+  margin: 2px 0;
+  font-style: italic;
+}
+
+/* Info dialog table hierarchy styling */
+.memory-details .memory-taxonomy {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+.memory-taxonomy th, .memory-taxonomy td {
+  padding: 8px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line, #263c55);
+}
+.memory-taxonomy-th-label {
+  width: 48%;
+}
+.memory-taxonomy-th-path {
+  width: 34%;
+}
+.memory-taxonomy-th-count {
+  width: 18%;
+  text-align: right;
+}
+
+.memory-taxonomy-cell-label {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.memory-taxonomy-cell-path {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+.memory-taxonomy-cell-count {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.memory-taxonomy-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.memory-taxonomy-tree-branch {
+  font-family: ui-monospace, monospace;
+  color: var(--muted, #708ba7);
+  font-size: 11px;
+  flex: none;
+  line-height: 1.35;
+  user-select: none;
+}
+.memory-taxonomy-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.memory-taxonomy-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text, #e2ecf7);
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+.memory-taxonomy-description {
+  font-size: 11px;
+  color: var(--muted, #708ba7);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+.memory-taxonomy-path {
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+  color: var(--muted, #708ba7);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+.memory-taxonomy-count {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cyan, #24c8e7);
+}
+.memory-taxonomy-count[data-count="0"] {
+  color: var(--muted, #708ba7);
+}
+.memory-taxonomy-count[data-count="unknown"] {
+  color: var(--amber, #f59e0b);
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .memory-card-category {
+  background: rgba(0, 0, 0, 0.02);
+}
+:root[data-theme="light"] .memory-card-category:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+:root[data-theme="light"] .memory-card-category-count {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0284c7;
+}
+:root[data-theme="light"] .memory-taxonomy-count {
+  color: #0284c7;
+}
+
+.memory-endpoint{display:flex;align-items:baseline;gap:7px;min-width:0;margin:3px 0;color:var(--muted);font:10px/1.5 ui-monospace,monospace}.memory-endpoint[hidden]{display:none}.memory-endpoint>span{flex:none;font-size:9px;letter-spacing:.04em}.memory-endpoint code{min-width:0;color:var(--text);font:inherit;overflow-wrap:anywhere;user-select:text}.memory-overview p code{font:inherit;color:var(--text)}

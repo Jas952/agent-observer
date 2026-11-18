@@ -23,3 +23,12 @@ var/
 observer.install.json
 config/*.local.json
 output/
+
+# Private installation, not canonical source or release content.
+/.agent-observer/
+
+# Local agent setup, project memory and diagnostic reports.
+/.omp/
+/PROJECT_CONTEXT.md
+/docs/knowledge/
+/docs/*REPORT*.md

@@ -9,7 +9,7 @@ The graph contains the request and refinements, an agent with its activity log, 
 - `write`, `edit`, `apply_patch` — create and modify files.
 - `bash` — run shell commands. Other command types appear after a recorded call.
 
-The graph observes the agent's actions; it does not execute commands. Connect events using the [Python example](examples/instrumented_agent.py). A file in the catalog is not evidence that it was read.
+The graph observes the agent's actions; recorded commands are not re-executed. Explicit settings controls can start and stop trusted installation-local services, with output in Terminal. Observer shutdown stops only graph-started services, not external ones. Connect events using the [Python example](examples/instrumented_agent.py). A file in the catalog is not evidence that it was read.
 
 ## Installation and startup
 
@@ -30,7 +30,7 @@ For your own project:
 .venv/bin/python observer.py run --config "/path/to/project/.agent-observer/config/observer.project.json"
 ```
 
-The installed graph defaults to http://127.0.0.1:8765/. Configure documents and tools in the installation's configuration file; event delivery requires integrating the agent.
+All installed projects share http://127.0.0.1:8766/ with isolated project runtimes. Normal startup reuses or safely replaces verified Observer servers; it never kills an unrelated listener or allocates another project port. Configure documents and tools in each installation's configuration file; event delivery requires integrating the agent.
 
 ## Change rules
 

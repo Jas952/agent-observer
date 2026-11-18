@@ -1,46 +1,55 @@
 # Agent Observer
 
-A local, interactive graph of an AI agent's workflow, from the request and requirements to tool calls and the final result. It shows interactions recorded by agent events.
+Интерактивный граф, который помогает следить за работой ИИ-агента: от запроса до результата. На нём видны зарегистрированные действия, инструменты, документы и рабочие файлы.
 
-- Highlights tool calls, successful actions, and errors.
-- Documents, native commands, external services, MCP servers, skills and working files in one graph.
-- Request history and step-by-step route replay.
-- Token tracking with separate estimates and provider-reported usage.
+![Пример графа с тестовыми данными](docs/assets/graph-demo.png)
 
-![Graph after a complete test cycle; all data is fictional](docs/assets/graph-demo.png)
+## Возможности
 
-The document category is based on a project **knowledge base**: Markdown notes with YAML descriptions and Obsidian links. Projects share a structure but keep their own content; the knowledge base grows as the agent works. Example structure (other folders are supported too):
+- Подключение Codex Desktop, Codex CLI, OMP и агента, встроенного в проект.
+- Несколько папок и графов: сессии сгруппированы по проектам, между ними можно переключаться. В одной папке доступны сессии Codex и OMP.
+- История действий и пошаговый просмотр записанного маршрута.
+- Документы и база знаний Obsidian, инструменты, MCP-серверы и навыки агента. MCP — способ подключить к агенту внешние инструменты и сервисы.
+- Рабочие файлы, результат, ошибки и расход токенов. Токены — единицы, в которых измеряется объём текста для модели.
+- Терминал для каждой папки. В нём можно видеть обнаруженные процессы проекта, например локальный сайт или службу памяти, и их журналы, если они доступны.
+
+Граф показывает записанные события и не выполняет команды повторно. Наличие документа или инструмента в списке ещё не означает, что агент обращался к нему.
+
+## Подключение
+
+1. Откройте **Agent connections** — подключение агентов.
+2. Выберите папку проекта и тип агента.
+3. Запустите анализ папки и после его завершения создайте граф.
+4. Выберите нужную сессию в списке слева.
+
+Observer не меняет модель, настройки авторизации или историю агента. Инструкции по установке и запуску находятся в [AGENTS.md](AGENTS.md).
+
+## База знаний Obsidian
+
+Граф может показывать документы проекта, в том числе заметки Obsidian — программы для ведения связанных заметок. Например, база для контентного проекта может выглядеть так:
 
 ```text
 docs/knowledge/
-├── ContentStrategy.md
-├── Audience.md
-├── Decisions.md
+├── ContentStrategy.md      # стратегия
+├── Audience.md             # аудитория
+├── VoiceAndStyle.md        # стиль
+├── Channels.md             # площадки
+├── Sources.md              # источники
+├── EditorialWorkflow.md    # порядок работы
+├── Decisions.md            # решения
 ├── ideas/
-│   └── ContentIdeas.md
+│   └── ContentIdeas.md     # идеи
 ├── publication/
-│   └── PublicationQueue.md
+│   └── PublicationQueue.md # очередь публикаций
 └── analytics/
-    └── Performance.md
+    └── Performance.md      # результаты
 ```
 
-See [AGENTS.md](AGENTS.md) for installation, startup, and configuration.
+Это пример, а не обязательная структура: можно подключить собственные папки и заметки. Файлы, к которым агент действительно обратился, выделяются на графе.
 
-## Connect Codex & Project Agents
+## Проверка
 
-Use the header's **Agent connections** button. Save or pin the project folder, then connect one of two modules:
-
-- **Project agent**: Connects to the project's own agent. Its model, router, and authentication stay entirely within that agent.
-- **Codex Desktop / CLI**: Reads that folder's existing Codex session journals. Continue working in the normal application or CLI; Observer does not launch a replacement Codex.
-
-## Command Observation & Unification
-
-Observer visualizes command execution and tool calls for both project agents and Codex:
-- `read` (file reading, internal URIs, and resource loading)
-- `write` (file creation and atomic replacement)
-- `edit` / `patch` (content patching and modifications)
-- `bash` / `shell` (terminal commands and script execution)
-- `search` / `grep` (content pattern search)
-- `glob` (file and directory discovery)
-- `image` (visual inspection and dimensions)
-- and more depending on connected tools, MCP servers, or agent skills. Extensible command set: additional operations appear dynamically based on the connected tools and integrations configured in the agent.
+```sh
+PYTHONPATH=src .venv/bin/python -m unittest discover -s src/agent_observer/tests -p 'test_*.py'
+node --test --test-concurrency=1 src/agent_observer/tests/demo-regression.test.mjs src/agent_observer/tests/omp-results.test.mjs
+```
