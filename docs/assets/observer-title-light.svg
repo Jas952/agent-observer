@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="170" viewBox="0 0 1200 170">
-  <rect width="1200" height="170" fill="#f3f6f8"/>
-  <text x="600" y="41" fill="#477b87" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="500" text-anchor="middle">ГРАФ РАБОТЫ ИИ-АГЕНТА</text>
-  <text x="600" y="102" fill="#203749" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" text-anchor="middle">Agent Observer</text>
-  <text x="600" y="155" fill="#587181" font-family="Arial, Helvetica, sans-serif" font-size="26" text-anchor="middle">Наблюдайте за работой агента</text>
-</svg>
