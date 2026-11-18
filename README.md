@@ -21,12 +21,8 @@ An interactive graph that helps you track how an AI agent works, from the initia
 <p align="center">
   <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections.png" width="48%" alt="Agent connections"></a>
   &nbsp;
-  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel.png" width="48%" alt="Commands and tool calls"></a>
-</p><p align="center">
-  <a href="docs/assets/agent-connections.png"><img src="docs/assets/agent-connections.png" width="48%" alt="Agent connections"></a>
-  &nbsp;
-  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel.png" width="48%" alt="Commands and tool calls"></a>
-</p>
+  <a href="docs/assets/commands-panel.png"><img src="docs/assets/commands-panel.png" width="55%" alt="Commands and tool calls"></a>
+</p><
 
 ## Connecting Agents
 
